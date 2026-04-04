@@ -86,41 +86,41 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| REGL-01 | — | Pending |
-| REGL-02 | — | Pending |
-| REGL-03 | — | Pending |
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| ASMT-01 | — | Pending |
-| ASMT-02 | — | Pending |
-| ASMT-03 | — | Pending |
-| ASMT-04 | — | Pending |
-| ASMT-05 | — | Pending |
-| ASMT-06 | — | Pending |
-| ASMT-07 | — | Pending |
-| DOCS-01 | — | Pending |
-| DOCS-02 | — | Pending |
-| DOCS-03 | — | Pending |
-| DOCS-04 | — | Pending |
-| GUID-01 | — | Pending |
-| GUID-02 | — | Pending |
-| GUID-03 | — | Pending |
-| GUID-04 | — | Pending |
-| DASH-01 | — | Pending |
-| DASH-02 | — | Pending |
-| DASH-03 | — | Pending |
-| DASH-04 | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| REGL-01 | Phase 1 | Pending |
+| REGL-02 | Phase 1 | Pending |
+| REGL-03 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Pending |
+| ASMT-01 | Phase 2 | Pending |
+| ASMT-02 | Phase 2 | Pending |
+| ASMT-03 | Phase 2 | Pending |
+| ASMT-04 | Phase 2 | Pending |
+| ASMT-05 | Phase 2 | Pending |
+| ASMT-06 | Phase 2 | Pending |
+| ASMT-07 | Phase 2 | Pending |
+| DOCS-01 | Phase 3 | Pending |
+| DOCS-02 | Phase 3 | Pending |
+| DOCS-03 | Phase 3 | Pending |
+| DOCS-04 | Phase 3 | Pending |
+| GUID-01 | Phase 3 | Pending |
+| GUID-02 | Phase 3 | Pending |
+| GUID-03 | Phase 3 | Pending |
+| GUID-04 | Phase 3 | Pending |
+| DASH-01 | Phase 4 | Pending |
+| DASH-02 | Phase 4 | Pending |
+| DASH-03 | Phase 4 | Pending |
+| DASH-04 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 29 total
-- Mapped to phases: 0
-- Unmapped: 29 ⚠️
+- Mapped to phases: 29
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-04-04*
-*Last updated: 2026-04-04 after initial definition*
+*Last updated: 2026-04-04 after roadmap creation*
