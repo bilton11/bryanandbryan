@@ -1,4 +1,4 @@
-# ClaimPilot
+# Bryan and Bryan
 
 ## What This Is
 
@@ -59,7 +59,7 @@ An SRL can walk through a guided case assessment, get a clear picture of their s
 - **Data residency**: All infrastructure in `northamerica-northeast1` (Montreal) — Canadian data residency matters for legal tech
 - **Infrastructure**: GCP Cloud Run, new Cloud SQL PostgreSQL 15 instance, Artifact Registry, Secret Manager
 - **Regulatory**: No directive language in AI outputs. Disclaimer on every page. Document generation is template-only (no AI). Assessment framed as "factors a court would typically consider," never predictions or recommendations.
-- **Branding**: Navy (#1e3a5f) + teal (#0d9488) + warm gray (#f5f5f4). Product name: ClaimPilot (working title). Tagline: "Navigate Ontario Small Claims Court with confidence."
+- **Branding**: Navy (#1e3a5f) + teal (#0d9488) + warm gray (#f5f5f4). Product name: Bryan and Bryan. Tagline: "Navigate Ontario Small Claims Court with confidence."
 
 ## Key Decisions
 
