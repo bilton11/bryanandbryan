@@ -1,0 +1,126 @@
+# Requirements: Bryan and Bryan
+
+**Defined:** 2026-04-04
+**Core Value:** An SRL can walk through a guided case assessment, get a clear picture of their situation, and produce court-ready documents — all framed as legal information, never legal advice.
+
+## v1 Requirements
+
+### Foundation
+
+- [ ] **AUTH-01**: User can create account with email and password
+- [ ] **AUTH-02**: User can log in and stay logged in across sessions
+- [ ] **AUTH-03**: User can log out from any page
+- [ ] **REGL-01**: Every page displays regulatory disclaimer footer ("legal information, not legal advice")
+- [ ] **REGL-02**: AI outputs structurally enforce statistical framing — no directive language ("you should", "I recommend") can reach the user
+- [ ] **REGL-03**: Court fees, monetary limits, and procedural constants stored as named constants (single source of truth, easy to update when rules change)
+- [ ] **INFRA-01**: Docker multi-stage build with gunicorn on python:3.12-slim
+- [ ] **INFRA-02**: CI/CD pipeline via GitHub Actions → Cloud Run, auto-deploy on push to main
+- [ ] **INFRA-03**: Health check endpoint at /health
+- [ ] **INFRA-04**: Mobile-first responsive design, WCAG 2.1 AA compliance
+
+### Case Assessment
+
+- [ ] **ASMT-01**: Dispute type router validates claim type and prevents filing in wrong forum (e.g., excludes libel/slander, title to land)
+- [ ] **ASMT-02**: Multi-step guided interview collecting claim type, basic facts, amount, opposing party details
+- [ ] **ASMT-03**: Limitation period calculator with branching logic (discovery date, not incident date; tolling for minors/incapacitated; municipal notice obligations)
+- [ ] **ASMT-04**: Jurisdiction check confirming amount ≤ $50,000 and matter is within Small Claims Court scope
+- [ ] **ASMT-05**: Evidence inventory checklist with completeness scoring (contracts, receipts, photos, correspondence, witnesses)
+- [ ] **ASMT-06**: AI-powered case strength indicator using Claude Sonnet with statistical framing ("cases with similar characteristics in Ontario...")
+- [ ] **ASMT-07**: Downloadable PDF case assessment summary with disclaimer on every page
+
+### Documents
+
+- [ ] **DOCS-01**: Demand letter generator — template-based, structured inputs, no AI content generation
+- [ ] **DOCS-02**: Plaintiff's Claim (Form 7A) generator — template-based, court-formatted, matching Ontario court requirements
+- [ ] **DOCS-03**: Defence (Form 9A) generator — template-based, court-formatted
+- [ ] **DOCS-04**: Filing fee calculator ($108 claim, $77 defence, etc.) with source citations
+
+### Guide
+
+- [ ] **GUID-01**: Plain-language process guide covering full Small Claims Court lifecycle (filing → service → defence → settlement conference → trial → enforcement)
+- [ ] **GUID-02**: Settlement conference preparation guide (what to expect, what to bring, how to present)
+- [ ] **GUID-03**: Searchable, accordion-style sections using Alpine.js
+- [ ] **GUID-04**: Court fees schedule with citations to Ontario.ca and court rules
+
+### Dashboard
+
+- [ ] **DASH-01**: User dashboard showing all claims, generated documents, and upcoming deadlines
+- [ ] **DASH-02**: Deadline tracker calculating from key dates (limitation period expiry, defence deadline 20 days after service, settlement conference window, trial request deadline)
+- [ ] **DASH-03**: Timeline visualization for calculated deadlines
+- [ ] **DASH-04**: Lawyer escalation pathway — clear handoff point to partner lawyer for complex cases
+
+## v2 Requirements
+
+### Payments
+
+- **PAY-01**: Stripe integration for document generation tier ($99)
+- **PAY-02**: Pricing page with functional payment flow
+
+### Integrations
+
+- **INTG-01**: CanLII API integration for case law references
+- **INTG-02**: Email reminders for approaching deadlines
+
+### Authentication
+
+- **AUTH-04**: OAuth login (Google)
+- **AUTH-05**: Password reset via email link
+
+### Expansion
+
+- **EXPN-01**: Multi-province support (beyond Ontario)
+- **EXPN-02**: AI-generated document content (with lawyer review workflow)
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Automated court filing | Requires direct integration with Ontario Courts portal — regulatory and technical complexity too high for POC |
+| Freeform AI legal chatbot | Impossible to guarantee outputs stay on "legal information" side — highest regulatory risk |
+| Win probability as precise percentage | Implies prediction of specific outcome — crosses into legal advice territory |
+| Real-time chat/messaging | Not needed for POC; adds significant complexity |
+| Paralegal matching/referral | Future feature — partner lawyer handles escalation directly for now |
+| AI-generated document content | Template-only is safest regulatory position for POC — zero hallucination risk |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| AUTH-01 | — | Pending |
+| AUTH-02 | — | Pending |
+| AUTH-03 | — | Pending |
+| REGL-01 | — | Pending |
+| REGL-02 | — | Pending |
+| REGL-03 | — | Pending |
+| INFRA-01 | — | Pending |
+| INFRA-02 | — | Pending |
+| INFRA-03 | — | Pending |
+| INFRA-04 | — | Pending |
+| ASMT-01 | — | Pending |
+| ASMT-02 | — | Pending |
+| ASMT-03 | — | Pending |
+| ASMT-04 | — | Pending |
+| ASMT-05 | — | Pending |
+| ASMT-06 | — | Pending |
+| ASMT-07 | — | Pending |
+| DOCS-01 | — | Pending |
+| DOCS-02 | — | Pending |
+| DOCS-03 | — | Pending |
+| DOCS-04 | — | Pending |
+| GUID-01 | — | Pending |
+| GUID-02 | — | Pending |
+| GUID-03 | — | Pending |
+| GUID-04 | — | Pending |
+| DASH-01 | — | Pending |
+| DASH-02 | — | Pending |
+| DASH-03 | — | Pending |
+| DASH-04 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 29 total
+- Mapped to phases: 0
+- Unmapped: 29 ⚠️
+
+---
+*Requirements defined: 2026-04-04*
+*Last updated: 2026-04-04 after initial definition*
