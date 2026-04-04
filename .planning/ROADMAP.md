@@ -29,11 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A structural AI output filter is in place — no directive language ("you should", "I recommend") can reach the user regardless of what Claude returns
   4. All court fees, monetary limits, and procedural constants are defined as named constants in a central config file — zero hardcoded values in UI strings
   5. The app builds via Docker multi-stage, passes the /health endpoint check, and auto-deploys to Cloud Run on push to main
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: App factory, database models, auth (Flask skeleton, SQLAlchemy 2.0, User model, Flask-Login, Alembic migrations)
-- [ ] 01-02: Regulatory layer and infrastructure (base template with disclaimer, AI guardrail wrapper, named constants config, Docker + CI/CD + health check, mobile-first base styles, WCAG baseline)
+- [ ] 01-01-PLAN.md — App factory, User model, magic-link auth, Alembic migrations, health check
+- [ ] 01-02-PLAN.md — Regulatory disclaimer footer, AI guardrail wrapper, Ontario constants, mobile-first CSS, Docker build, CI/CD pipeline
 
 ### Phase 2: Case Assessment
 **Goal**: A user can walk through the full guided case assessment — from dispute type routing through limitation check, jurisdiction validation, evidence inventory, and AI case strength indicator — and download a PDF summary.
