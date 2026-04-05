@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 ## Current Position
 
 Phase: 2 of 4 (Case Assessment)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
-Last activity: 2026-04-05 — Phase 1 complete, verified, approved
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-04-05 — Completed 02-01-PLAN.md (wizard + Claim model)
 
-Progress: [██░░░░░░░░] 25%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
@@ -28,9 +28,10 @@ Progress: [██░░░░░░░░] 25%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2/2 completed | 8 min | 4 min |
+| 02-case-assessment | 1/3 completed | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min), 01-02 (3 min)
+- Last 5 plans: 01-01 (5 min), 01-02 (3 min), 02-01 (8 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -53,6 +54,10 @@ Recent decisions affecting current work:
 - 01-02: Fees stored in cents as integers; format_fee() for display (avoids float errors)
 - 01-02: AIGuardrail patterns marked LAWYER_REVIEW_REQUIRED — supervising lawyer must review before any AI feature ships
 - 01-02: Workload Identity Federation (not service account key) for GitHub Actions → Cloud Run auth
+- 02-01: JSONB with SQLite fallback via JSONB().with_variant(JSON(), "sqlite") — all JSONB columns should use this pattern
+- 02-01: Both EXCLUDED and REDIRECTED claim types are hard stops — no acknowledgment checkbox, user must pick different type
+- 02-01: REDIRECTED_CLAIM_TYPES values contain LAWYER_REVIEW_REQUIRED marker — supervising lawyer must review before launch
+- 02-01: Assessment blueprint registered without URL prefix — routes define /assess/ paths directly
 
 ### Pending Todos
 
@@ -70,5 +75,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-05
-Stopped at: Phase 1 complete — ready to plan Phase 2
+Stopped at: Completed 02-01-PLAN.md — wizard + Claim model + dispute type validation
 Resume file: None
