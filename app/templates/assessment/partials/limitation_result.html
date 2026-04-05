@@ -1,0 +1,94 @@
+{#
+  Partial fragment — no {% extends %}
+  Context variables:
+    limitation  — dict from claim.step_data["limitation"] (or None)
+#}
+{% set lim = claim.step_data.get("limitation") if claim and claim.step_data else None %}
+
+{% if lim %}
+  {% set status = lim.get("status", "") %}
+
+  {# Choose alert class based on status #}
+  {% if status == "within_period" %}
+    {% set alert_class = "limitation-alert limitation-alert--success" %}
+  {% elif status == "warning" %}
+    {% set alert_class = "limitation-alert limitation-alert--warning" %}
+  {% elif status == "expired" %}
+    {% set alert_class = "limitation-alert limitation-alert--danger" %}
+  {% elif status == "ultimate_expired" %}
+    {% set alert_class = "limitation-alert limitation-alert--danger limitation-alert--ultimate" %}
+  {% elif status == "requires_lawyer_review" %}
+    {% set alert_class = "limitation-alert limitation-alert--review" %}
+  {% else %}
+    {% set alert_class = "limitation-alert" %}
+  {% endif %}
+
+  <div class="{{ alert_class }}" role="alert">
+
+    {% if status == "within_period" %}
+      <p class="limitation-alert__heading">Your claim appears to be within the limitation period.</p>
+      {% if lim.get("basic_deadline") %}
+        <p>You have until <strong>{{ lim["basic_deadline"] }}</strong> to file
+        {% if lim.get("days_remaining") is not none %}
+          (<strong>{{ lim["days_remaining"] }} days</strong> from today).
+        {% else %}
+          .
+        {% endif %}
+        </p>
+      {% endif %}
+
+    {% elif status == "warning" %}
+      <p class="limitation-alert__heading">Act promptly — your deadline is approaching.</p>
+      {% if lim.get("days_remaining") is not none and lim.get("basic_deadline") %}
+        <p>You have approximately <strong>{{ lim["days_remaining"] }} days</strong> remaining
+        (deadline: <strong>{{ lim["basic_deadline"] }}</strong>).
+        Once the deadline passes, you may lose your right to sue.</p>
+      {% endif %}
+
+    {% elif status == "expired" %}
+      <p class="limitation-alert__heading">The 2-year limitation period appears to have expired.</p>
+      {% if lim.get("basic_deadline") %}
+        <p>The deadline was <strong>{{ lim["basic_deadline"] }}</strong>.
+        You may no longer be able to file this claim.</p>
+      {% endif %}
+      <p>Consult a lawyer as soon as possible — there may be exceptions that apply to your situation.</p>
+
+    {% elif status == "ultimate_expired" %}
+      <p class="limitation-alert__heading">The 15-year absolute deadline has passed.</p>
+      {% if lim.get("ultimate_deadline") %}
+        <p>The ultimate deadline was <strong>{{ lim["ultimate_deadline"] }}</strong>.
+        In almost all cases, this means the claim cannot be brought.</p>
+      {% endif %}
+      <p>You should consult a lawyer to confirm whether any exception applies.</p>
+
+    {% elif status == "requires_lawyer_review" %}
+      <p class="limitation-alert__heading">A lawyer should review your limitation period.</p>
+      <p>Your situation may involve a special rule that pauses or extends the usual 2-year deadline.
+      The correct deadline depends on your specific circumstances and requires legal advice to confirm.</p>
+      {% if lim.get("basic_deadline") %}
+        <p>Based on the information provided, the calculated deadline is <strong>{{ lim["basic_deadline"] }}</strong>
+        — but this may not be accurate given the special circumstances involved.</p>
+      {% endif %}
+
+    {% else %}
+      <p>{{ lim.get("warning_message", "Unable to calculate limitation period.") }}</p>
+    {% endif %}
+
+  </div>
+
+  {# Municipal notice — shown in addition to any status alert above #}
+  {% if lim.get("municipal_notice_required") %}
+  <div class="limitation-alert limitation-alert--municipal" role="note">
+    <p class="limitation-alert__heading">10-day written notice required before filing.</p>
+    <p>Because the other party is a municipality or municipal body, you must give
+    <strong>10 days written notice</strong> before filing your claim with the court.
+    This requirement comes from the <em>Municipal Act, 2001</em>, s. 44(12).
+    Filing without providing this notice may affect your claim.</p>
+  </div>
+  {% endif %}
+
+{% else %}
+  <div class="limitation-alert limitation-alert--info" role="note">
+    <p>Complete the Facts step to see your limitation period calculation.</p>
+  </div>
+{% endif %}

@@ -125,6 +125,31 @@
     </dl>
   </div>
 
+  {# Limitation Period #}
+  <div class="wizard-summary-section wizard-summary-section--analysis">
+    <div class="wizard-summary-section-header">
+      <h3>Limitation Period</h3>
+    </div>
+    <p class="wizard-summary-section-intro">
+      Ontario's Limitations Act gives you 2 years from the date you discovered (or should have
+      discovered) your claim to file with the court. Missing this deadline generally means you
+      cannot bring your claim.
+    </p>
+    {% include "assessment/partials/limitation_result.html" %}
+  </div>
+
+  {# Evidence Inventory #}
+  <div class="wizard-summary-section wizard-summary-section--analysis">
+    <div class="wizard-summary-section-header">
+      <h3>Evidence Inventory</h3>
+    </div>
+    <p class="wizard-summary-section-intro">
+      Check off the evidence you already have. This helps you understand the strength of your
+      documentation before filing. The score updates automatically as you check items.
+    </p>
+    {% include "assessment/partials/evidence_checklist.html" %}
+  </div>
+
   {# Complete Assessment #}
   <div class="wizard-nav wizard-nav--summary">
     <button

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from flask import abort, redirect, render_template, request, url_for
+from flask import abort, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.assessment import assessment_bp
@@ -14,6 +14,7 @@ from app.ontario_constants import (
     SMALL_CLAIMS_MONETARY_LIMIT,
     VALID_CLAIM_TYPES,
 )
+from app.services.limitation_service import LimitationResult, LimitationStatus, calculate_limitation
 
 # ---------------------------------------------------------------------------
 # Wizard configuration
@@ -43,10 +44,111 @@ _STEP_TEMPLATE: dict[str, str] = {
     "summary": "assessment/steps/step_summary.html",
 }
 
+# ---------------------------------------------------------------------------
+# Evidence inventory configuration
+# ---------------------------------------------------------------------------
+
+EVIDENCE_TYPES: list[dict] = [
+    {"key": "written_contract", "label": "Written contract or agreement", "weight": 3},
+    {"key": "receipts", "label": "Receipts or proof of payment", "weight": 2},
+    {"key": "photos", "label": "Photos or videos of damage/issue", "weight": 2},
+    {"key": "correspondence", "label": "Emails, texts, or letters with the other party", "weight": 2},
+    {"key": "witness", "label": "Witness who can confirm your account", "weight": 2},
+    {"key": "expert_report", "label": "Expert report or professional estimate", "weight": 1},
+    {"key": "police_report", "label": "Police report (if applicable)", "weight": 1},
+    {"key": "other_docs", "label": "Other supporting documents", "weight": 1},
+]
+
+EVIDENCE_SCORE_LABELS = [
+    (70, "Strong evidence base"),
+    (40, "Moderate — consider gathering more evidence"),
+    (0, "Limited evidence — your case may be harder to prove"),
+]
+
+_EVIDENCE_TOTAL_WEIGHT = sum(e["weight"] for e in EVIDENCE_TYPES)
+
+
+def _score_evidence(checked_keys: list[str]) -> tuple[int, str]:
+    """Return (score_pct, label) for the given checked evidence keys."""
+    checked_weight = sum(
+        e["weight"] for e in EVIDENCE_TYPES if e["key"] in checked_keys
+    )
+    score_pct = round(checked_weight / _EVIDENCE_TOTAL_WEIGHT * 100) if _EVIDENCE_TOTAL_WEIGHT else 0
+    label = next(lbl for threshold, lbl in EVIDENCE_SCORE_LABELS if score_pct >= threshold)
+    return score_pct, label
+
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _calculate_and_store_limitation(claim: Claim) -> LimitationResult | None:
+    """
+    Extract facts data from claim, run the limitation calculator, and store
+    the serialised result back into claim.step_data["limitation"].
+
+    Returns the LimitationResult on success, or None if facts data is missing.
+    The caller must call db.session.commit() after this to persist the update.
+    """
+    facts = (claim.step_data or {}).get("facts", {})
+    if not facts:
+        return None
+
+    incident_date_str = facts.get("incident_date", "")
+    if not incident_date_str:
+        return None
+
+    try:
+        incident_date = date.fromisoformat(incident_date_str)
+    except ValueError:
+        return None
+
+    # Discovery date — default to incident date if not provided (conservative)
+    discovery_date_str = facts.get("discovery_date", "")
+    discovery_date = (
+        date.fromisoformat(discovery_date_str)
+        if discovery_date_str
+        else incident_date
+    )
+
+    is_minor = facts.get("is_minor") == "1"
+    is_municipal_defendant = facts.get("is_municipal_defendant") == "1"
+
+    minor_dob: date | None = None
+    minor_dob_str = facts.get("minor_dob", "")
+    if is_minor and minor_dob_str:
+        try:
+            minor_dob = date.fromisoformat(minor_dob_str)
+        except ValueError:
+            pass
+
+    result = calculate_limitation(
+        discovery_date=discovery_date,
+        incident_date=incident_date,
+        is_minor=is_minor,
+        minor_dob=minor_dob,
+        is_incapacitated=False,
+        incapacity_end_date=None,
+        is_municipal_defendant=is_municipal_defendant,
+    )
+
+    # Serialise for JSONB storage (dates → ISO strings)
+    limitation_dict = {
+        "status": result.status.value,
+        "basic_deadline": result.basic_deadline.isoformat() if result.basic_deadline else None,
+        "ultimate_deadline": result.ultimate_deadline.isoformat() if result.ultimate_deadline else None,
+        "days_remaining": result.days_remaining,
+        "warning_message": result.warning_message,
+        "tolling_applied": result.tolling_applied,
+        "municipal_notice_required": result.municipal_notice_required,
+    }
+
+    step_data = dict(claim.step_data or {})
+    step_data["limitation"] = limitation_dict
+    claim.step_data = step_data
+
+    return result
 
 
 def _get_or_create_draft(user_id: int) -> Claim:
@@ -83,6 +185,11 @@ def _render_step(
 ) -> str:
     """Render a step partial template with common context."""
     template = _STEP_TEMPLATE[step_name]
+
+    # Evidence score for summary step
+    evidence_keys: list[str] = list((claim.step_data or {}).get("evidence", {}).get("checked", []))
+    evidence_score_pct, evidence_score_label = _score_evidence(evidence_keys)
+
     ctx = dict(
         claim=claim,
         step_name=step_name,
@@ -94,6 +201,11 @@ def _render_step(
         excluded_claim_types=EXCLUDED_CLAIM_TYPES,
         redirected_claim_types=REDIRECTED_CLAIM_TYPES,
         today=date.today().isoformat(),
+        # Evidence inventory
+        evidence_types=EVIDENCE_TYPES,
+        evidence_checked=evidence_keys,
+        evidence_score_pct=evidence_score_pct,
+        evidence_score_label=evidence_score_label,
     )
     if is_htmx:
         return render_template(template, **ctx)
@@ -262,7 +374,15 @@ def wizard_step(step_name: str):
         # Persist step data
         if claim.step_data is None:
             claim.step_data = {}
-        claim.step_data[step_name] = form_data
+
+        # Mutate via a fresh dict so SQLAlchemy's MutableDict tracking fires
+        step_data = dict(claim.step_data)
+        step_data[step_name] = form_data
+        claim.step_data = step_data
+
+        # After facts step: calculate limitation period and cache result
+        if step_name == "facts":
+            _calculate_and_store_limitation(claim)
 
         # Advance current_step to next (do not go backwards)
         next_step = _next_step(step_name)
@@ -316,3 +436,46 @@ def wizard_back(step_name: str):
 
     is_htmx = request.headers.get("HX-Request") == "true"
     return _render_step(prev, claim, is_htmx=is_htmx)
+
+
+@assessment_bp.route("/assess/evidence", methods=["POST"])
+@login_required
+def save_evidence():
+    """
+    POST /assess/evidence — save evidence checklist selections and return updated partial.
+
+    Called via HTMX from the evidence_checklist partial on the summary step.
+    Accepts a multiselect of checked evidence keys, computes completeness score,
+    persists to claim.step_data["evidence"], and returns the evidence_checklist partial.
+    """
+    claim = Claim.query.filter_by(
+        user_id=current_user.id, status=ClaimStatus.DRAFT
+    ).first()
+    if claim is None:
+        # Also check ASSESSED status — user may have just completed the wizard
+        claim = Claim.query.filter_by(
+            user_id=current_user.id, status=ClaimStatus.ASSESSED
+        ).order_by(Claim.id.desc()).first()
+    if claim is None:
+        abort(404)
+
+    # form.getlist returns all checked values for multi-checkbox fields
+    checked_keys: list[str] = request.form.getlist("evidence_items")
+    # Validate against known keys to prevent arbitrary data injection
+    valid_keys = {e["key"] for e in EVIDENCE_TYPES}
+    checked_keys = [k for k in checked_keys if k in valid_keys]
+
+    score_pct, score_label = _score_evidence(checked_keys)
+
+    step_data = dict(claim.step_data or {})
+    step_data["evidence"] = {"checked": checked_keys}
+    claim.step_data = step_data
+    db.session.commit()
+
+    return render_template(
+        "assessment/partials/evidence_checklist.html",
+        evidence_types=EVIDENCE_TYPES,
+        evidence_checked=checked_keys,
+        evidence_score_pct=score_pct,
+        evidence_score_label=score_label,
+    )

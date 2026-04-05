@@ -1,0 +1,83 @@
+{#
+  Partial fragment — no {% extends %}
+  Context variables:
+    evidence_types       — list of {key, label, weight} dicts
+    evidence_checked     — list of checked evidence keys
+    evidence_score_pct   — integer 0-100
+    evidence_score_label — string rating label
+  This partial is also returned directly by POST /assess/evidence (HTMX swap).
+#}
+<div id="evidence-checklist-inner">
+
+  <form
+    hx-post="{{ url_for('assessment.save_evidence') }}"
+    hx-target="#evidence-checklist-inner"
+    hx-swap="innerHTML"
+  >
+    <div class="evidence-list">
+      {% for item in evidence_types %}
+      <label class="evidence-item">
+        <input
+          type="checkbox"
+          name="evidence_items"
+          value="{{ item.key }}"
+          {% if item.key in evidence_checked %}checked{% endif %}
+          hx-include="closest form"
+        >
+        <span class="evidence-item__label">{{ item.label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+
+    {# Trigger save on any checkbox change #}
+    <input type="hidden" name="_trigger" value="1">
+    <noscript>
+      <button type="submit" class="btn btn-secondary btn-sm">Update score</button>
+    </noscript>
+  </form>
+
+  {# Completeness score display #}
+  <div class="evidence-score" aria-live="polite">
+    {% set score_class = "evidence-score__bar--strong" if evidence_score_pct >= 70
+                    else ("evidence-score__bar--moderate" if evidence_score_pct >= 40
+                    else "evidence-score__bar--limited") %}
+
+    <div class="evidence-score__header">
+      <span class="evidence-score__label">Evidence strength:</span>
+      <span class="evidence-score__pct
+        {% if evidence_score_pct >= 70 %}evidence-score__pct--strong
+        {% elif evidence_score_pct >= 40 %}evidence-score__pct--moderate
+        {% else %}evidence-score__pct--limited{% endif %}
+      ">{{ evidence_score_pct }}%</span>
+    </div>
+
+    <div class="evidence-score__bar-track" role="progressbar"
+         aria-valuenow="{{ evidence_score_pct }}" aria-valuemin="0" aria-valuemax="100"
+         aria-label="Evidence completeness: {{ evidence_score_pct }}%">
+      <div class="evidence-score__bar {{ score_class }}"
+           style="width: {{ evidence_score_pct }}%"></div>
+    </div>
+
+    <p class="evidence-score__rating
+      {% if evidence_score_pct >= 70 %}evidence-score__rating--strong
+      {% elif evidence_score_pct >= 40 %}evidence-score__rating--moderate
+      {% else %}evidence-score__rating--limited{% endif %}
+    ">{{ evidence_score_label }}</p>
+  </div>
+
+</div>
+
+{# Auto-submit on checkbox change via HTMX #}
+<script>
+  (function () {
+    var inner = document.getElementById('evidence-checklist-inner');
+    if (!inner) return;
+    var form = inner.querySelector('form');
+    if (!form) return;
+    form.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        htmx.trigger(form, 'submit');
+      });
+    });
+  })();
+</script>

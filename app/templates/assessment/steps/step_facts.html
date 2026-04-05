@@ -59,17 +59,33 @@
     <p id="discovery-date-hint" class="field-hint">If you didn't know about the harm right away, enter the date you discovered it. This affects limitation period calculations.</p>
   </div>
 
-  <div class="wizard-field wizard-field--checkbox">
+  <div class="wizard-field wizard-field--checkbox" x-data="{ isMinor: {{ 'true' if saved.get('is_minor') == '1' else 'false' }} }">
     <label class="wizard-checkbox-label">
       <input
         type="checkbox"
         name="is_minor"
         value="1"
         {% if saved.get("is_minor") == "1" %}checked{% endif %}
+        x-model="isMinor"
       >
       I was under 18 years old at the time of the incident
     </label>
     <p class="field-hint">Being a minor when the incident occurred may extend the limitation period.</p>
+
+    <div x-show="isMinor" x-cloak class="wizard-field wizard-field--nested">
+      <label for="minor_dob">Date of birth <span class="field-required" aria-hidden="true">*</span></label>
+      <input
+        type="date"
+        id="minor_dob"
+        name="minor_dob"
+        value="{{ saved.get('minor_dob', '') }}"
+        class="wizard-input"
+        aria-describedby="minor-dob-hint"
+        max="{{ today }}"
+        :required="isMinor"
+      >
+      <p id="minor-dob-hint" class="field-hint">Your date of birth is used to calculate when the limitation period started running.</p>
+    </div>
   </div>
 
   <div class="wizard-field wizard-field--checkbox">
