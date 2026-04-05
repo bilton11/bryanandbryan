@@ -5,6 +5,8 @@ from datetime import timedelta
 class DefaultConfig:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "")
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     REMEMBER_COOKIE_DURATION = timedelta(days=7)
     REMEMBER_COOKIE_HTTPONLY = True

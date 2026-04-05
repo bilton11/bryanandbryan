@@ -49,9 +49,10 @@ def login():
     token = generate_magic_token(email)
     verify_url = url_for("auth.verify", token=token, _external=True)
 
-    api_key = current_app.config.get("SENDGRID_API_KEY", "")
-    if api_key:
-        _send_magic_link_email(email, verify_url, api_key)
+    mail_user = current_app.config.get("MAIL_USERNAME", "")
+    mail_pass = current_app.config.get("MAIL_PASSWORD", "")
+    if mail_user and mail_pass:
+        _send_magic_link_email(email, verify_url, mail_user, mail_pass)
     else:
         # Development mode — print link to console and flash it
         current_app.logger.info("Magic link for %s: %s", email, verify_url)
@@ -61,25 +62,37 @@ def login():
     return redirect(url_for("auth.check_email"))
 
 
-def _send_magic_link_email(to_email: str, verify_url: str, api_key: str) -> None:
-    """Send a magic link email via SendGrid."""
-    import sendgrid
-    from sendgrid.helpers.mail import Mail
+def _send_magic_link_email(
+    to_email: str, verify_url: str, mail_user: str, mail_pass: str
+) -> None:
+    """Send a magic link email via Gmail SMTP."""
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
 
-    from_email = current_app.config.get("SENDGRID_FROM_EMAIL", "")
-    sg = sendgrid.SendGridAPIClient(api_key=api_key)
-    message = Mail(
-        from_email=from_email,
-        to_emails=to_email,
-        subject="Your Bryan and Bryan sign-in link",
-        html_content=(
-            "<p>Click the link below to sign in to Bryan and Bryan. "
-            "The link expires in 15 minutes.</p>"
-            f'<p><a href="{verify_url}">Sign in to Bryan and Bryan</a></p>'
-            "<p>If you did not request this link, you can safely ignore this email.</p>"
-        ),
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "Your Bryan and Bryan sign-in link"
+    msg["From"] = mail_user
+    msg["To"] = to_email
+
+    text = (
+        "Sign in to Bryan and Bryan by visiting this link "
+        f"(expires in 15 minutes):\n\n{verify_url}\n\n"
+        "If you did not request this link, you can safely ignore this email."
     )
-    sg.send(message)
+    html = (
+        "<p>Click the link below to sign in to Bryan and Bryan. "
+        "The link expires in 15 minutes.</p>"
+        f'<p><a href="{verify_url}">Sign in to Bryan and Bryan</a></p>'
+        "<p>If you did not request this link, you can safely ignore this email.</p>"
+    )
+    msg.attach(MIMEText(text, "plain"))
+    msg.attach(MIMEText(html, "html"))
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(mail_user, mail_pass)
+        server.sendmail(mail_user, to_email, msg.as_string())
 
 
 @auth_bp.route("/check-email")
