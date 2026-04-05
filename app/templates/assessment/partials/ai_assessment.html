@@ -1,0 +1,35 @@
+{#
+  Partial fragment — no {% extends %}
+  Context variables:
+    ai_text  — the guardrailed AI assessment text string (may be empty/None)
+#}
+
+{% if ai_text %}
+<div class="ai-assessment-card">
+  <div class="ai-assessment-card__header">
+    <span class="ai-assessment-card__icon" aria-hidden="true">&#9432;</span>
+    <h3 class="ai-assessment-card__heading">Case Strength Indicator</h3>
+  </div>
+  <div class="ai-assessment-card__body">
+    <p class="ai-assessment-card__text">{{ ai_text | e }}</p>
+  </div>
+  <div class="ai-assessment-card__footer">
+    <p class="ai-assessment-card__disclaimer">
+      This assessment uses statistical patterns from similar Ontario Small Claims Court cases.
+      It is not legal advice.
+    </p>
+  </div>
+</div>
+{% else %}
+<div class="ai-assessment-card ai-assessment-card--unavailable">
+  <div class="ai-assessment-card__header">
+    <span class="ai-assessment-card__icon" aria-hidden="true">&#9432;</span>
+    <h3 class="ai-assessment-card__heading">Case Strength Indicator</h3>
+  </div>
+  <div class="ai-assessment-card__body">
+    <p class="ai-assessment-card__text ai-assessment-card__text--muted">
+      AI assessment is not currently available.
+    </p>
+  </div>
+</div>
+{% endif %}

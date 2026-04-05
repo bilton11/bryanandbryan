@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Results — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<div class="results-page">
+
+  <div class="results-header">
+    <h1 class="results-header__title">Your Case Assessment</h1>
+    <p class="results-header__subtitle">
+      Here is a summary of your Ontario Small Claims Court case assessment.
+      All information below is for reference only — it is not legal advice.
+    </p>
+  </div>
+
+  {# -----------------------------------------------------------------------
+     Claim Type
+  ----------------------------------------------------------------------- #}
+  <section class="results-section" aria-labelledby="section-claim-type">
+    <h2 class="results-section__heading" id="section-claim-type">Claim Type</h2>
+    <dl class="results-dl">
+      <dt>Type of dispute</dt>
+      <dd>{{ claim_type_label or "(not provided)" }}</dd>
+    </dl>
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Facts Summary
+  ----------------------------------------------------------------------- #}
+  {% set facts_data = claim.step_data.get("facts", {}) if claim.step_data else {} %}
+  <section class="results-section" aria-labelledby="section-facts">
+    <h2 class="results-section__heading" id="section-facts">Facts Summary</h2>
+    <dl class="results-dl">
+      <dt>Description</dt>
+      <dd class="results-dl__description">{{ facts_data.get("description", "(not provided)") }}</dd>
+      <dt>Date of incident</dt>
+      <dd>{{ facts_data.get("incident_date", "(not provided)") }}</dd>
+      {% if facts_data.get("discovery_date") %}
+      <dt>Date discovered</dt>
+      <dd>{{ facts_data.get("discovery_date") }}</dd>
+      {% endif %}
+    </dl>
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Claim Amount
+  ----------------------------------------------------------------------- #}
+  {% set amount_data = claim.step_data.get("amount", {}) if claim.step_data else {} %}
+  {% set amount_labels = {"exact": "Exact amount", "estimated": "Estimated", "tbd": "To be determined"} %}
+  <section class="results-section" aria-labelledby="section-amount">
+    <h2 class="results-section__heading" id="section-amount">Claim Amount</h2>
+    <dl class="results-dl">
+      <dt>Amount claimed</dt>
+      <dd>
+        {% if amount_data.get("amount") %}
+          ${{ "{:,}".format(amount_data.get("amount") | int) }}
+          &mdash; {{ amount_labels.get(amount_data.get("amount_includes", ""), "") }}
+        {% else %}
+          (not provided)
+        {% endif %}
+      </dd>
+      <dt>Jurisdiction</dt>
+      <dd>
+        {% if amount_data.get("amount") and amount_data.get("amount") | int <= monetary_limit %}
+          Within the ${{ "{:,}".format(monetary_limit) }} Small Claims Court limit
+        {% elif amount_data.get("amount") %}
+          Exceeds the Small Claims Court monetary limit
+        {% else %}
+          (not determined)
+        {% endif %}
+      </dd>
+    </dl>
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Opposing Party
+  ----------------------------------------------------------------------- #}
+  {% set party_data = claim.step_data.get("opposing_party", {}) if claim.step_data else {} %}
+  <section class="results-section" aria-labelledby="section-party">
+    <h2 class="results-section__heading" id="section-party">Opposing Party</h2>
+    <dl class="results-dl">
+      <dt>Name</dt>
+      <dd>{{ party_data.get("party_name", "(not provided)") }}</dd>
+      <dt>Type</dt>
+      <dd>{{ "Individual" if party_data.get("party_type") == "individual" else ("Business or corporation" if party_data.get("party_type") == "business" else "(not provided)") }}</dd>
+    </dl>
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Limitation Period
+  ----------------------------------------------------------------------- #}
+  <section class="results-section" aria-labelledby="section-limitation">
+    <h2 class="results-section__heading" id="section-limitation">Limitation Period</h2>
+    {% include "assessment/partials/limitation_result.html" %}
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Evidence Inventory
+  ----------------------------------------------------------------------- #}
+  <section class="results-section" aria-labelledby="section-evidence">
+    <h2 class="results-section__heading" id="section-evidence">Evidence Inventory</h2>
+
+    <div class="results-evidence">
+      <ul class="results-evidence__list">
+        {% for item in evidence_types %}
+        <li class="results-evidence__item {% if item.key in evidence_checked %}results-evidence__item--checked{% else %}results-evidence__item--unchecked{% endif %}">
+          <span class="results-evidence__icon" aria-hidden="true">
+            {% if item.key in evidence_checked %}&#10003;{% else %}&#9633;{% endif %}
+          </span>
+          {{ item.label }}
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="evidence-score" aria-live="polite">
+        {% set score_class = "evidence-score__bar--strong" if evidence_score_pct >= 70
+                        else ("evidence-score__bar--moderate" if evidence_score_pct >= 40
+                        else "evidence-score__bar--limited") %}
+        <div class="evidence-score__header">
+          <span class="evidence-score__label">Evidence strength:</span>
+          <span class="evidence-score__pct
+            {% if evidence_score_pct >= 70 %}evidence-score__pct--strong
+            {% elif evidence_score_pct >= 40 %}evidence-score__pct--moderate
+            {% else %}evidence-score__pct--limited{% endif %}
+          ">{{ evidence_score_pct }}%</span>
+        </div>
+        <div class="evidence-score__bar-track" role="progressbar"
+             aria-valuenow="{{ evidence_score_pct }}" aria-valuemin="0" aria-valuemax="100"
+             aria-label="Evidence completeness: {{ evidence_score_pct }}%">
+          <div class="evidence-score__bar {{ score_class }}"
+               style="width: {{ evidence_score_pct }}%"></div>
+        </div>
+        <p class="evidence-score__rating
+          {% if evidence_score_pct >= 70 %}evidence-score__rating--strong
+          {% elif evidence_score_pct >= 40 %}evidence-score__rating--moderate
+          {% else %}evidence-score__rating--limited{% endif %}
+        ">{{ evidence_score_label }}</p>
+      </div>
+    </div>
+  </section>
+
+  {# -----------------------------------------------------------------------
+     AI Case Strength Assessment
+  ----------------------------------------------------------------------- #}
+  <section class="results-section" aria-labelledby="section-ai">
+    <h2 class="results-section__heading" id="section-ai">Case Strength Assessment</h2>
+    {% with ai_text = claim.ai_assessment %}
+      {% include "assessment/partials/ai_assessment.html" %}
+    {% endwith %}
+  </section>
+
+  {# -----------------------------------------------------------------------
+     Actions
+  ----------------------------------------------------------------------- #}
+  <div class="results-actions">
+    <a
+      href="{{ url_for('assessment.download_pdf', claim_id=claim.id) }}"
+      class="btn btn-primary"
+      download
+    >Download PDF</a>
+
+    <a
+      href="{{ url_for('assessment.wizard_entry') }}"
+      class="btn btn-secondary"
+    >Start New Assessment</a>
+  </div>
+
+</div>
+{% endblock %}

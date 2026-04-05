@@ -160,12 +160,21 @@
       hx-swap="innerHTML"
     >&larr; Back</button>
 
+    {#
+      Submitting the summary step POSTs to wizard_step/summary which saves the step
+      and then issues an HX-Redirect to /assess/finalize. The finalize route triggers
+      the AI assessment and redirects to the results page.
+      The htmx-indicator shows "Analyzing..." while the server is processing.
+    #}
     <form
       hx-post="{{ url_for('assessment.wizard_step', step_name='summary') }}"
       hx-target="#wizard-step-container"
       hx-swap="innerHTML"
     >
-      <button type="submit" class="btn btn-primary">Complete Assessment &rarr;</button>
+      <button type="submit" class="btn btn-primary" hx-indicator="#assessment-loading">
+        <span class="htmx-trigger-text">Complete Assessment &rarr;</span>
+        <span id="assessment-loading" class="htmx-indicator">Analyzing your case&hellip;</span>
+      </button>
     </form>
   </div>
 </div>

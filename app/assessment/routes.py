@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 
-from flask import abort, jsonify, redirect, render_template, request, url_for
+from flask import abort, make_response, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from app.assessment import assessment_bp
@@ -393,20 +393,19 @@ def wizard_step(step_name: str):
             if this_idx >= current_idx:
                 claim.current_step = next_step
         else:
-            # Last step (summary) — mark assessed
-            claim.status = ClaimStatus.ASSESSED
+            # Last step (summary) — keep as DRAFT, finalize route handles ASSESSED transition
             claim.current_step = "complete"
 
         db.session.commit()
 
         if next_step is None:
-            # Assessment complete — redirect to a completion page (plan 02-02)
+            # Summary step submitted — redirect to finalize to trigger AI assessment
+            finalize_url = url_for("assessment.finalize")
             if is_htmx:
-                from flask import make_response
                 resp = make_response()
-                resp.headers["HX-Redirect"] = url_for("assessment.wizard_entry")
+                resp.headers["HX-Redirect"] = finalize_url
                 return resp
-            return redirect(url_for("assessment.wizard_entry"))
+            return redirect(finalize_url)
 
         return _render_step(next_step, claim, is_htmx=is_htmx)
 
@@ -479,3 +478,120 @@ def save_evidence():
         evidence_score_pct=score_pct,
         evidence_score_label=score_label,
     )
+
+
+# ---------------------------------------------------------------------------
+# Finalize, Results, and PDF Download Routes
+# ---------------------------------------------------------------------------
+
+
+@assessment_bp.route("/assess/finalize", methods=["POST"])
+@login_required
+def finalize():
+    """
+    POST /assess/finalize — transition claim from DRAFT to ASSESSED and
+    generate the AI case strength assessment.
+
+    Called from the "Complete Assessment" button on the summary step.
+    Runs get_case_strength_assessment() which stores ai_assessment on the claim,
+    then redirects to the results page.
+    """
+    from app.services.assessment_service import get_case_strength_assessment
+
+    claim = Claim.query.filter_by(
+        user_id=current_user.id, status=ClaimStatus.DRAFT
+    ).first()
+    if claim is None:
+        # No draft — redirect to wizard entry
+        return redirect(url_for("assessment.wizard_entry"))
+
+    # Transition to ASSESSED
+    claim.status = ClaimStatus.ASSESSED
+    claim.current_step = "complete"
+    db.session.commit()
+
+    # Generate AI assessment (stores result in claim.ai_assessment)
+    # Gracefully degrades if API key absent or AI_ASSESSMENT_ENABLED=false
+    get_case_strength_assessment(claim)
+
+    return redirect(url_for("assessment.results", claim_id=claim.id))
+
+
+@assessment_bp.route("/assess/<int:claim_id>/results")
+@login_required
+def results(claim_id: int):
+    """
+    GET /assess/<claim_id>/results — display the completed assessment results.
+
+    Shows all assessment data: claim summary, limitation period, evidence
+    inventory, and AI case strength indicator. Provides a "Download PDF" link.
+    """
+    claim = Claim.query.get_or_404(claim_id)
+
+    # Ownership check
+    if claim.user_id != current_user.id:
+        abort(404)
+
+    # Status check — must be ASSESSED to view results
+    if claim.status != ClaimStatus.ASSESSED:
+        return redirect(url_for("assessment.wizard_entry"))
+
+    step_data = claim.step_data or {}
+
+    # Claim type label
+    dispute = step_data.get("dispute_type", {})
+    claim_type_value = dispute.get("claim_type", "")
+    claim_type_label = claim_type_value
+    for ct in VALID_CLAIM_TYPES:
+        if ct["value"] == claim_type_value:
+            claim_type_label = ct["label"]
+            break
+
+    # Evidence score
+    evidence_keys: list[str] = list(step_data.get("evidence", {}).get("checked", []))
+    evidence_score_pct, evidence_score_label = _score_evidence(evidence_keys)
+
+    # Limitation result from cached step_data
+    limitation = step_data.get("limitation", {})
+
+    return render_template(
+        "assessment/results.html",
+        claim=claim,
+        claim_type_label=claim_type_label,
+        evidence_types=EVIDENCE_TYPES,
+        evidence_checked=evidence_keys,
+        evidence_score_pct=evidence_score_pct,
+        evidence_score_label=evidence_score_label,
+        limitation=limitation,
+        valid_claim_types=VALID_CLAIM_TYPES,
+        monetary_limit=SMALL_CLAIMS_MONETARY_LIMIT,
+    )
+
+
+@assessment_bp.route("/assess/<int:claim_id>/pdf")
+@login_required
+def download_pdf(claim_id: int):
+    """
+    GET /assess/<claim_id>/pdf — serve the assessment report as a PDF download.
+
+    Ownership and status checks are applied before rendering. The PDF is
+    generated on demand by WeasyPrint and returned as an attachment.
+    """
+    from app.services.pdf_service import render_assessment_pdf
+
+    claim = Claim.query.get_or_404(claim_id)
+
+    # Ownership check
+    if claim.user_id != current_user.id:
+        abort(404)
+
+    # Status check — PDF only available for assessed claims
+    if claim.status != ClaimStatus.ASSESSED:
+        return redirect(url_for("assessment.wizard_entry"))
+
+    pdf_bytes = render_assessment_pdf(claim)
+
+    response = make_response(pdf_bytes)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = f'attachment; filename="assessment-{claim_id}.pdf"'
+    return response
