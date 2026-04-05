@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Bryan and Bryan{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bryan and Bryan{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block head_extra %}{% endblock %}
 </head>
 <body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul class="flash-messages">
-        {% for category, message in messages %}
-          <li class="flash flash--{{ category }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+    <a href="#main-content" class="skip-nav">Skip to main content</a>
 
-  {% block content %}{% endblock %}
+    <header role="banner">
+        <nav role="navigation" aria-label="Main navigation">
+            <a href="{{ url_for('main.index') }}" class="site-name">Bryan and Bryan</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}">Log out</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main id="main-content" role="main">
+        {# Flash messages #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages" role="alert">
+            {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer role="contentinfo">
+        {# DISCLAIMER — NOT in a block. Cannot be overridden by child templates. #}
+        <div class="disclaimer" aria-label="Legal disclaimer">
+            <p>
+                <strong>Legal Information, Not Legal Advice:</strong>
+                The information provided by this tool is for general informational purposes only
+                and does not constitute legal advice. It is not a substitute for advice from a
+                qualified lawyer or paralegal. For advice about your specific situation,
+                please consult a licensed legal professional.
+            </p>
+            <p>
+                AI-generated assessments describe statistical patterns in similar cases and
+                do not predict outcomes in your case.
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
