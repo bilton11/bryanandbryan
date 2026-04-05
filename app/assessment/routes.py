@@ -485,24 +485,30 @@ def save_evidence():
 # ---------------------------------------------------------------------------
 
 
-@assessment_bp.route("/assess/finalize", methods=["POST"])
+@assessment_bp.route("/assess/finalize", methods=["GET", "POST"])
 @login_required
 def finalize():
     """
-    POST /assess/finalize — transition claim from DRAFT to ASSESSED and
+    GET|POST /assess/finalize — transition claim from DRAFT to ASSESSED and
     generate the AI case strength assessment.
 
     Called from the "Complete Assessment" button on the summary step.
-    Runs get_case_strength_assessment() which stores ai_assessment on the claim,
-    then redirects to the results page.
+    Accepts GET because HX-Redirect and 302 redirects both result in GET.
+    Idempotent: if claim is already ASSESSED, skips AI call and redirects.
     """
     from app.services.assessment_service import get_case_strength_assessment
+
+    # Check for already-assessed claim first (idempotent)
+    assessed = Claim.query.filter_by(
+        user_id=current_user.id, status=ClaimStatus.ASSESSED
+    ).first()
+    if assessed is not None:
+        return redirect(url_for("assessment.results", claim_id=assessed.id))
 
     claim = Claim.query.filter_by(
         user_id=current_user.id, status=ClaimStatus.DRAFT
     ).first()
     if claim is None:
-        # No draft — redirect to wizard entry
         return redirect(url_for("assessment.wizard_entry"))
 
     # Transition to ASSESSED
