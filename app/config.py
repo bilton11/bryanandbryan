@@ -26,17 +26,22 @@ def _make_cloud_sql_creator():
     instance = os.environ.get("CLOUD_SQL_INSTANCE", "")
     db_name = os.environ.get("DB_NAME", "")
     db_user = os.environ.get("DB_USER", "")
+    db_password = os.environ.get("DB_PASSWORD", "")
 
     connector = Connector()
 
     def creator():
-        return connector.connect(
-            instance,
-            "pg8000",
-            user=db_user,
-            db=db_name,
-            enable_iam_auth=True,
-        )
+        connect_kwargs = {
+            "instance_connection_name": instance,
+            "driver": "pg8000",
+            "user": db_user,
+            "db": db_name,
+        }
+        if db_password:
+            connect_kwargs["password"] = db_password
+        else:
+            connect_kwargs["enable_iam_auth"] = True
+        return connector.connect(**connect_kwargs)
 
     return creator
 
@@ -45,10 +50,13 @@ class ProductionConfig(DefaultConfig):
     DEBUG = False
     REMEMBER_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
+    SQLALCHEMY_DATABASE_URI = "postgresql+pg8000://"
 
     @property
     def SQLALCHEMY_ENGINE_OPTIONS(self):  # noqa: N802
-        return {"creator": _make_cloud_sql_creator()}
+        if os.environ.get("CLOUD_SQL_INSTANCE"):
+            return {"creator": _make_cloud_sql_creator()}
+        return {}
 
 
 config = {
