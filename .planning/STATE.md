@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-04-04)
 
 **Core value:** An SRL can walk through a guided case assessment, get a clear picture of their situation, and produce court-ready documents — all framed as legal information, never legal advice.
-**Current focus:** Phase 1 — Foundation (complete)
+**Current focus:** Phase 2 — Case Assessment
 
 ## Current Position
 
-Phase: 1 of 4 (Foundation)
-Plan: 2 of 2 in current phase
-Status: Phase complete — ready for Phase 2
-Last activity: 2026-04-05 — Completed 01-02-PLAN.md (regulatory layer, CSS, Docker, CI/CD)
+Phase: 2 of 4 (Case Assessment)
+Plan: 0 of 3 in current phase
+Status: Ready to plan
+Last activity: 2026-04-05 — Phase 1 complete, verified, approved
 
-Progress: [██░░░░░░░░] 20%
+Progress: [██░░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -70,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-05
-Stopped at: Completed 01-02-PLAN.md — Phase 1 foundation complete, ready for Phase 2
+Stopped at: Phase 1 complete — ready to plan Phase 2
 Resume file: None

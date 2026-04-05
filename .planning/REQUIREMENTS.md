@@ -7,16 +7,16 @@
 
 ### Foundation
 
-- [ ] **AUTH-01**: User can create account with email and password
-- [ ] **AUTH-02**: User can log in and stay logged in across sessions
-- [ ] **AUTH-03**: User can log out from any page
-- [ ] **REGL-01**: Every page displays regulatory disclaimer footer ("legal information, not legal advice")
-- [ ] **REGL-02**: AI outputs structurally enforce statistical framing — no directive language ("you should", "I recommend") can reach the user
-- [ ] **REGL-03**: Court fees, monetary limits, and procedural constants stored as named constants (single source of truth, easy to update when rules change)
-- [ ] **INFRA-01**: Docker multi-stage build with gunicorn on python:3.12-slim
-- [ ] **INFRA-02**: CI/CD pipeline via GitHub Actions → Cloud Run, auto-deploy on push to main
-- [ ] **INFRA-03**: Health check endpoint at /health
-- [ ] **INFRA-04**: Mobile-first responsive design, WCAG 2.1 AA compliance
+- [x] **AUTH-01**: User can create account with email and authenticate via magic link
+- [x] **AUTH-02**: User can log in and stay logged in across sessions
+- [x] **AUTH-03**: User can log out from any page
+- [x] **REGL-01**: Every page displays regulatory disclaimer footer ("legal information, not legal advice")
+- [x] **REGL-02**: AI outputs structurally enforce statistical framing — no directive language ("you should", "I recommend") can reach the user
+- [x] **REGL-03**: Court fees, monetary limits, and procedural constants stored as named constants (single source of truth, easy to update when rules change)
+- [x] **INFRA-01**: Docker multi-stage build with gunicorn on python:3.12-slim
+- [x] **INFRA-02**: CI/CD pipeline via GitHub Actions → Cloud Run, auto-deploy on push to main
+- [x] **INFRA-03**: Health check endpoint at /health
+- [x] **INFRA-04**: Mobile-first responsive design, WCAG 2.1 AA compliance
 
 ### Case Assessment
 
@@ -86,16 +86,16 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| REGL-01 | Phase 1 | Pending |
-| REGL-02 | Phase 1 | Pending |
-| REGL-03 | Phase 1 | Pending |
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
+| REGL-01 | Phase 1 | Complete |
+| REGL-02 | Phase 1 | Complete |
+| REGL-03 | Phase 1 | Complete |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
+| INFRA-04 | Phase 1 | Complete |
 | ASMT-01 | Phase 2 | Pending |
 | ASMT-02 | Phase 2 | Pending |
 | ASMT-03 | Phase 2 | Pending |

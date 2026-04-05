@@ -12,7 +12,7 @@ A licensed Ontario lawyer + tech builder POC that lets self-represented litigant
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - App skeleton, auth, regulatory guardrails, and infrastructure plumbing
+- [x] **Phase 1: Foundation** - App skeleton, auth, regulatory guardrails, and infrastructure plumbing
 - [ ] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
 - [ ] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
 - [ ] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
@@ -24,7 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Requirements**: AUTH-01, AUTH-02, AUTH-03, REGL-01, REGL-02, REGL-03, INFRA-01, INFRA-02, INFRA-03, INFRA-04
 **Success Criteria** (what must be TRUE):
-  1. User can create an account with email and password, log in, and log out from any page
+  1. User can create an account with email, authenticate via magic link, and log out from any page
   2. Every page in the app displays the "legal information, not legal advice" regulatory disclaimer footer
   3. A structural AI output filter is in place — no directive language ("you should", "I recommend") can reach the user regardless of what Claude returns
   4. All court fees, monetary limits, and procedural constants are defined as named constants in a central config file — zero hardcoded values in UI strings
@@ -32,8 +32,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — App factory, User model, magic-link auth, Alembic migrations, health check
-- [ ] 01-02-PLAN.md — Regulatory disclaimer footer, AI guardrail wrapper, Ontario constants, mobile-first CSS, Docker build, CI/CD pipeline
+- [x] 01-01-PLAN.md — App factory, User model, magic-link auth, Alembic migrations, health check
+- [x] 01-02-PLAN.md — Regulatory disclaimer footer, AI guardrail wrapper, Ontario constants, mobile-first CSS, Docker build, CI/CD pipeline
 
 ### Phase 2: Case Assessment
 **Goal**: A user can walk through the full guided case assessment — from dispute type routing through limitation check, jurisdiction validation, evidence inventory, and AI case strength indicator — and download a PDF summary.
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | Complete | 2026-04-05 |
 | 2. Case Assessment | 0/3 | Not started | - |
 | 3. Documents and Guide | 0/2 | Not started | - |
 | 4. Dashboard and Deployment | 0/2 | Not started | - |
