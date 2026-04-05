@@ -41,4 +41,11 @@ def create_app(config_name=None):
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(main_bp)
 
+    # Auto-run migrations on startup (idempotent)
+    if config_name == "production":
+        with app.app_context():
+            from flask_migrate import upgrade as alembic_upgrade
+
+            alembic_upgrade()
+
     return app
