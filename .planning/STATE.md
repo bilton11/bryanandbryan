@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 ## Current Position
 
 Phase: 2 of 4 (Case Assessment)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-04-05 — Completed 02-02-PLAN.md (limitation calculator + evidence inventory)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-04-05 — Completed 02-03-PLAN.md (AI assessment + PDF download)
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 4 minutes
-- Total execution time: 13 minutes
+- Total plans completed: 4
+- Average duration: 6 minutes
+- Total execution time: 20 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2/2 completed | 8 min | 4 min |
-| 02-case-assessment | 2/3 completed | 13 min | 6 min |
+| 02-case-assessment | 3/3 completed | 20 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min), 01-02 (3 min), 02-01 (8 min), 02-02 (5 min)
+- Last 5 plans: 01-02 (3 min), 02-01 (8 min), 02-02 (5 min), 02-03 (7 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -61,6 +61,10 @@ Recent decisions affecting current work:
 - 02-02: Limitation result serialised to step_data["limitation"] dict (dates as ISO strings) after facts step POST
 - 02-02: REQUIRES_LAWYER_REVIEW always set when tolling_applied — automated deadline cannot be trusted for minor/incapacity cases
 - 02-02: minor_dob field added to step_facts (Alpine.js conditional) — required for minor tolling to compute shifted deadline
+- 02-03: AI_ASSESSMENT_ENABLED config flag in DefaultConfig — env var lawyer gate, disables AI without code deploy
+- 02-03: PII exclusion from Claude prompt — build_claim_summary() strips names/addresses/emails, sends factual attributes only
+- 02-03: PDF template fully standalone (no extends base.html) — system fonts only, no nav/logout, per-page disclaimer via CSS running()/element()
+- 02-03: Finalize route owns DRAFT→ASSESSED transition — wizard_step/summary redirects to /finalize which calls AI and commits
 
 ### Pending Todos
 
@@ -78,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-05
-Stopped at: Completed 02-02-PLAN.md — limitation calculator + evidence inventory
+Stopped at: Completed 02-03-PLAN.md — AI assessment + PDF download (Phase 2 complete)
 Resume file: None
