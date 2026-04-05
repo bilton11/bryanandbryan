@@ -13,7 +13,7 @@ A licensed Ontario lawyer + tech builder POC that lets self-represented litigant
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - App skeleton, auth, regulatory guardrails, and infrastructure plumbing
-- [ ] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
+- [x] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
 - [ ] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
 - [ ] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
 
@@ -49,9 +49,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Claim model, assessment blueprint, HTMX wizard skeleton, dispute type router
-- [ ] 02-02-PLAN.md — Limitation period calculator, jurisdiction check, evidence inventory checklist
-- [ ] 02-03-PLAN.md — AI case strength indicator and PDF assessment summary download
+- [x] 02-01-PLAN.md — Claim model, assessment blueprint, HTMX wizard skeleton, dispute type router
+- [x] 02-02-PLAN.md — Limitation period calculator, jurisdiction check, evidence inventory checklist
+- [x] 02-03-PLAN.md — AI case strength indicator and PDF assessment summary download
 
 ### Phase 3: Documents and Guide
 **Goal**: A user can generate a Demand Letter, Plaintiff's Claim (Form 7A), or Defence (Form 9A) as a court-ready PDF, see the current filing fees, and read through the full plain-language process guide.
@@ -92,6 +92,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-04-05 |
-| 2. Case Assessment | 0/3 | In progress | - |
+| 2. Case Assessment | 3/3 | Complete | 2026-04-05 |
 | 3. Documents and Guide | 0/2 | Not started | - |
 | 4. Dashboard and Deployment | 0/2 | Not started | - |

@@ -20,13 +20,13 @@
 
 ### Case Assessment
 
-- [ ] **ASMT-01**: Dispute type router validates claim type and prevents filing in wrong forum (e.g., excludes libel/slander, title to land)
-- [ ] **ASMT-02**: Multi-step guided interview collecting claim type, basic facts, amount, opposing party details
-- [ ] **ASMT-03**: Limitation period calculator with branching logic (discovery date, not incident date; tolling for minors/incapacitated; municipal notice obligations)
-- [ ] **ASMT-04**: Jurisdiction check confirming amount ≤ $50,000 and matter is within Small Claims Court scope
-- [ ] **ASMT-05**: Evidence inventory checklist with completeness scoring (contracts, receipts, photos, correspondence, witnesses)
-- [ ] **ASMT-06**: AI-powered case strength indicator using Claude Sonnet with statistical framing ("cases with similar characteristics in Ontario...")
-- [ ] **ASMT-07**: Downloadable PDF case assessment summary with disclaimer on every page
+- [x] **ASMT-01**: Dispute type router validates claim type and prevents filing in wrong forum (e.g., excludes libel/slander, title to land)
+- [x] **ASMT-02**: Multi-step guided interview collecting claim type, basic facts, amount, opposing party details
+- [x] **ASMT-03**: Limitation period calculator with branching logic (discovery date, not incident date; tolling for minors/incapacitated; municipal notice obligations)
+- [x] **ASMT-04**: Jurisdiction check confirming amount ≤ $50,000 and matter is within Small Claims Court scope
+- [x] **ASMT-05**: Evidence inventory checklist with completeness scoring (contracts, receipts, photos, correspondence, witnesses)
+- [x] **ASMT-06**: AI-powered case strength indicator using Claude Sonnet with statistical framing ("cases with similar characteristics in Ontario...")
+- [x] **ASMT-07**: Downloadable PDF case assessment summary with disclaimer on every page
 
 ### Documents
 
