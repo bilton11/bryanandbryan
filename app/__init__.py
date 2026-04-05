@@ -13,6 +13,14 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
+    # Set Cloud SQL engine options for production
+    if os.environ.get("CLOUD_SQL_INSTANCE"):
+        from app.config import _make_cloud_sql_creator
+
+        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            "creator": _make_cloud_sql_creator()
+        }
+
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)

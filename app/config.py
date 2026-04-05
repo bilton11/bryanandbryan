@@ -52,12 +52,6 @@ class ProductionConfig(DefaultConfig):
     SESSION_COOKIE_SECURE = True
     SQLALCHEMY_DATABASE_URI = "postgresql+pg8000://"
 
-    @property
-    def SQLALCHEMY_ENGINE_OPTIONS(self):  # noqa: N802
-        if os.environ.get("CLOUD_SQL_INSTANCE"):
-            return {"creator": _make_cloud_sql_creator()}
-        return {}
-
 
 config = {
     "default": DevelopmentConfig,
