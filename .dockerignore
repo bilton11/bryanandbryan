@@ -1,0 +1,11 @@
+.git
+.github
+.planning
+__pycache__
+*.pyc
+.env
+.env.*
+*.md
+.venv
+venv
+migrations/versions/__pycache__

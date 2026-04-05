@@ -3,9 +3,9 @@
 {% block title %}Link expired — Bryan and Bryan{% endblock %}
 
 {% block content %}
-<main>
-  <h1>Link expired</h1>
-  <p>This login link has expired or is invalid.</p>
-  <a href="{{ url_for('auth.login') }}">Request a new link</a>
-</main>
+<div class="auth-card">
+    <h1>Link expired</h1>
+    <p>This login link has expired or is invalid.</p>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Request a new link</a>
+</div>
 {% endblock %}
