@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+<p>Welcome. Your dashboard is coming soon.</p>
+<a href="{{ url_for('auth.logout') }}">Sign out</a>
+{% endblock %}

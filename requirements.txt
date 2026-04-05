@@ -1,0 +1,11 @@
+flask>=3.1,<4
+flask-sqlalchemy>=3.0,<4
+sqlalchemy>=2.0.49,<3
+flask-migrate>=4.0,<5
+flask-login>=0.6,<1
+flask-limiter>=4.0,<5
+itsdangerous>=2.2,<3
+sendgrid>=6.0,<7
+gunicorn>=22.0,<23
+cloud-sql-python-connector[pg8000]>=1.0,<2
+python-dotenv>=1.0,<2
