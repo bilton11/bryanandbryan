@@ -12,6 +12,9 @@ class DefaultConfig:
     REMEMBER_COOKIE_HTTPONLY = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    # AI assessment feature flag — set AI_ASSESSMENT_ENABLED=false to disable
+    # without a code deploy (lawyer review gate for pre-launch supervision)
+    AI_ASSESSMENT_ENABLED = os.environ.get("AI_ASSESSMENT_ENABLED", "true").lower() == "true"
 
 
 class DevelopmentConfig(DefaultConfig):

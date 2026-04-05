@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Case Assessment Summary — Bryan and Bryan</title>
+  <style>
+    /* -----------------------------------------------------------------------
+       Page setup — Letter, margins with room for running footer disclaimer
+    ----------------------------------------------------------------------- */
+    @page {
+      size: Letter;
+      margin: 2.5cm 2cm 3.5cm 2cm;
+
+      @bottom-center {
+        content: element(page-disclaimer);
+        font-size: 8pt;
+        color: #555;
+      }
+    }
+
+    /* Running element — WeasyPrint lifts this out of normal flow and repeats
+       it in the @bottom-center area of every page. */
+    #page-disclaimer {
+      position: running(page-disclaimer);
+      text-align: center;
+      font-size: 8pt;
+      font-style: italic;
+      color: #555;
+    }
+
+    /* -----------------------------------------------------------------------
+       Typography — system fonts only (no external requests in PDF)
+    ----------------------------------------------------------------------- */
+    body {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-size: 10pt;
+      line-height: 1.5;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 18pt;
+      color: #1e3a5f;
+      margin-top: 0;
+      margin-bottom: 4pt;
+    }
+
+    h2 {
+      font-size: 12pt;
+      color: #1e3a5f;
+      border-bottom: 1pt solid #1e3a5f;
+      padding-bottom: 3pt;
+      margin-top: 18pt;
+      margin-bottom: 8pt;
+    }
+
+    p {
+      margin: 0 0 6pt 0;
+    }
+
+    /* -----------------------------------------------------------------------
+       Header / branding
+    ----------------------------------------------------------------------- */
+    .report-header {
+      margin-bottom: 20pt;
+      border-bottom: 2pt solid #1e3a5f;
+      padding-bottom: 10pt;
+    }
+
+    .report-header__brand {
+      font-size: 11pt;
+      color: #555;
+      letter-spacing: 0.5pt;
+      text-transform: uppercase;
+      margin-bottom: 4pt;
+    }
+
+    .report-header__date {
+      font-size: 9pt;
+      color: #666;
+      margin-top: 4pt;
+    }
+
+    /* -----------------------------------------------------------------------
+       Definition list — used for field/value pairs
+    ----------------------------------------------------------------------- */
+    dl {
+      margin: 0;
+    }
+
+    dt {
+      font-weight: bold;
+      color: #444;
+      font-size: 9pt;
+      margin-top: 6pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3pt;
+    }
+
+    dd {
+      margin: 1pt 0 0 0;
+      padding-left: 0;
+      font-size: 10pt;
+    }
+
+    /* -----------------------------------------------------------------------
+       Status / alert boxes
+    ----------------------------------------------------------------------- */
+    .alert {
+      padding: 8pt 10pt;
+      border-left: 4pt solid #ccc;
+      margin: 8pt 0;
+      font-size: 9.5pt;
+    }
+
+    .alert--success {
+      border-color: #2e7d32;
+      background: #f1f8f1;
+    }
+
+    .alert--warning {
+      border-color: #e65100;
+      background: #fff8f0;
+    }
+
+    .alert--danger {
+      border-color: #c62828;
+      background: #fff5f5;
+    }
+
+    .alert--review {
+      border-color: #5c3317;
+      background: #fdf6ee;
+    }
+
+    .alert--info {
+      border-color: #1565c0;
+      background: #f0f5ff;
+    }
+
+    .alert__heading {
+      font-weight: bold;
+      margin-bottom: 4pt;
+    }
+
+    /* -----------------------------------------------------------------------
+       Evidence list
+    ----------------------------------------------------------------------- */
+    .evidence-list {
+      margin: 4pt 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .evidence-list li {
+      font-size: 9.5pt;
+      padding: 2pt 0 2pt 12pt;
+      position: relative;
+    }
+
+    .evidence-list li::before {
+      content: "\2713";  /* checkmark */
+      position: absolute;
+      left: 0;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .evidence-list li.unchecked::before {
+      content: "\25A1";  /* empty square */
+      color: #aaa;
+    }
+
+    .evidence-score {
+      margin-top: 6pt;
+      font-size: 9.5pt;
+    }
+
+    .evidence-score__bar-track {
+      height: 8pt;
+      background: #e0e0e0;
+      border-radius: 4pt;
+      margin: 4pt 0;
+      overflow: hidden;
+    }
+
+    .evidence-score__bar {
+      height: 8pt;
+      border-radius: 4pt;
+    }
+
+    .evidence-score__bar--strong { background: #2e7d32; }
+    .evidence-score__bar--moderate { background: #e65100; }
+    .evidence-score__bar--limited { background: #c62828; }
+
+    /* -----------------------------------------------------------------------
+       AI assessment section
+    ----------------------------------------------------------------------- */
+    .ai-assessment {
+      border: 1pt solid #c8d8e8;
+      background: #f5f8fb;
+      padding: 10pt;
+      border-radius: 3pt;
+      margin-top: 6pt;
+    }
+
+    .ai-assessment__label {
+      font-size: 8pt;
+      color: #1e3a5f;
+      text-transform: uppercase;
+      letter-spacing: 0.4pt;
+      font-weight: bold;
+      margin-bottom: 6pt;
+    }
+
+    .ai-assessment__text {
+      font-size: 9.5pt;
+      line-height: 1.6;
+    }
+
+    .ai-assessment--unavailable {
+      border-color: #ccc;
+      background: #f8f8f8;
+      color: #777;
+    }
+
+    /* -----------------------------------------------------------------------
+       Report footer note
+    ----------------------------------------------------------------------- */
+    .report-footer {
+      margin-top: 24pt;
+      padding-top: 10pt;
+      border-top: 1pt solid #ccc;
+      font-size: 8.5pt;
+      color: #555;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  {# -------------------------------------------------------------------------
+     Running disclaimer — WeasyPrint lifts this out and prints it on every page
+  -------------------------------------------------------------------------- #}
+  <div id="page-disclaimer">
+    Legal Information, Not Legal Advice. This assessment describes statistical patterns
+    in similar cases and does not constitute legal advice or predict your case outcome.
+    Bryan and Bryan &mdash; {{ report_date }}.
+  </div>
+
+  {# -------------------------------------------------------------------------
+     a) Report header
+  -------------------------------------------------------------------------- #}
+  <div class="report-header">
+    <div class="report-header__brand">Bryan and Bryan &mdash; Ontario Small Claims Court</div>
+    <h1>Case Assessment Summary</h1>
+    <div class="report-header__date">Generated: {{ report_date }}</div>
+  </div>
+
+  {# -------------------------------------------------------------------------
+     b) Claim Type
+  -------------------------------------------------------------------------- #}
+  <h2>Claim Type</h2>
+  <dl>
+    <dt>Type of dispute</dt>
+    <dd>{{ claim_type_label or "(not provided)" }}</dd>
+  </dl>
+
+  {# -------------------------------------------------------------------------
+     c) Facts Summary
+  -------------------------------------------------------------------------- #}
+  <h2>Facts Summary</h2>
+  <dl>
+    <dt>Description</dt>
+    <dd>{{ facts_description or "(not provided)" }}</dd>
+
+    <dt>Date of incident</dt>
+    <dd>{{ facts_incident_date or "(not provided)" }}</dd>
+
+    {% if facts_discovery_date %}
+    <dt>Date discovered</dt>
+    <dd>{{ facts_discovery_date }}</dd>
+    {% endif %}
+  </dl>
+
+  {# -------------------------------------------------------------------------
+     d) Claim Amount
+  -------------------------------------------------------------------------- #}
+  <h2>Claim Amount</h2>
+  <dl>
+    <dt>Amount claimed</dt>
+    <dd>
+      {% if amount_value %}
+        ${{ "{:,}".format(amount_value | int) }}
+        {% if amount_certainty %}({{ amount_certainty }}){% endif %}
+      {% else %}
+        (not provided)
+      {% endif %}
+    </dd>
+    <dt>Within jurisdiction</dt>
+    <dd>{% if within_jurisdiction %}Yes — within $50,000 Small Claims Court limit{% else %}Exceeds Small Claims Court monetary limit{% endif %}</dd>
+  </dl>
+
+  {# -------------------------------------------------------------------------
+     e) Opposing Party — type only (NO name, address, or email for privacy)
+  -------------------------------------------------------------------------- #}
+  <h2>Opposing Party</h2>
+  <dl>
+    <dt>Party type</dt>
+    <dd>
+      {% if party_type == "individual" %}Individual
+      {% elif party_type == "business" %}Business or corporation
+      {% else %}(not provided){% endif %}
+    </dd>
+  </dl>
+  <p style="font-size: 8.5pt; color: #777; font-style: italic;">
+    Name and contact information omitted from this report.
+  </p>
+
+  {# -------------------------------------------------------------------------
+     f) Limitation Period
+  -------------------------------------------------------------------------- #}
+  <h2>Limitation Period</h2>
+
+  {% if limitation_status %}
+    {% if limitation_status == "within_period" %}
+      <div class="alert alert--success">
+        <div class="alert__heading">Claim appears to be within the limitation period.</div>
+        {% if limitation_deadline %}
+          <p>Filing deadline: <strong>{{ limitation_deadline }}</strong>
+          {% if days_remaining is not none %}
+            ({{ days_remaining }} days remaining).
+          {% endif %}
+          </p>
+        {% endif %}
+      </div>
+
+    {% elif limitation_status == "warning" %}
+      <div class="alert alert--warning">
+        <div class="alert__heading">Act promptly &mdash; deadline is approaching.</div>
+        {% if days_remaining is not none and limitation_deadline %}
+          <p>Approximately <strong>{{ days_remaining }} days</strong> remaining
+          (deadline: <strong>{{ limitation_deadline }}</strong>).</p>
+        {% endif %}
+      </div>
+
+    {% elif limitation_status == "expired" %}
+      <div class="alert alert--danger">
+        <div class="alert__heading">The 2-year limitation period appears to have expired.</div>
+        {% if limitation_deadline %}
+          <p>The deadline was {{ limitation_deadline }}. Consult a lawyer &mdash; exceptions may apply.</p>
+        {% endif %}
+      </div>
+
+    {% elif limitation_status == "ultimate_expired" %}
+      <div class="alert alert--danger">
+        <div class="alert__heading">The 15-year absolute deadline has passed.</div>
+        {% if ultimate_deadline %}
+          <p>The ultimate deadline was {{ ultimate_deadline }}.</p>
+        {% endif %}
+        <p>Consult a lawyer to confirm whether any exception applies.</p>
+      </div>
+
+    {% elif limitation_status == "requires_lawyer_review" %}
+      <div class="alert alert--review">
+        <div class="alert__heading">A lawyer should review your limitation period.</div>
+        <p>Your situation may involve a special rule (minor, incapacity, or other tolling).
+        The correct deadline requires legal advice to confirm.</p>
+        {% if limitation_deadline %}
+          <p>Calculated deadline: <strong>{{ limitation_deadline }}</strong> &mdash; may not be accurate.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if municipal_notice_required %}
+    <div class="alert alert--warning">
+      <div class="alert__heading">10-day written notice required before filing.</div>
+      <p>The opposing party is a municipality. You must give 10 days written notice
+      before filing your claim (Municipal Act, 2001, s. 44(12)).</p>
+    </div>
+    {% endif %}
+
+  {% else %}
+    <div class="alert alert--info">
+      <p>Limitation period data not available.</p>
+    </div>
+  {% endif %}
+
+  {# -------------------------------------------------------------------------
+     g) Evidence Inventory
+  -------------------------------------------------------------------------- #}
+  <h2>Evidence Inventory</h2>
+
+  <ul class="evidence-list">
+    {% for item in evidence_types %}
+      <li {% if item.key not in evidence_checked %}class="unchecked"{% endif %}>
+        {{ item.label }}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="evidence-score">
+    <strong>Evidence completeness: {{ evidence_score_pct }}%</strong>
+    &mdash; {{ evidence_score_label }}
+    <div class="evidence-score__bar-track">
+      <div class="evidence-score__bar
+        {% if evidence_score_pct >= 70 %}evidence-score__bar--strong
+        {% elif evidence_score_pct >= 40 %}evidence-score__bar--moderate
+        {% else %}evidence-score__bar--limited{% endif %}"
+        style="width: {{ evidence_score_pct }}%">
+      </div>
+    </div>
+  </div>
+
+  {# -------------------------------------------------------------------------
+     h) AI Case Strength Assessment
+  -------------------------------------------------------------------------- #}
+  <h2>AI Case Strength Assessment</h2>
+
+  {% if ai_assessment_text %}
+    <div class="ai-assessment">
+      <div class="ai-assessment__label">Statistical Case Analysis</div>
+      <div class="ai-assessment__text">{{ ai_assessment_text | e }}</div>
+    </div>
+  {% else %}
+    <div class="ai-assessment ai-assessment--unavailable">
+      <div class="ai-assessment__label">Statistical Case Analysis</div>
+      <p class="ai-assessment__text">AI assessment not available for this report.</p>
+    </div>
+  {% endif %}
+
+  {# -------------------------------------------------------------------------
+     i) Report footer
+  -------------------------------------------------------------------------- #}
+  <div class="report-footer">
+    <p>This report was generated on {{ report_date }}. For legal advice about your
+    specific situation, consult a licensed legal professional.</p>
+    <p>Bryan and Bryan provides legal information, not legal advice.
+    AI-generated assessments describe statistical patterns in similar Ontario cases
+    and do not predict the outcome of your case.</p>
+  </div>
+
+</body>
+</html>
