@@ -46,12 +46,12 @@ Plans:
   4. The jurisdiction check prevents a user from proceeding if their claim amount exceeds $50,000 or the matter is outside Small Claims Court scope
   5. The AI case strength indicator displays statistical framing only ("cases with similar characteristics in Ontario...") — no directive language, no win probability percentage
   6. User can download a PDF case assessment summary with the regulatory disclaimer printed on every page
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Dispute type router, multi-step wizard skeleton (HTMX partials, DB-backed wizard state via Claim model, step validation)
-- [ ] 02-02: Limitation calculator, jurisdiction check, evidence inventory checklist (multi-branch limitation logic, $50K check, evidence completeness scoring)
-- [ ] 02-03: AI integration and PDF summary (AI service with statistical framing, assessment_service, WeasyPrint PDF with per-page disclaimer)
+- [ ] 02-01-PLAN.md — Claim model, assessment blueprint, HTMX wizard skeleton, dispute type router
+- [ ] 02-02-PLAN.md — Limitation period calculator, jurisdiction check, evidence inventory checklist
+- [ ] 02-03-PLAN.md — AI case strength indicator and PDF assessment summary download
 
 ### Phase 3: Documents and Guide
 **Goal**: A user can generate a Demand Letter, Plaintiff's Claim (Form 7A), or Defence (Form 9A) as a court-ready PDF, see the current filing fees, and read through the full plain-language process guide.
@@ -92,6 +92,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-04-05 |
-| 2. Case Assessment | 0/3 | Not started | - |
+| 2. Case Assessment | 0/3 | In progress | - |
 | 3. Documents and Guide | 0/2 | Not started | - |
 | 4. Dashboard and Deployment | 0/2 | Not started | - |
