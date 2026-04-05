@@ -5,7 +5,7 @@ from typing import Optional
 
 from flask_login import UserMixin
 from sqlalchemy import DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import db
 
@@ -21,4 +21,9 @@ class User(db.Model, UserMixin):
     )
     last_login_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), nullable=True
+    )
+
+    # Relationships
+    claims: Mapped[list["Claim"]] = relationship(
+        "Claim", back_populates="user", lazy="dynamic"
     )

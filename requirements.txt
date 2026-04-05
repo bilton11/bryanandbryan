@@ -9,3 +9,8 @@ sendgrid>=6.0,<7
 gunicorn>=22.0,<23
 cloud-sql-python-connector[pg8000]>=1.0,<2
 python-dotenv>=1.0,<2
+# Phase 2 — Case Assessment
+python-dateutil>=2.9,<3
+weasyprint>=68.0,<69
+flask-weasyprint>=1.2.0,<2
+anthropic>=0.89.0,<1

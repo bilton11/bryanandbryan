@@ -46,6 +46,55 @@ MUNICIPAL_NOTICE_DAYS = 10  # Days written notice before action against municipa
 # Source: Municipal Act, 2001, s. 44(12)
 
 
+# --- Dispute Type Router ---
+
+# Hard-stop excluded types: NOT within SCC jurisdiction at all
+EXCLUDED_CLAIM_TYPES: list[str] = [
+    "title_to_land",
+    "bankruptcy",
+    "false_imprisonment",
+    "malicious_prosecution",
+]
+
+# Hard-stop redirected types: technically possible in SCC but should be
+# routed elsewhere by default. Each entry has a plain-language redirect
+# message explaining the correct forum. Marked LAWYER_REVIEW_REQUIRED
+# because exceptions exist (e.g. defamation CAN be brought in SCC, but
+# anti-SLAPP motions are not available there).
+REDIRECTED_CLAIM_TYPES: dict[str, str] = {
+    "defamation": (
+        "Defamation claims (libel and slander) involve complex procedural "
+        "rules including anti-SLAPP motions that are not available in Small "
+        "Claims Court. These claims are typically filed in the Superior Court "
+        "of Justice. We strongly recommend consulting a lawyer before proceeding. "
+        "LAWYER_REVIEW_REQUIRED"
+    ),
+    "landlord_tenant": (
+        "Most landlord-tenant disputes in Ontario must be filed with the "
+        "Landlord and Tenant Board (LTB), not Small Claims Court. The LTB "
+        "handles evictions, rent arrears, maintenance issues, and deposit "
+        "disputes. Visit tribunalsontario.ca/ltb to file your application. "
+        "LAWYER_REVIEW_REQUIRED"
+    ),
+}
+
+# All valid claim types for the dispute type step dropdown
+VALID_CLAIM_TYPES: list[dict[str, str]] = [
+    {"value": "unpaid_debt", "label": "Unpaid debt or loan"},
+    {"value": "property_damage", "label": "Property damage"},
+    {"value": "breach_of_contract", "label": "Breach of contract"},
+    {"value": "consumer_complaint", "label": "Consumer complaint (goods or services)"},
+    {"value": "personal_injury", "label": "Personal injury (up to $50,000)"},
+    {"value": "return_of_property", "label": "Return of personal property"},
+    {"value": "defamation", "label": "Defamation (libel or slander)"},
+    {"value": "landlord_tenant", "label": "Landlord/tenant dispute"},
+    {"value": "title_to_land", "label": "Title to land or real property"},
+    {"value": "bankruptcy", "label": "Bankruptcy matter"},
+    {"value": "false_imprisonment", "label": "False imprisonment"},
+    {"value": "malicious_prosecution", "label": "Malicious prosecution"},
+]
+
+
 # --- Display Helpers ---
 def format_fee(cents: int) -> str:
     """Format a fee in cents to a display string like '$108.00'."""
