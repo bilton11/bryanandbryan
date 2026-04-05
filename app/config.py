@@ -32,7 +32,6 @@ def _make_cloud_sql_creator():
 
     def creator():
         connect_kwargs = {
-            "instance_connection_name": instance,
             "driver": "pg8000",
             "user": db_user,
             "db": db_name,
@@ -41,7 +40,7 @@ def _make_cloud_sql_creator():
             connect_kwargs["password"] = db_password
         else:
             connect_kwargs["enable_iam_auth"] = True
-        return connector.connect(**connect_kwargs)
+        return connector.connect(instance, **connect_kwargs)
 
     return creator
 
