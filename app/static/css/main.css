@@ -288,3 +288,451 @@ button[type="submit"]:hover {
     animation-iteration-count: 1 !important;
   }
 }
+
+
+/* =============================================================================
+   Wizard — Assessment (Phase 2)
+   ============================================================================= */
+
+/* Outer container: comfortable reading width, centred */
+.wizard-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.wizard-title {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin: 0 0 0.25rem;
+}
+
+.wizard-intro {
+  color: var(--color-text-secondary);
+  margin: 0 0 2rem;
+}
+
+/* --- Progress bar ---------------------------------------------------------- */
+.wizard-progress {
+  margin-bottom: 2rem;
+}
+
+.wizard-progress__list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  counter-reset: wizard-step;
+}
+
+.wizard-progress__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+}
+
+/* Connector line between steps */
+.wizard-progress__step::before {
+  content: "";
+  position: absolute;
+  top: 18px; /* vertically centred on the circle */
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-border);
+  z-index: 0;
+}
+
+.wizard-progress__step:first-child::before {
+  display: none;
+}
+
+.wizard-progress__step--complete::before {
+  background-color: var(--color-primary);
+}
+
+.wizard-progress__step--active::before {
+  background-color: var(--color-primary);
+}
+
+.wizard-progress__number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-secondary);
+  position: relative;
+  z-index: 1;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.wizard-progress__step--active .wizard-progress__number {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.wizard-progress__step--complete .wizard-progress__number {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.wizard-progress__label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.375rem;
+  line-height: 1.2;
+}
+
+.wizard-progress__step--active .wizard-progress__label {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.wizard-progress__step--complete .wizard-progress__label {
+  color: var(--color-text-secondary);
+}
+
+/* Hide labels on very small screens */
+@media (max-width: 400px) {
+  .wizard-progress__label {
+    display: none;
+  }
+}
+
+/* --- Step heading ---------------------------------------------------------- */
+.wizard-step-heading {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  margin: 0 0 1.5rem;
+}
+
+.wizard-legend {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+  padding: 0;
+  border: none;
+}
+
+/* --- Wizard form container ------------------------------------------------- */
+.wizard-form {
+  padding: 1.5rem 0;
+}
+
+/* --- Field wrapper --------------------------------------------------------- */
+.wizard-field {
+  margin-bottom: 1.5rem;
+}
+
+.wizard-field--checkbox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.wizard-field-legend {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+/* --- Inputs inside wizard -------------------------------------------------- */
+.wizard-input,
+.wizard-textarea,
+.wizard-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: var(--touch-target);
+}
+
+.wizard-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.wizard-input:focus,
+.wizard-textarea:focus,
+.wizard-select:focus {
+  border-color: var(--color-primary);
+  outline: 3px solid rgba(27, 42, 74, 0.2);
+  outline-offset: 0;
+}
+
+.wizard-input.field-error,
+.wizard-textarea.field-error {
+  border-color: var(--color-error);
+}
+
+/* Dollar prefix wrapper */
+.wizard-input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+
+.wizard-input-prefix-wrap:focus-within {
+  border-color: var(--color-primary);
+  outline: 3px solid rgba(27, 42, 74, 0.2);
+  outline-offset: 0;
+}
+
+.wizard-input-prefix {
+  padding: 0 0.75rem;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  border-right: 1px solid var(--color-border);
+  min-height: var(--touch-target);
+  display: inline-flex;
+  align-items: center;
+}
+
+.wizard-input--number {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.wizard-input--number:focus {
+  border: none;
+  outline: none;
+}
+
+/* --- Radio group ----------------------------------------------------------- */
+.wizard-radio-group,
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.wizard-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1rem;
+  min-height: var(--touch-target);
+}
+
+.wizard-radio-label:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.wizard-radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+}
+
+/* Checkbox */
+.wizard-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.wizard-checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: var(--color-primary);
+}
+
+/* --- Hints and errors ------------------------------------------------------ */
+.field-hint {
+  margin: 0.375rem 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.field-required {
+  color: var(--color-error);
+  margin-left: 0.125rem;
+}
+
+.field-optional {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.wizard-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin: 0.375rem 0 0;
+}
+
+/* --- Warning box (informational, yellow) ----------------------------------- */
+.wizard-warning {
+  background-color: #fffbeb;
+  border: 1px solid #f6c94e;
+  border-left: 4px solid #f6c94e;
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.wizard-warning strong {
+  display: block;
+  color: #92400e;
+  margin-bottom: 0.375rem;
+}
+
+.wizard-warning p {
+  margin: 0;
+  color: #78350f;
+}
+
+/* --- Excluded / redirected hard-stop box (red) ----------------------------- */
+/* Used for BOTH excluded types (no jurisdiction) AND redirected types (wrong forum).
+   Both are hard stops — user cannot proceed and must select a different type. */
+.wizard-excluded {
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.wizard-excluded strong {
+  display: block;
+  color: var(--color-error);
+  margin-bottom: 0.375rem;
+}
+
+.wizard-excluded p {
+  margin: 0;
+  color: #742a2a;
+  line-height: 1.6;
+}
+
+/* --- Navigation row -------------------------------------------------------- */
+.wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-border);
+}
+
+/* Override full-width rule for wizard back/next buttons */
+.wizard-nav button[type="submit"],
+.wizard-nav button[type="button"] {
+  width: auto;
+}
+
+/* --- Summary step ---------------------------------------------------------- */
+.wizard-summary-intro {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.wizard-summary-section {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.wizard-summary-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.75rem;
+}
+
+.wizard-summary-section-header h3 {
+  font-size: 1rem;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.wizard-summary-edit {
+  font-size: 0.875rem;
+  color: var(--color-primary-light);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.wizard-summary-edit:hover {
+  color: var(--color-primary);
+}
+
+.wizard-summary-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.375rem 1rem;
+  margin: 0;
+}
+
+.wizard-summary-dl dt {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.wizard-summary-dl dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.wizard-summary-description {
+  white-space: pre-wrap;
+}
+
+.wizard-nav--summary {
+  margin-top: 1.5rem;
+}
+
+/* Responsive: on small screens, stack the summary DL */
+@media (max-width: 400px) {
+  .wizard-summary-dl {
+    grid-template-columns: 1fr;
+  }
+}

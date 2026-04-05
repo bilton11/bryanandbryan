@@ -1,0 +1,146 @@
+{# Partial fragment — no {% extends %} #}
+{% set dispute_data = claim.step_data.get("dispute_type", {}) if claim.step_data else {} %}
+{% set facts_data = claim.step_data.get("facts", {}) if claim.step_data else {} %}
+{% set amount_data = claim.step_data.get("amount", {}) if claim.step_data else {} %}
+{% set party_data = claim.step_data.get("opposing_party", {}) if claim.step_data else {} %}
+
+{# Look up the human label for the claim type #}
+{% set claim_type_value = dispute_data.get("claim_type", "") %}
+{% set claim_type_label = claim_type_value %}
+{% for ct in valid_claim_types %}
+  {% if ct.value == claim_type_value %}{% set claim_type_label = ct.label %}{% endif %}
+{% endfor %}
+
+{% set amount_includes_labels = {
+  "exact": "Exact amount known",
+  "estimated": "Estimated amount",
+  "tbd": "To be determined at trial"
+} %}
+
+<div class="wizard-summary">
+  <h2 class="wizard-step-heading">Review your information</h2>
+  <p class="wizard-summary-intro">Please review the details below before completing your assessment. You can edit any section.</p>
+
+  {# Dispute Type #}
+  <div class="wizard-summary-section">
+    <div class="wizard-summary-section-header">
+      <h3>Dispute Type</h3>
+      <a
+        class="wizard-summary-edit"
+        hx-get="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}"
+        hx-target="#wizard-step-container"
+        hx-swap="innerHTML"
+        href="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}"
+      >Edit</a>
+    </div>
+    <dl class="wizard-summary-dl">
+      <dt>Claim type</dt>
+      <dd>{{ claim_type_label or "(not provided)" }}</dd>
+    </dl>
+  </div>
+
+  {# Facts #}
+  <div class="wizard-summary-section">
+    <div class="wizard-summary-section-header">
+      <h3>Facts</h3>
+      <a
+        class="wizard-summary-edit"
+        hx-get="{{ url_for('assessment.wizard_step', step_name='facts') }}"
+        hx-target="#wizard-step-container"
+        hx-swap="innerHTML"
+        href="{{ url_for('assessment.wizard_step', step_name='facts') }}"
+      >Edit</a>
+    </div>
+    <dl class="wizard-summary-dl">
+      <dt>Description</dt>
+      <dd class="wizard-summary-description">{{ facts_data.get("description", "(not provided)") }}</dd>
+      <dt>Date of incident</dt>
+      <dd>{{ facts_data.get("incident_date", "(not provided)") }}</dd>
+      {% if facts_data.get("discovery_date") %}
+      <dt>Date discovered</dt>
+      <dd>{{ facts_data.get("discovery_date") }}</dd>
+      {% endif %}
+      {% if facts_data.get("is_minor") == "1" %}
+      <dt>Additional note</dt>
+      <dd>You were under 18 at the time of the incident.</dd>
+      {% endif %}
+      {% if facts_data.get("is_municipal_defendant") == "1" %}
+      <dt>Municipal defendant</dt>
+      <dd>Yes — written notice may be required before filing.</dd>
+      {% endif %}
+    </dl>
+  </div>
+
+  {# Amount #}
+  <div class="wizard-summary-section">
+    <div class="wizard-summary-section-header">
+      <h3>Amount</h3>
+      <a
+        class="wizard-summary-edit"
+        hx-get="{{ url_for('assessment.wizard_step', step_name='amount') }}"
+        hx-target="#wizard-step-container"
+        hx-swap="innerHTML"
+        href="{{ url_for('assessment.wizard_step', step_name='amount') }}"
+      >Edit</a>
+    </div>
+    <dl class="wizard-summary-dl">
+      <dt>Claim amount</dt>
+      <dd>
+        {% if amount_data.get("amount") %}
+          ${{ "{:,}".format(amount_data.get("amount") | int) }}
+        {% else %}
+          (not provided)
+        {% endif %}
+      </dd>
+      <dt>Certainty</dt>
+      <dd>{{ amount_includes_labels.get(amount_data.get("amount_includes", ""), amount_data.get("amount_includes", "(not provided)")) }}</dd>
+    </dl>
+  </div>
+
+  {# Opposing Party #}
+  <div class="wizard-summary-section">
+    <div class="wizard-summary-section-header">
+      <h3>Opposing Party</h3>
+      <a
+        class="wizard-summary-edit"
+        hx-get="{{ url_for('assessment.wizard_step', step_name='opposing_party') }}"
+        hx-target="#wizard-step-container"
+        hx-swap="innerHTML"
+        href="{{ url_for('assessment.wizard_step', step_name='opposing_party') }}"
+      >Edit</a>
+    </div>
+    <dl class="wizard-summary-dl">
+      <dt>Name</dt>
+      <dd>{{ party_data.get("party_name", "(not provided)") }}</dd>
+      <dt>Type</dt>
+      <dd>{{ "Individual" if party_data.get("party_type") == "individual" else ("Business or corporation" if party_data.get("party_type") == "business" else "(not provided)") }}</dd>
+      {% if party_data.get("party_address") %}
+      <dt>Address</dt>
+      <dd>{{ party_data.get("party_address") }}</dd>
+      {% endif %}
+      {% if party_data.get("party_email") %}
+      <dt>Email</dt>
+      <dd>{{ party_data.get("party_email") }}</dd>
+      {% endif %}
+    </dl>
+  </div>
+
+  {# Complete Assessment #}
+  <div class="wizard-nav wizard-nav--summary">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      hx-post="{{ url_for('assessment.wizard_back', step_name='summary') }}"
+      hx-target="#wizard-step-container"
+      hx-swap="innerHTML"
+    >&larr; Back</button>
+
+    <form
+      hx-post="{{ url_for('assessment.wizard_step', step_name='summary') }}"
+      hx-target="#wizard-step-container"
+      hx-swap="innerHTML"
+    >
+      <button type="submit" class="btn btn-primary">Complete Assessment &rarr;</button>
+    </form>
+  </div>
+</div>

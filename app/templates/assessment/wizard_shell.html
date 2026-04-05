@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block title %}Case Assessment — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+  <h1 class="wizard-title">Case Assessment</h1>
+  <p class="wizard-intro">Answer a few questions to help us understand your situation.</p>
+
+  {# Progress bar — semantic ordered list, aria-current on active step #}
+  <nav class="wizard-progress" aria-label="Assessment progress">
+    <ol class="wizard-progress__list">
+      {% for step in wizard_steps %}
+      {% set step_idx = loop.index0 %}
+      {% set current_idx = wizard_steps.index(step_name) if step_name in wizard_steps else 0 %}
+      <li class="wizard-progress__step{% if step == step_name %} wizard-progress__step--active{% elif step_idx < current_idx %} wizard-progress__step--complete{% endif %}"
+          {% if step == step_name %}aria-current="step"{% endif %}>
+        <span class="wizard-progress__number" aria-hidden="true">
+          {% if step_idx < current_idx %}&#10003;{% else %}{{ loop.index }}{% endif %}
+        </span>
+        <span class="wizard-progress__label">{{ step_labels[step] }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </nav>
+
+  {# Step container — HTMX swaps innerHTML of this div #}
+  <div id="wizard-step-container">
+    {% include initial_step_template %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{# Partial fragment — no {% extends %} #}
+{% set saved = claim.step_data.get("amount", {}) if claim.step_data else {} %}
+{% set saved_amount = saved.get("amount", "") %}
+{% set amount_int = saved_amount | int if saved_amount else 0 %}
+
+<form
+  class="wizard-form"
+  hx-post="{{ url_for('assessment.wizard_step', step_name='amount') }}"
+  hx-target="#wizard-step-container"
+  hx-swap="innerHTML"
+  novalidate
+>
+  <h2 class="wizard-step-heading">How much are you claiming?</h2>
+
+  {% if errors.get("jurisdiction_exceeded") %}
+  <div class="wizard-excluded" role="alert" aria-live="assertive">
+    <strong>Amount exceeds Small Claims Court limit</strong>
+    <p>{{ errors["amount"] }}</p>
+  </div>
+  {% elif errors.get("amount") %}
+  <div class="wizard-error" role="alert" aria-live="polite">{{ errors["amount"] }}</div>
+  {% endif %}
+
+  {% if amount_int > 25000 and amount_int <= monetary_limit %}
+  <div class="wizard-warning" role="note">
+    <strong>Note — frequent claimant fees may apply</strong>
+    <p>Claims over $25,000 may attract higher filing fees if you have filed 10 or more claims in the current year. The filing fee for frequent claimants is $249.00 versus $108.00 for infrequent claimants.</p>
+  </div>
+  {% endif %}
+
+  <div class="wizard-field">
+    <label for="amount">Claim amount (dollars) <span class="field-required" aria-hidden="true">*</span></label>
+    <div class="wizard-input-prefix-wrap">
+      <span class="wizard-input-prefix" aria-hidden="true">$</span>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        value="{{ saved_amount }}"
+        class="wizard-input wizard-input--number{% if errors.get('amount') %} field-error{% endif %}"
+        aria-required="true"
+        aria-describedby="amount-hint{% if errors.get('amount') %} amount-error{% endif %}"
+        min="1"
+        max="{{ monetary_limit }}"
+        step="1"
+        placeholder="e.g. 5000"
+      >
+    </div>
+    <p id="amount-hint" class="field-hint">Enter the total amount you are claiming, in whole dollars. The maximum for Small Claims Court is ${{ "{:,}".format(monetary_limit) }}.</p>
+    {% if errors.get("amount") and not errors.get("jurisdiction_exceeded") %}
+    <p id="amount-error" class="wizard-error" aria-live="polite">{{ errors["amount"] }}</p>
+    {% endif %}
+  </div>
+
+  <div class="wizard-field">
+    <label for="amount_includes">How certain is this amount?</label>
+    <select id="amount_includes" name="amount_includes" class="wizard-select">
+      {% set saved_includes = saved.get("amount_includes", "") %}
+      <option value="exact" {% if saved_includes == "exact" %}selected{% endif %}>Exact amount known</option>
+      <option value="estimated" {% if saved_includes == "estimated" %}selected{% endif %}>Estimated amount</option>
+      <option value="tbd" {% if saved_includes == "tbd" %}selected{% endif %}>To be determined at trial</option>
+    </select>
+  </div>
+
+  <div class="wizard-nav">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      hx-post="{{ url_for('assessment.wizard_back', step_name='amount') }}"
+      hx-target="#wizard-step-container"
+      hx-swap="innerHTML"
+    >&larr; Back</button>
+    <button type="submit" class="btn btn-primary">Next &rarr;</button>
+  </div>
+</form>

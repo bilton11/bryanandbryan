@@ -1,0 +1,97 @@
+{# Partial fragment — no {% extends %} #}
+{% set saved = claim.step_data.get("opposing_party", {}) if claim.step_data else {} %}
+
+<form
+  class="wizard-form"
+  hx-post="{{ url_for('assessment.wizard_step', step_name='opposing_party') }}"
+  hx-target="#wizard-step-container"
+  hx-swap="innerHTML"
+  novalidate
+>
+  <h2 class="wizard-step-heading">Who are you filing against?</h2>
+
+  <div class="wizard-field">
+    <label for="party_name">Name of opposing party <span class="field-required" aria-hidden="true">*</span></label>
+    <input
+      type="text"
+      id="party_name"
+      name="party_name"
+      value="{{ saved.get('party_name', '') }}"
+      class="wizard-input{% if errors.get('party_name') %} field-error{% endif %}"
+      aria-required="true"
+      aria-describedby="party-name-hint{% if errors.get('party_name') %} party-name-error{% endif %}"
+      autocomplete="off"
+      placeholder="Full legal name"
+    >
+    <p id="party-name-hint" class="field-hint">Enter the full legal name as it appears on contracts or invoices, if known.</p>
+    {% if errors.get("party_name") %}
+    <p id="party-name-error" class="wizard-error" aria-live="polite">{{ errors["party_name"] }}</p>
+    {% endif %}
+  </div>
+
+  <div class="wizard-field">
+    <fieldset>
+      <legend class="wizard-field-legend">Type of opposing party <span class="field-required" aria-hidden="true">*</span></legend>
+      {% if errors.get("party_type") %}
+      <p class="wizard-error" aria-live="polite">{{ errors["party_type"] }}</p>
+      {% endif %}
+      <label class="wizard-radio-label">
+        <input
+          type="radio"
+          name="party_type"
+          value="individual"
+          {% if saved.get("party_type") == "individual" %}checked{% endif %}
+        >
+        Individual (person)
+      </label>
+      <label class="wizard-radio-label">
+        <input
+          type="radio"
+          name="party_type"
+          value="business"
+          {% if saved.get("party_type") == "business" %}checked{% endif %}
+        >
+        Business or corporation
+      </label>
+    </fieldset>
+  </div>
+
+  <div class="wizard-field">
+    <label for="party_address">Address <span class="field-optional">(optional but recommended)</span></label>
+    <input
+      type="text"
+      id="party_address"
+      name="party_address"
+      value="{{ saved.get('party_address', '') }}"
+      class="wizard-input"
+      aria-describedby="party-address-hint"
+      autocomplete="off"
+      placeholder="Street address, city, province, postal code"
+    >
+    <p id="party-address-hint" class="field-hint">An address is required to serve the defendant with your claim. You can add it later if you don't have it now.</p>
+  </div>
+
+  <div class="wizard-field">
+    <label for="party_email">Email address <span class="field-optional">(optional)</span></label>
+    <input
+      type="email"
+      id="party_email"
+      name="party_email"
+      value="{{ saved.get('party_email', '') }}"
+      class="wizard-input"
+      autocomplete="off"
+      placeholder="email@example.com"
+    >
+  </div>
+
+  <div class="wizard-nav">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      hx-post="{{ url_for('assessment.wizard_back', step_name='opposing_party') }}"
+      hx-target="#wizard-step-container"
+      hx-swap="innerHTML"
+    >&larr; Back</button>
+    <button type="submit" class="btn btn-primary">Next &rarr;</button>
+  </div>
+</form>

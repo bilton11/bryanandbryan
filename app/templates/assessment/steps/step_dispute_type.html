@@ -1,0 +1,49 @@
+{# Partial fragment — no {% extends %} #}
+{% set saved = claim.step_data.get("dispute_type", {}) if claim.step_data else {} %}
+
+<form
+  class="wizard-form"
+  hx-post="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}"
+  hx-target="#wizard-step-container"
+  hx-swap="innerHTML"
+  novalidate
+>
+  <fieldset>
+    <legend class="wizard-legend">What type of dispute are you filing?</legend>
+
+    {% if errors.get("claim_type") %}
+    <div class="wizard-excluded" role="alert" aria-live="assertive">
+      <strong>
+        {% if errors.get("excluded") %}
+          Cannot be filed in Small Claims Court
+        {% elif errors.get("redirected") %}
+          This claim belongs in a different forum
+        {% else %}
+          Please correct the following
+        {% endif %}
+      </strong>
+      <p>{{ errors["claim_type"] }}</p>
+    </div>
+    {% endif %}
+
+    <div class="wizard-radio-group" role="radiogroup" aria-labelledby="claim-type-legend">
+      {% for ct in valid_claim_types %}
+      <label class="wizard-radio-label">
+        <input
+          type="radio"
+          name="claim_type"
+          value="{{ ct.value }}"
+          {% if saved.get("claim_type") == ct.value %}checked{% endif %}
+          {% if errors.get("claim_type") and saved.get("claim_type") == ct.value %}aria-describedby="claim-type-error"{% endif %}
+        >
+        {{ ct.label }}
+      </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <div class="wizard-nav">
+    <span></span>{# placeholder for back button alignment #}
+    <button type="submit" class="btn btn-primary">Next &rarr;</button>
+  </div>
+</form>

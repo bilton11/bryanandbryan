@@ -1,0 +1,98 @@
+{# Partial fragment — no {% extends %} #}
+{% set saved = claim.step_data.get("facts", {}) if claim.step_data else {} %}
+
+<form
+  class="wizard-form"
+  hx-post="{{ url_for('assessment.wizard_step', step_name='facts') }}"
+  hx-target="#wizard-step-container"
+  hx-swap="innerHTML"
+  novalidate
+>
+  <h2 class="wizard-step-heading">Tell us what happened</h2>
+
+  <div class="wizard-field">
+    <label for="description">Describe what happened <span class="field-required" aria-hidden="true">*</span></label>
+    <textarea
+      id="description"
+      name="description"
+      rows="6"
+      class="wizard-textarea{% if errors.get('description') %} field-error{% endif %}"
+      aria-required="true"
+      aria-describedby="description-hint{% if errors.get('description') %} description-error{% endif %}"
+      minlength="20"
+    >{{ saved.get("description", "") }}</textarea>
+    <p id="description-hint" class="field-hint">Include the key facts: what happened, who was involved, and what you are owed. Minimum 20 characters.</p>
+    {% if errors.get("description") %}
+    <p id="description-error" class="wizard-error" aria-live="polite">{{ errors["description"] }}</p>
+    {% endif %}
+  </div>
+
+  <div class="wizard-field">
+    <label for="incident_date">When did this happen? <span class="field-required" aria-hidden="true">*</span></label>
+    <input
+      type="date"
+      id="incident_date"
+      name="incident_date"
+      value="{{ saved.get('incident_date', '') }}"
+      class="wizard-input{% if errors.get('incident_date') %} field-error{% endif %}"
+      aria-required="true"
+      aria-describedby="incident-date-hint{% if errors.get('incident_date') %} incident-date-error{% endif %}"
+      max="{{ today }}"
+    >
+    <p id="incident-date-hint" class="field-hint">The date the incident, breach, or event occurred.</p>
+    {% if errors.get("incident_date") %}
+    <p id="incident-date-error" class="wizard-error" aria-live="polite">{{ errors["incident_date"] }}</p>
+    {% endif %}
+  </div>
+
+  <div class="wizard-field">
+    <label for="discovery_date">When did you first find out? <span class="field-optional">(optional)</span></label>
+    <input
+      type="date"
+      id="discovery_date"
+      name="discovery_date"
+      value="{{ saved.get('discovery_date', '') }}"
+      class="wizard-input"
+      aria-describedby="discovery-date-hint"
+      max="{{ today }}"
+    >
+    <p id="discovery-date-hint" class="field-hint">If you didn't know about the harm right away, enter the date you discovered it. This affects limitation period calculations.</p>
+  </div>
+
+  <div class="wizard-field wizard-field--checkbox">
+    <label class="wizard-checkbox-label">
+      <input
+        type="checkbox"
+        name="is_minor"
+        value="1"
+        {% if saved.get("is_minor") == "1" %}checked{% endif %}
+      >
+      I was under 18 years old at the time of the incident
+    </label>
+    <p class="field-hint">Being a minor when the incident occurred may extend the limitation period.</p>
+  </div>
+
+  <div class="wizard-field wizard-field--checkbox">
+    <label class="wizard-checkbox-label">
+      <input
+        type="checkbox"
+        name="is_municipal_defendant"
+        value="1"
+        {% if saved.get("is_municipal_defendant") == "1" %}checked{% endif %}
+      >
+      The other party is a municipality or municipal body
+    </label>
+    <p class="field-hint">Claims against municipalities require 10 days written notice before filing under the Municipal Act, 2001, s. 44(12).</p>
+  </div>
+
+  <div class="wizard-nav">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      hx-post="{{ url_for('assessment.wizard_back', step_name='facts') }}"
+      hx-target="#wizard-step-container"
+      hx-swap="innerHTML"
+    >&larr; Back</button>
+    <button type="submit" class="btn btn-primary">Next &rarr;</button>
+  </div>
+</form>
