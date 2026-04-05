@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 ## Current Position
 
 Phase: 2 of 4 (Case Assessment)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-04-05 — Completed 02-01-PLAN.md (wizard + Claim model)
+Last activity: 2026-04-05 — Completed 02-02-PLAN.md (limitation calculator + evidence inventory)
 
-Progress: [███░░░░░░░] 30%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 4 minutes
-- Total execution time: 8 minutes
+- Total execution time: 13 minutes
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation | 2/2 completed | 8 min | 4 min |
-| 02-case-assessment | 1/3 completed | 8 min | 8 min |
+| 02-case-assessment | 2/3 completed | 13 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5 min), 01-02 (3 min), 02-01 (8 min)
+- Last 5 plans: 01-01 (5 min), 01-02 (3 min), 02-01 (8 min), 02-02 (5 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -58,6 +58,9 @@ Recent decisions affecting current work:
 - 02-01: Both EXCLUDED and REDIRECTED claim types are hard stops — no acknowledgment checkbox, user must pick different type
 - 02-01: REDIRECTED_CLAIM_TYPES values contain LAWYER_REVIEW_REQUIRED marker — supervising lawyer must review before launch
 - 02-01: Assessment blueprint registered without URL prefix — routes define /assess/ paths directly
+- 02-02: Limitation result serialised to step_data["limitation"] dict (dates as ISO strings) after facts step POST
+- 02-02: REQUIRES_LAWYER_REVIEW always set when tolling_applied — automated deadline cannot be trusted for minor/incapacity cases
+- 02-02: minor_dob field added to step_facts (Alpine.js conditional) — required for minor tolling to compute shifted deadline
 
 ### Pending Todos
 
@@ -75,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-05
-Stopped at: Completed 02-01-PLAN.md — wizard + Claim model + dispute type validation
+Stopped at: Completed 02-02-PLAN.md — limitation calculator + evidence inventory
 Resume file: None
