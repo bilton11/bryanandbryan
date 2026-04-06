@@ -22,6 +22,12 @@
                 <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
                 <a href="{{ url_for('auth.logout') }}">Log out</a>
             </div>
+            {% else %}
+            <div class="nav-links">
+                <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
+                <a href="{{ url_for('documents.fees') }}"{% if request.endpoint == 'documents.fees' %} aria-current="page"{% endif %}>Fees</a>
+                <a href="{{ url_for('auth.login') }}">Log in</a>
+            </div>
             {% endif %}
         </nav>
     </header>
