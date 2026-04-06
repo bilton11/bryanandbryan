@@ -1,0 +1,27 @@
+{# documents_list.html — partial for the My Documents section.
+   Variables: documents (list[Document]).
+   Included by dashboard/index.html. #}
+
+{% set doc_type_labels = {
+  "demand_letter": "Demand Letter",
+  "form_7a": "Form 7A — Plaintiff's Claim",
+  "form_9a": "Form 9A — Defence"
+} %}
+
+{% if documents %}
+<ul class="documents-list" role="list">
+  {% for doc in documents %}
+  <li>
+    <div class="doc-info">
+      <span class="doc-title">{{ doc.title }}</span>
+      <span class="doc-type-badge doc-type-badge--{{ doc.doc_type.value }}">{{ doc_type_labels.get(doc.doc_type.value, doc.doc_type.value) }}</span>
+      <span class="field-hint" style="font-size:0.8125rem;">{{ doc.updated_at.strftime("%b %d, %Y") }}</span>
+    </div>
+    {# Plain anchor tag — NOT HTMX. HTMX cannot trigger binary file downloads (decision 03-01). #}
+    <a href="{{ url_for('documents.download', doc_id=doc.id) }}" class="btn btn-secondary" style="font-size:0.875rem; padding:0.375rem 0.75rem; min-height:unset; white-space:nowrap;">Download PDF</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="field-hint">No documents generated yet. <a href="{{ url_for('documents.index') }}">Go to Documents</a> to create your first document.</p>
+{% endif %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard &mdash; Bryan and Bryan{% endblock %}
+
+{% block content %}
+
+{% if has_overdue %}
+<div class="dashboard-overdue-banner" role="alert">
+  You have overdue deadlines. Review the timeline below.
+</div>
+{% endif %}
+
+<h1 style="color: var(--color-primary); margin-bottom: 1.5rem;">Welcome, {{ current_user.email }}</h1>
+
+{% if not claims %}
+<div class="dashboard-cta">
+  <p>You have no active cases. Ready to get started?</p>
+  <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}" class="btn btn-primary">Start your first case assessment</a>
+</div>
+{% endif %}
+
+<div class="dashboard-grid">
+
+  {# ---- My Claims ---- #}
+  <section class="dashboard-section" aria-labelledby="section-claims">
+    <h2 id="section-claims">My Claims</h2>
+    {% include "dashboard/partials/claims_list.html" %}
+  </section>
+
+  {# ---- My Documents ---- #}
+  <section class="dashboard-section" aria-labelledby="section-docs">
+    <h2 id="section-docs">My Documents</h2>
+    {% include "dashboard/partials/documents_list.html" %}
+  </section>
+
+</div>{# /.dashboard-grid #}
+
+{# ---- Deadlines and Timeline (full-width below grid) ---- #}
+{% if claims %}
+<section class="dashboard-section dashboard-section--timeline" aria-labelledby="section-deadlines" style="margin-top: 1.5rem;">
+  <h2 id="section-deadlines">Deadlines and Timeline</h2>
+  <p class="field-hint" style="margin-bottom:1.5rem;">Enter key dates for each claim to track your court deadlines automatically.</p>
+
+  {% for claim in claims %}
+  {% set deadlines = claim_deadlines[claim.id] %}
+  {% set step_data = claim.step_data or {} %}
+  {% set dispute = step_data.get("dispute_type", {}) %}
+  {% set claim_type = dispute.get("claim_type", "") %}
+  {% set claim_dates_data = step_data.get("claim_dates", {}) %}
+
+  <div class="claim-deadline-block" id="claim-block-{{ claim.id }}">
+    <h3 class="claim-deadline-title">
+      Claim #{{ loop.index }}
+      {% if claim_type %}&mdash; {{ claim_type | replace("_", " ") | title }}{% endif %}
+    </h3>
+
+    <form class="deadline-form"
+          hx-post="{{ url_for('dashboard.save_dates', claim_id=claim.id) }}"
+          hx-target="#timeline-{{ claim.id }}"
+          hx-swap="innerHTML"
+          aria-label="Enter dates for claim #{{ loop.index }}">
+      <div class="deadline-form-fields">
+        <div class="form-group">
+          <label for="service_date_{{ claim.id }}">Date Defendant Was Served</label>
+          <input type="date"
+                 id="service_date_{{ claim.id }}"
+                 name="service_date"
+                 value="{{ claim_dates_data.get('service_date', '') }}"
+                 aria-describedby="service_date_hint_{{ claim.id }}">
+          <p class="field-hint" id="service_date_hint_{{ claim.id }}">Defence filing deadline is calculated 20 days after this date.</p>
+        </div>
+        <div class="form-group">
+          <label for="settlement_date_{{ claim.id }}">Settlement Conference Date</label>
+          <input type="date"
+                 id="settlement_date_{{ claim.id }}"
+                 name="settlement_conference_date"
+                 value="{{ claim_dates_data.get('settlement_conference_date', '') }}"
+                 aria-describedby="settlement_date_hint_{{ claim.id }}">
+          <p class="field-hint" id="settlement_date_hint_{{ claim.id }}">Trial request deadline is calculated 30 days after this date.</p>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:auto;">Update Dates</button>
+    </form>
+
+    <div id="timeline-{{ claim.id }}">
+      {% include "dashboard/partials/deadline_timeline.html" with context %}
+    </div>
+
+  </div>{# /.claim-deadline-block #}
+
+  {% if not loop.last %}
+  <hr class="claim-separator" aria-hidden="true">
+  {% endif %}
+
+  {% endfor %}
+</section>
+{% endif %}
+
+{% endblock %}

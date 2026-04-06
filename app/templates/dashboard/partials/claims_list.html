@@ -1,0 +1,61 @@
+{# claims_list.html — partial for the My Claims section.
+   Variables: claims (list[Claim]).
+   Included by dashboard/index.html. #}
+
+{% set type_labels = {
+  "unpaid_debt": "Unpaid Debt / Loan",
+  "property_damage": "Property Damage",
+  "breach_of_contract": "Breach of Contract",
+  "consumer_complaint": "Consumer Complaint",
+  "personal_injury": "Personal Injury",
+  "return_of_property": "Return of Property",
+  "defamation": "Defamation",
+  "landlord_tenant": "Landlord / Tenant",
+  "title_to_land": "Title to Land",
+  "bankruptcy": "Bankruptcy",
+  "false_imprisonment": "False Imprisonment",
+  "malicious_prosecution": "Malicious Prosecution"
+} %}
+
+{% if claims %}
+<div class="claims-table-wrapper" role="region" aria-label="Claims table" tabindex="0">
+  <table class="claims-table">
+    <thead>
+      <tr>
+        <th scope="col">Claim Type</th>
+        <th scope="col">Status</th>
+        <th scope="col">Created</th>
+        <th scope="col">Updated</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for claim in claims %}
+      {% set step_data = claim.step_data or {} %}
+      {% set dispute = step_data.get("dispute_type", {}) %}
+      {% set raw_type = dispute.get("claim_type", "") %}
+      {% set claim_type_display = type_labels.get(raw_type, "Draft") if raw_type else "Draft" %}
+      <tr>
+        <td>{{ claim_type_display }}</td>
+        <td>
+          <span class="claim-status claim-status--{{ claim.status.value }}">{{ claim.status.value }}</span>
+        </td>
+        <td>{{ claim.created_at.strftime("%b %d, %Y") }}</td>
+        <td>{{ claim.updated_at.strftime("%b %d, %Y") }}</td>
+        <td>
+          {% if claim.status.value == "draft" %}
+          <a href="{{ url_for('assessment.wizard_entry') }}" class="btn btn-secondary" style="font-size:0.875rem; padding:0.375rem 0.75rem; min-height:unset;">Continue</a>
+          {% elif claim.status.value == "assessed" %}
+          <a href="{{ url_for('assessment.results', claim_id=claim.id) }}" class="btn btn-secondary" style="font-size:0.875rem; padding:0.375rem 0.75rem; min-height:unset;">View Results</a>
+          {% else %}
+          <span class="field-hint">Filed</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="field-hint">No claims yet.</p>
+{% endif %}

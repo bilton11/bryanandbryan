@@ -14,7 +14,13 @@
         <nav role="navigation" aria-label="Main navigation">
             <a href="{{ url_for('main.index') }}" class="site-name">Bryan and Bryan</a>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('auth.logout') }}">Log out</a>
+            <div class="nav-links">
+                <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+                <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}">New Assessment</a>
+                <a href="{{ url_for('documents.index') }}">Documents</a>
+                <a href="{{ url_for('main.guide') }}">Guide</a>
+                <a href="{{ url_for('auth.logout') }}">Log out</a>
+            </div>
             {% endif %}
         </nav>
     </header>
