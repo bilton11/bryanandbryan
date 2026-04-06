@@ -96,21 +96,21 @@
 | INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
-| ASMT-01 | Phase 2 | Pending |
-| ASMT-02 | Phase 2 | Pending |
-| ASMT-03 | Phase 2 | Pending |
-| ASMT-04 | Phase 2 | Pending |
-| ASMT-05 | Phase 2 | Pending |
-| ASMT-06 | Phase 2 | Pending |
-| ASMT-07 | Phase 2 | Pending |
-| DOCS-01 | Phase 3 | Pending |
-| DOCS-02 | Phase 3 | Pending |
-| DOCS-03 | Phase 3 | Pending |
-| DOCS-04 | Phase 3 | Pending |
-| GUID-01 | Phase 3 | Pending |
-| GUID-02 | Phase 3 | Pending |
-| GUID-03 | Phase 3 | Pending |
-| GUID-04 | Phase 3 | Pending |
+| ASMT-01 | Phase 2 | Complete |
+| ASMT-02 | Phase 2 | Complete |
+| ASMT-03 | Phase 2 | Complete |
+| ASMT-04 | Phase 2 | Complete |
+| ASMT-05 | Phase 2 | Complete |
+| ASMT-06 | Phase 2 | Complete |
+| ASMT-07 | Phase 2 | Complete |
+| DOCS-01 | Phase 3 | Complete |
+| DOCS-02 | Phase 3 | Complete |
+| DOCS-03 | Phase 3 | Complete |
+| DOCS-04 | Phase 3 | Complete |
+| GUID-01 | Phase 3 | Complete |
+| GUID-02 | Phase 3 | Complete |
+| GUID-03 | Phase 3 | Complete |
+| GUID-04 | Phase 3 | Complete |
 | DASH-01 | Phase 4 | Complete |
 | DASH-02 | Phase 4 | Complete |
 | DASH-03 | Phase 4 | Complete |
@@ -123,4 +123,4 @@
 
 ---
 *Requirements defined: 2026-04-04*
-*Last updated: 2026-04-04 after roadmap creation*
+*Last updated: 2026-04-06 — Phase 2, 3 traceability updated to Complete after v1.0 audit*
