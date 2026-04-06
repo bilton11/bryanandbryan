@@ -41,6 +41,9 @@ body {
   font-size: 16px; /* never smaller — ensures readability on mobile */
 }
 
+/* Alpine.js — prevent flash of unstyled content before initialization */
+[x-cloak] { display: none !important; }
+
 /* WCAG 2.4.7 — visible focus indicator */
 :focus-visible {
   outline: 3px solid var(--color-accent);
