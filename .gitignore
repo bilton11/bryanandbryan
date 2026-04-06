@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask instance folder (local SQLite, config overrides)
+instance/
+
+# Environment variables
+.env
+.env.*
+
+# Playwright MCP
+.playwright-mcp/
+
+# Artifacts / scratch
+artifacts/
+ERROR
+
+# Images (screenshots, etc.)
+*.png
