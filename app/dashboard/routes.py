@@ -14,10 +14,10 @@ from app.services.deadline_service import build_claim_deadlines
 from app.services.escalation_service import get_escalation_reasons, is_escalation_required
 
 
-@dashboard_bp.route("/")
+@dashboard_bp.route("/dashboard")
 @login_required
 def index():
-    """GET / — user dashboard showing all claims, documents, and deadlines."""
+    """GET /dashboard — user dashboard showing all claims, documents, and deadlines."""
     claims = db.session.execute(
         db.select(Claim)
         .where(Claim.user_id == current_user.id)

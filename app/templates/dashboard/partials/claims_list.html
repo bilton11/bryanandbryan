@@ -35,8 +35,10 @@
       {% set dispute = step_data.get("dispute_type", {}) %}
       {% set raw_type = dispute.get("claim_type", "") %}
       {% set claim_type_display = type_labels.get(raw_type, "Draft") if raw_type else "Draft" %}
+      {% set opposing_name = step_data.get("opposing_party", {}).get("party_name", "") %}
+      {% set claim_amount = step_data.get("amount", {}).get("amount", "") %}
       <tr>
-        <td>{{ claim_type_display }}</td>
+        <td>{{ claim_type_display }}{% if opposing_name or claim_amount %} <span class="claim-detail-sub">({% if opposing_name %}vs {{ opposing_name }}{% endif %}{% if opposing_name and claim_amount %} for {% elif claim_amount %}{% endif %}{% if claim_amount %}${{ "{:,}".format(claim_amount | int) }}{% endif %})</span>{% endif %}</td>
         <td>
           <span class="claim-status claim-status--{{ claim.status.value }}">{{ claim.status.value }}</span>
         </td>

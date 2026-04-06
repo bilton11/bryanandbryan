@@ -18,10 +18,12 @@
     <p>Start a document using the details from one of your completed case assessments.</p>
     {% for claim in assessed_claims %}
     {% set claim_type = claim.step_data.get('dispute_type', {}).get('claim_type', 'Unknown') if claim.step_data else 'Unknown' %}
+    {% set opposing_name = claim.step_data.get('opposing_party', {}).get('party_name', '') if claim.step_data else '' %}
+    {% set claim_amount = claim.step_data.get('amount', {}).get('amount', '') if claim.step_data else '' %}
     {% set claim_date = claim.updated_at.strftime('%Y-%m-%d') %}
     <div style="border: 1px solid #ddd; border-radius: 4px; padding: 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
       <div>
-        <strong>Claim #{{ claim.id }}</strong> — {{ claim_type | replace('_', ' ') | title }}
+        <strong>{{ claim_type | replace('_', ' ') | title }}</strong>{% if opposing_name or claim_amount %} <span style="color: var(--color-text-secondary); font-size: 0.9375rem;">({% if opposing_name %}vs {{ opposing_name }}{% endif %}{% if opposing_name and claim_amount %} for {% elif claim_amount %}{% endif %}{% if claim_amount %}${{ "{:,}".format(claim_amount | int) }}{% endif %})</span>{% endif %}
         <span style="color: #666; font-size: 0.875rem; margin-left: 0.5rem;">Assessed {{ claim_date }}</span>
       </div>
       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">

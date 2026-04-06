@@ -948,6 +948,18 @@ fieldset {
   font-weight: 700;
 }
 
+.claim-deadline-detail {
+  font-weight: 400;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+}
+
+.claim-detail-sub {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
 .deadline-form {
   margin-bottom: 1.5rem;
 }

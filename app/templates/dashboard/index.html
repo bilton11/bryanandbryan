@@ -15,7 +15,7 @@
 {% if not claims %}
 <div class="dashboard-cta">
   <p>You have no active cases. Ready to get started?</p>
-  <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}" class="btn btn-primary">Start your first case assessment</a>
+  <a href="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}" class="btn btn-primary">Start your first case assessment</a>
 </div>
 {% endif %}
 
@@ -48,18 +48,22 @@
   {% set dispute = step_data.get("dispute_type", {}) %}
   {% set claim_type = dispute.get("claim_type", "") %}
   {% set claim_dates_data = step_data.get("claim_dates", {}) %}
+  {% set opposing_name = step_data.get("opposing_party", {}).get("party_name", "") %}
+  {% set claim_amount = step_data.get("amount", {}).get("amount", "") %}
 
   <div class="claim-deadline-block" id="claim-block-{{ claim.id }}">
     <h3 class="claim-deadline-title">
-      Claim #{{ loop.index }}
-      {% if claim_type %}&mdash; {{ claim_type | replace("_", " ") | title }}{% endif %}
+      {{ claim_type | replace("_", " ") | title if claim_type else "Draft Claim" }}
+      {% if opposing_name or claim_amount %}
+      <span class="claim-deadline-detail">({% if opposing_name %}vs {{ opposing_name }}{% endif %}{% if opposing_name and claim_amount %} for {% elif claim_amount %}{% endif %}{% if claim_amount %}${{ "{:,}".format(claim_amount | int) }}{% endif %})</span>
+      {% endif %}
     </h3>
 
     <form class="deadline-form"
           hx-post="{{ url_for('dashboard.save_dates', claim_id=claim.id) }}"
           hx-target="#timeline-{{ claim.id }}"
           hx-swap="innerHTML"
-          aria-label="Enter dates for claim #{{ loop.index }}">
+          aria-label="Enter dates for {{ claim_type | replace('_', ' ') | title if claim_type else 'claim' }}">
       <div class="deadline-form-fields">
         <div class="form-group">
           <label for="service_date_{{ claim.id }}">Date Defendant Was Served</label>

@@ -16,8 +16,8 @@
   {% endif %}
 
   <a class="escalation-cta"
-     href="mailto:info@bryanandbryan.ca?subject=Consultation%20Request%20%E2%80%94%20Case%20%23{{ claim.id }}"
-     aria-label="Request a consultation for case #{{ claim.id }}">
+     href="mailto:info@bryanandbryan.ca?subject=Consultation%20Request%20%E2%80%94%20{{ (claim.step_data or {}).get('dispute_type', {}).get('claim_type', 'Case') | replace('_', ' ') | title }}"
+     aria-label="Request a consultation">
     Request a Consultation
   </a>
 

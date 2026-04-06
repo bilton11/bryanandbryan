@@ -17,7 +17,7 @@
             {% if current_user.is_authenticated %}
             <div class="nav-links">
                 <a href="{{ url_for('dashboard.index') }}"{% if request.endpoint == 'dashboard.index' %} aria-current="page"{% endif %}>Dashboard</a>
-                <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}"{% if request.endpoint and request.endpoint.startswith('assessment.') %} aria-current="page"{% endif %}>New Assessment</a>
+                <a href="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}"{% if request.endpoint and request.endpoint.startswith('assessment.') %} aria-current="page"{% endif %}>New Assessment</a>
                 <a href="{{ url_for('documents.index') }}"{% if request.endpoint and request.endpoint.startswith('documents.') %} aria-current="page"{% endif %}>Documents</a>
                 <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
                 <a href="{{ url_for('auth.logout') }}">Log out</a>
