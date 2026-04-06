@@ -27,3 +27,6 @@ class User(db.Model, UserMixin):
     claims: Mapped[list["Claim"]] = relationship(
         "Claim", back_populates="user", lazy="dynamic"
     )
+    documents: Mapped[list["Document"]] = relationship(
+        "Document", back_populates="user", lazy="dynamic"
+    )

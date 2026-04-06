@@ -95,6 +95,15 @@ VALID_CLAIM_TYPES: list[dict[str, str]] = [
 ]
 
 
+# --- Court Form Versions ---
+# Pin to specific form version for traceability. Update when Ontario publishes new forms.
+FORM_7A_VERSION = "August 1, 2022"  # Plaintiff's Claim
+FORM_9A_VERSION = "August 1, 2022"  # Defence
+# Source: Ontario Courts — Small Claims Court Forms, ontariocourts.ca
+
+FEES_LAST_VERIFIED = "2026-04-04"
+
+
 # --- Display Helpers ---
 def format_fee(cents: int) -> str:
     """Format a fee in cents to a display string like '$108.00'."""

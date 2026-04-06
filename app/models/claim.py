@@ -66,6 +66,9 @@ class Claim(db.Model):
 
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="claims")
+    documents: Mapped[list["Document"]] = relationship(
+        "Document", back_populates="claim"
+    )
 
     __table_args__ = (
         Index("ix_claims_user_status", "user_id", "status"),
