@@ -30,17 +30,17 @@
 
 ### Documents
 
-- [ ] **DOCS-01**: Demand letter generator — template-based, structured inputs, no AI content generation
-- [ ] **DOCS-02**: Plaintiff's Claim (Form 7A) generator — template-based, court-formatted, matching Ontario court requirements
-- [ ] **DOCS-03**: Defence (Form 9A) generator — template-based, court-formatted
-- [ ] **DOCS-04**: Filing fee calculator ($108 claim, $77 defence, etc.) with source citations
+- [x] **DOCS-01**: Demand letter generator — template-based, structured inputs, no AI content generation
+- [x] **DOCS-02**: Plaintiff's Claim (Form 7A) generator — template-based, court-formatted, matching Ontario court requirements
+- [x] **DOCS-03**: Defence (Form 9A) generator — template-based, court-formatted
+- [x] **DOCS-04**: Filing fee calculator ($108 claim, $77 defence, etc.) with source citations
 
 ### Guide
 
-- [ ] **GUID-01**: Plain-language process guide covering full Small Claims Court lifecycle (filing → service → defence → settlement conference → trial → enforcement)
-- [ ] **GUID-02**: Settlement conference preparation guide (what to expect, what to bring, how to present)
-- [ ] **GUID-03**: Searchable, accordion-style sections using Alpine.js
-- [ ] **GUID-04**: Court fees schedule with citations to Ontario.ca and court rules
+- [x] **GUID-01**: Plain-language process guide covering full Small Claims Court lifecycle (filing → service → defence → settlement conference → trial → enforcement)
+- [x] **GUID-02**: Settlement conference preparation guide (what to expect, what to bring, how to present)
+- [x] **GUID-03**: Searchable, accordion-style sections using Alpine.js
+- [x] **GUID-04**: Court fees schedule with citations to Ontario.ca and court rules
 
 ### Dashboard
 

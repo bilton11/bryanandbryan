@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - App skeleton, auth, regulatory guardrails, and infrastructure plumbing
 - [x] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
-- [ ] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
+- [x] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
 - [ ] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
 
 ## Phase Details
@@ -66,8 +66,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Document pipeline (Document/DocumentVersion models, documents blueprint, document service, Demand Letter PDF, filing fee page)
-- [ ] 03-02-PLAN.md — Form 7A and Form 9A pixel-perfect court forms, guided narrative prompts, plain-language process guide (8-stage accordion, Alpine.js search, settlement conference prep)
+- [x] 03-01-PLAN.md — Document pipeline (Document/DocumentVersion models, documents blueprint, document service, Demand Letter PDF, filing fee page)
+- [x] 03-02-PLAN.md — Form 7A and Form 9A pixel-perfect court forms, guided narrative prompts, plain-language process guide (8-stage accordion, Alpine.js search, settlement conference prep)
 
 ### Phase 4: Dashboard and Deployment
 **Goal**: A logged-in user sees all their claims, generated documents, and upcoming deadlines in one place; the lawyer escalation pathway is live; and the platform is fully deployed to production on Cloud Run.
@@ -93,5 +93,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-04-05 |
 | 2. Case Assessment | 3/3 | Complete | 2026-04-05 |
-| 3. Documents and Guide | 0/2 | Not started | - |
+| 3. Documents and Guide | 2/2 | Complete | 2026-04-06 |
 | 4. Dashboard and Deployment | 0/2 | Not started | - |
