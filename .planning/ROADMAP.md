@@ -63,11 +63,11 @@ Plans:
   3. User can generate a Defence (Form 9A) PDF under the same template pipeline
   4. The filing fee calculator displays current fees ($108 claim, $77 defence) with citations to the Ontario.ca source — fees are read from named constants, not hardcoded
   5. User can read the full Small Claims Court lifecycle guide (filing through enforcement, including post-June 2025 Trial Management Conference reforms) via accordion-style sections, searchable with Alpine.js
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Document generation pipeline (Jinja2 → WeasyPrint → PDF, ownership check, Demand Letter template, filing fee calculator, disclaimer-on-every-page CSS)
-- [ ] 03-02: Form 7A and Form 9A templates, plain-language process guide and settlement conference prep (accordion UI, Alpine.js search, court fees schedule with citations)
+- [ ] 03-01-PLAN.md — Document pipeline (Document/DocumentVersion models, documents blueprint, document service, Demand Letter PDF, filing fee page)
+- [ ] 03-02-PLAN.md — Form 7A and Form 9A pixel-perfect court forms, guided narrative prompts, plain-language process guide (8-stage accordion, Alpine.js search, settlement conference prep)
 
 ### Phase 4: Dashboard and Deployment
 **Goal**: A logged-in user sees all their claims, generated documents, and upcoming deadlines in one place; the lawyer escalation pathway is live; and the platform is fully deployed to production on Cloud Run.
