@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 ## Current Position
 
 Phase: 4 of 4 (Dashboard and Deployment)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-04-06 — Phase 3 complete, verified, approved
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-04-06 — Completed 04-01-PLAN.md (dashboard-deadline-tracker)
 
-Progress: [███████░░░] 75%
+Progress: [████████░░] 87%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 7 minutes
-- Total execution time: 44 minutes
+- Total execution time: 48 minutes
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: [███████░░░] 75%
 | 01-foundation | 2/2 completed | 8 min | 4 min |
 | 02-case-assessment | 3/3 completed | 20 min | 7 min |
 | 03-documents-and-guide | 2/2 completed | 18 min | 9 min |
+| 04-dashboard-and-deployment | 1/2 completed | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (5 min), 02-03 (7 min), 03-01 (6 min), 03-02 (12 min)
+- Last 5 plans: 02-03 (7 min), 03-01 (6 min), 03-02 (12 min), 04-01 (4 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -74,10 +75,13 @@ Recent decisions affecting current work:
 - 03-02: monetary_limit_formatted passed as pre-formatted string from route — avoids custom Jinja2 filter
 - 03-02: Guide accordion search uses data-keywords attribute — heading-filter approach, not full-text
 - 03-02: GUIDE_STAGES constant added to ontario_constants.py — single source of truth for stage metadata
+- 04-01: dashboard_bp registered without url_prefix — routes define / and /dashboard/dates/<claim_id> directly
+- 04-01: Timeline partial serves double duty — initial Jinja2 include and HTMX swap target (#timeline-{claim_id})
+- 04-01: settlement_conf_date stored as user-entered date; trial_request_deadline = settlement_conf_date + 30 days
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
@@ -87,10 +91,9 @@ None yet.
 - Phase 4: WCAG/AODA audit must be treated as a pre-launch deliverable, not an afterthought (fines up to $100K/day)
 - All phases: Python 3.14 is in use — verify any new SQLAlchemy model files have `from __future__ import annotations`
 - CI/CD: GitHub repository secrets (GCP_PROJECT_ID, WIF_PROVIDER, WIF_SERVICE_ACCOUNT) must be configured before first deploy to main
-- Phase 4: Add /guide link to main navigation and relevant document pages
 
 ## Session Continuity
 
 Last session: 2026-04-06
-Stopped at: Phase 3 complete — ready to plan Phase 4
+Stopped at: Completed 04-01-PLAN.md — dashboard-deadline-tracker
 Resume file: None
