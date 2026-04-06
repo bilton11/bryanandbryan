@@ -1,0 +1,130 @@
+---
+phase: 03
+plan: 01
+subsystem: document-pipeline
+tags: [flask, sqlalchemy, weasyprint, alembic, jinja2, alpinejs, pdf-generation]
+
+dependencies:
+  requires:
+    - 01-01  # Flask app, SQLAlchemy, db extensions
+    - 01-02  # ontario_constants.py with fee constants
+    - 02-01  # Claim model with JSONB step_data
+  provides:
+    - Document and DocumentVersion models with full CRUD
+    - Documents blueprint with 9 routes
+    - document_service.py PDF render pipeline
+    - Demand Letter PDF template (first document type end-to-end)
+    - Filing fee page at /fees
+  affects:
+    - 03-02  # Form 7A and 9A templates plug into same pipeline
+    - 04-guide  # Guide can link to /documents/ and /fees
+
+tech-stack:
+  added: []
+  patterns:
+    - "JSONB-with-SQLite-fallback: MutableDict.as_mutable(JSONB().with_variant(JSON(), 'sqlite'))"
+    - "document-pipeline: input_data dict -> render_document_html -> WeasyHTML.write_pdf"
+    - "version-snapshot: DocumentVersion.input_data_snapshot frozen at download time"
+    - "running-disclaimer: CSS position:running(page-disclaimer) + @bottom-center element() for per-page footer"
+    - "alpine-optional-section: x-show/x-model for representative toggle in review form"
+
+key-files:
+  created:
+    - app/models/document.py
+    - app/documents/__init__.py
+    - app/documents/routes.py
+    - app/services/document_service.py
+    - app/templates/documents/index.html
+    - app/templates/documents/review.html
+    - app/templates/documents/preview.html
+    - app/templates/documents/versions.html
+    - app/templates/documents/fees.html
+    - app/templates/documents/pdf/demand_letter.html
+    - migrations/versions/3812ca30ab60_add_documents_and_document_versions_.py
+  modified:
+    - app/models/claim.py  # added documents relationship
+    - app/models/user.py   # added documents relationship
+    - app/ontario_constants.py  # added FORM_7A_VERSION, FORM_9A_VERSION, FEES_LAST_VERIFIED
+    - app/__init__.py  # registered documents_bp
+
+decisions:
+  - "03-01: documents blueprint registered without URL prefix — routes define /documents/ paths directly"
+  - "03-01: DocumentVersion.input_data_snapshot taken at download time (not review submit) — review is free-edit until download"
+  - "03-01: PDF download is plain anchor tag, not HTMX — HTMX cannot trigger binary file download"
+  - "03-01: FORM_7A and FORM_9A raise NotImplementedError in document_service — plan 03-02 adds those templates"
+  - "03-01: Text import added manually to Alembic migration — autogenerate omitted it from JSONB astext_type parameter"
+
+metrics:
+  duration: "6 minutes"
+  completed: "2026-04-06"
+---
+
+# Phase 3 Plan 1: Document Pipeline Summary
+
+**One-liner:** JSONB document model with version history, WeasyPrint PDF pipeline, Demand Letter template, and filing fee page — all routes wired end-to-end.
+
+## What Was Built
+
+The complete document generation infrastructure:
+
+1. **Data model** — `Document` (stores doc_type, title, JSONB input_data, FK to user and optional claim) and `DocumentVersion` (snapshot of input_data at each download, unique version_number per document). Alembic migration applied to SQLite dev DB.
+
+2. **Documents blueprint** — 9 routes: index, new (standalone), from-claim (pre-populated), review GET/POST, preview, download, versions, version-download, fees. All authenticated except /fees.
+
+3. **Document service** — `render_document_html()` dispatches to Jinja2 template by doc_type, `render_document_pdf()` calls WeasyPrint, `render_version_pdf()` re-generates from historical snapshot.
+
+4. **Demand Letter PDF template** — standalone HTML (no base.html), CSS `position:running(page-disclaimer)` + `@bottom-center element()` for per-page disclaimer, system fonts only, table-based layout for WeasyPrint compatibility.
+
+5. **Web templates** — index (list + generate buttons), review (single-page form with Alpine.js representative toggle), preview (inline HTML with plain download anchor), versions (history table), fees (standalone, no login required).
+
+6. **Filing fee page** — all fees from named constants in ontario_constants.py, O. Reg. 432/93 source citation, Ontario.ca link, last-verified date.
+
+## Decisions Made
+
+| Decision | Rationale |
+|----------|-----------|
+| Version snapshot at download (not review submit) | Review is iterative — user may submit multiple times before downloading; snapshot should reflect the exact data that generated the PDF |
+| Plain anchor for PDF download | HTMX processes responses as HTML — cannot handle binary `Content-Disposition: attachment` responses |
+| NotImplementedError for Form 7A/9A | Pipeline is proven with Demand Letter; form templates are plan 03-02 scope |
+| Text import fix in migration | Alembic autogenerate omitted `from sqlalchemy import Text` needed for JSONB `astext_type=Text()` — fixed manually before applying |
+
+## Deviations from Plan
+
+### Auto-fixed Issues
+
+**1. [Rule 1 - Bug] Missing `Text` import in Alembic autogenerated migration**
+
+- **Found during:** Task 1 — `flask db upgrade` threw `NameError: name 'Text' is not defined`
+- **Issue:** Alembic autogenerate included `JSONB(astext_type=Text())` but did not add the `from sqlalchemy import Text` import
+- **Fix:** Added `from sqlalchemy import Text` to the migration file before running upgrade
+- **Files modified:** `migrations/versions/3812ca30ab60_add_documents_and_document_versions_.py`
+- **Commit:** 230310b
+
+None beyond the Alembic import fix above.
+
+## Verification Results
+
+All verifications passed:
+
+```
+Models OK  — Document, DocumentVersion, DocumentType import
+Blueprint OK — documents_bp import
+Service OK — render_document_pdf import
+Routes: ['/documents/', '/documents/<int:doc_id>/download', '/documents/<int:doc_id>/preview',
+         '/documents/<int:doc_id>/review', '/documents/<int:doc_id>/versions',
+         '/documents/<int:doc_id>/versions/<int:version_id>/download',
+         '/documents/from-claim/<int:claim_id>/<doc_type>',
+         '/documents/new/<doc_type>', '/fees']
+HTML render OK, length: 6120
+Fees page: 200 OK — fee table, 108.00, O. Reg. 432/93, ontario.ca all present
+Documents index: 302 redirect to login (login_required working)
+```
+
+## Next Phase Readiness
+
+Plan 03-02 can proceed immediately:
+- Document pipeline is wired end-to-end and proven with Demand Letter
+- `render_document_html()` dispatcher ready for FORM_7A and FORM_9A branches (currently raise NotImplementedError)
+- `_prepopulate_from_claim()` already extracts evidence data for Form 7A
+
+No blockers for 03-02.

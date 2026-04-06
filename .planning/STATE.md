@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 ## Current Position
 
 Phase: 3 of 4 (Documents and Guide)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-04-05 — Phase 2 complete, verified, approved
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-04-06 — Completed 03-01-PLAN.md (document pipeline)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
@@ -29,9 +29,10 @@ Progress: [█████░░░░░] 50%
 |-------|-------|-------|----------|
 | 01-foundation | 2/2 completed | 8 min | 4 min |
 | 02-case-assessment | 3/3 completed | 20 min | 7 min |
+| 03-documents-and-guide | 1/2 completed | 6 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (3 min), 02-01 (8 min), 02-02 (5 min), 02-03 (7 min)
+- Last 5 plans: 02-01 (8 min), 02-02 (5 min), 02-03 (7 min), 03-01 (6 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -65,6 +66,10 @@ Recent decisions affecting current work:
 - 02-03: PII exclusion from Claude prompt — build_claim_summary() strips names/addresses/emails, sends factual attributes only
 - 02-03: PDF template fully standalone (no extends base.html) — system fonts only, no nav/logout, per-page disclaimer via CSS running()/element()
 - 02-03: Finalize route owns DRAFT→ASSESSED transition — wizard_step/summary redirects to /finalize which calls AI and commits
+- 03-01: documents blueprint registered without URL prefix — routes define /documents/ paths directly
+- 03-01: DocumentVersion.input_data_snapshot taken at download time — review is free-edit until download triggers versioning
+- 03-01: PDF download uses plain anchor tag (not HTMX) — HTMX cannot trigger binary file downloads
+- 03-01: FORM_7A and FORM_9A raise NotImplementedError in document_service — plan 03-02 adds those templates
 
 ### Pending Todos
 
@@ -81,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-05
-Stopped at: Phase 2 complete — ready to plan Phase 3
+Last session: 2026-04-06
+Stopped at: Completed 03-01-PLAN.md — document pipeline, Demand Letter, fees page
 Resume file: None
