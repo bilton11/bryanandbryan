@@ -114,7 +114,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Model exports, CI test gate, REQUIREMENTS.md traceability, ROADMAP wording verification
+- [x] 06-01-PLAN.md — Model exports, CI test gate, REQUIREMENTS.md traceability, ROADMAP wording verification
 
 ## Progress
 
@@ -128,4 +128,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 3. Documents and Guide | 2/2 | Complete | 2026-04-06 |
 | 4. Dashboard and Deployment | 2/2 | Complete | 2026-04-06 |
 | 5. UI Gap Closure and Polish | 1/1 | Complete | 2026-04-06 |
-| 6. Codebase Consistency Cleanup | 0/1 | Planned | — |
+| 6. Codebase Consistency Cleanup | 1/1 | Complete | 2026-04-06 |
