@@ -44,10 +44,10 @@
 
 ### Dashboard
 
-- [ ] **DASH-01**: User dashboard showing all claims, generated documents, and upcoming deadlines
-- [ ] **DASH-02**: Deadline tracker calculating from key dates (limitation period expiry, defence deadline 20 days after service, settlement conference window, trial request deadline)
-- [ ] **DASH-03**: Timeline visualization for calculated deadlines
-- [ ] **DASH-04**: Lawyer escalation pathway — clear handoff point to partner lawyer for complex cases
+- [x] **DASH-01**: User dashboard showing all claims, generated documents, and upcoming deadlines
+- [x] **DASH-02**: Deadline tracker calculating from key dates (limitation period expiry, defence deadline 20 days after service, settlement conference window, trial request deadline)
+- [x] **DASH-03**: Timeline visualization for calculated deadlines
+- [x] **DASH-04**: Lawyer escalation pathway — clear handoff point to partner lawyer for complex cases
 
 ## v2 Requirements
 
@@ -111,10 +111,10 @@
 | GUID-02 | Phase 3 | Pending |
 | GUID-03 | Phase 3 | Pending |
 | GUID-04 | Phase 3 | Pending |
-| DASH-01 | Phase 4 | Pending |
-| DASH-02 | Phase 4 | Pending |
-| DASH-03 | Phase 4 | Pending |
-| DASH-04 | Phase 4 | Pending |
+| DASH-01 | Phase 4 | Complete |
+| DASH-02 | Phase 4 | Complete |
+| DASH-03 | Phase 4 | Complete |
+| DASH-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 29 total

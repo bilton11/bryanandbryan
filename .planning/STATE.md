@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-04-04)
 
 **Core value:** An SRL can walk through a guided case assessment, get a clear picture of their situation, and produce court-ready documents — all framed as legal information, never legal advice.
-**Current focus:** Phase 4 — Dashboard and Deployment
+**Current focus:** Milestone v1.0 complete
 
 ## Current Position
 
-Phase: 4 of 4 (Dashboard and Deployment)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-04-06 — Completed 04-01-PLAN.md (dashboard-deadline-tracker)
+Phase: 4 of 4 (Dashboard and Deployment) — COMPLETE
+Plan: 2 of 2 in current phase — COMPLETE
+Status: All phases complete
+Last activity: 2026-04-06 — Completed Phase 4 (Dashboard and Deployment)
 
-Progress: [████████░░] 87%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 7 minutes
-- Total execution time: 48 minutes
+- Total plans completed: 9
+- Average duration: 6 minutes
+- Total execution time: 56 minutes
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [████████░░] 87%
 | 01-foundation | 2/2 completed | 8 min | 4 min |
 | 02-case-assessment | 3/3 completed | 20 min | 7 min |
 | 03-documents-and-guide | 2/2 completed | 18 min | 9 min |
-| 04-dashboard-and-deployment | 1/2 completed | 4 min | 4 min |
+| 04-dashboard-and-deployment | 2/2 completed | 12 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-03 (7 min), 03-01 (6 min), 03-02 (12 min), 04-01 (4 min)
+- Last 5 plans: 03-01 (6 min), 03-02 (12 min), 04-01 (4 min), 04-02 (8 min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -75,9 +75,11 @@ Recent decisions affecting current work:
 - 03-02: monetary_limit_formatted passed as pre-formatted string from route — avoids custom Jinja2 filter
 - 03-02: Guide accordion search uses data-keywords attribute — heading-filter approach, not full-text
 - 03-02: GUIDE_STAGES constant added to ontario_constants.py — single source of truth for stage metadata
-- 04-01: dashboard_bp registered without url_prefix — routes define / and /dashboard/dates/<claim_id> directly
 - 04-01: Timeline partial serves double duty — initial Jinja2 include and HTMX swap target (#timeline-{claim_id})
 - 04-01: settlement_conf_date stored as user-entered date; trial_request_deadline = settlement_conf_date + 30 days
+- 04-02: Dashboard route at /dashboard (not /) — avoids redirect loop with main.index
+- 04-02: Claim labels use type + opposing party + amount instead of DB IDs
+- 04-02: HTMX script loaded globally from base.html
 
 ### Pending Todos
 
@@ -88,12 +90,12 @@ None.
 - Phase 1: AI prompt guardrail architecture requires supervising lawyer sign-off before any user-facing AI feature ships (Nippon Life v. OpenAI March 2026 precedent)
 - Phase 1: Data retention policy (specific retention periods and deletion workflows) must be decided by partners before schema design
 - Phase 2: Limitation period branching logic must be reviewed by supervising lawyer before launch — discovery doctrine branches are legally sensitive
-- Phase 4: WCAG/AODA audit must be treated as a pre-launch deliverable, not an afterthought (fines up to $100K/day)
+- Phase 4: pytest step in deploy.yml uses `|| true` — remove before external launch so test failures block deployment
 - All phases: Python 3.14 is in use — verify any new SQLAlchemy model files have `from __future__ import annotations`
 - CI/CD: GitHub repository secrets (GCP_PROJECT_ID, WIF_PROVIDER, WIF_SERVICE_ACCOUNT) must be configured before first deploy to main
 
 ## Session Continuity
 
 Last session: 2026-04-06
-Stopped at: Completed 04-01-PLAN.md — dashboard-deadline-tracker
+Stopped at: Milestone v1.0 complete — all 4 phases done
 Resume file: None

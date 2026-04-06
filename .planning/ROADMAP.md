@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation** - App skeleton, auth, regulatory guardrails, and infrastructure plumbing
 - [x] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
 - [x] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
-- [ ] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
+- [x] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
 
 ## Phase Details
 
@@ -81,8 +81,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Dashboard blueprint, deadline tracker service, claims/documents lists, CSS timeline visualization, navigation update
-- [ ] 04-02-PLAN.md — Lawyer escalation pathway, GitHub Actions deployment hardening, WCAG audit, regulatory sign-off checklist
+- [x] 04-01-PLAN.md — Dashboard blueprint, deadline tracker service, claims/documents lists, CSS timeline visualization, navigation update
+- [x] 04-02-PLAN.md — Lawyer escalation pathway, GitHub Actions deployment hardening, WCAG audit, regulatory sign-off checklist
 
 ## Progress
 
@@ -94,4 +94,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Foundation | 2/2 | Complete | 2026-04-05 |
 | 2. Case Assessment | 3/3 | Complete | 2026-04-05 |
 | 3. Documents and Guide | 2/2 | Complete | 2026-04-06 |
-| 4. Dashboard and Deployment | 0/2 | Not started | - |
+| 4. Dashboard and Deployment | 2/2 | Complete | 2026-04-06 |
