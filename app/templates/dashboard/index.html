@@ -39,7 +39,8 @@
 {% if claims %}
 <section class="dashboard-section dashboard-section--timeline" aria-labelledby="section-deadlines" style="margin-top: 1.5rem;">
   <h2 id="section-deadlines">Deadlines and Timeline</h2>
-  <p class="field-hint" style="margin-bottom:1.5rem;">Enter key dates for each claim to track your court deadlines automatically.</p>
+  <p class="field-hint" style="margin-bottom:0.75rem;">Enter key dates for each claim to track your court deadlines automatically.</p>
+  <p class="field-hint" style="margin-bottom:1.5rem;"><a href="{{ url_for('main.guide') }}">Learn about the process</a> — understand what each deadline means and what to expect at each stage.</p>
 
   {% for claim in claims %}
   {% set deadlines = claim_deadlines[claim.id] %}
@@ -85,6 +86,9 @@
     <div id="timeline-{{ claim.id }}">
       {% include "dashboard/partials/deadline_timeline.html" with context %}
     </div>
+
+    {% set escalation = claim_escalations[claim.id] %}
+    {% include "dashboard/partials/escalation_panel.html" with context %}
 
   </div>{# /.claim-deadline-block #}
 

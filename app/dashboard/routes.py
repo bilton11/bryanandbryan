@@ -11,6 +11,7 @@ from app.extensions import db
 from app.models.claim import Claim
 from app.models.document import Document
 from app.services.deadline_service import build_claim_deadlines
+from app.services.escalation_service import get_escalation_reasons, is_escalation_required
 
 
 @dashboard_bp.route("/")
@@ -36,6 +37,14 @@ def index():
         bool(dl.overdue_items) for dl in claim_deadlines.values()
     )
 
+    claim_escalations = {
+        c.id: {
+            "required": is_escalation_required(c),
+            "reasons": get_escalation_reasons(c),
+        }
+        for c in claims
+    }
+
     return render_template(
         "dashboard/index.html",
         claims=claims,
@@ -43,6 +52,7 @@ def index():
         claim_deadlines=claim_deadlines,
         has_overdue=has_overdue,
         today=date.today(),
+        claim_escalations=claim_escalations,
     )
 
 

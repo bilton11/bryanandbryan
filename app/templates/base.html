@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bryan and Bryan{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     {% block head_extra %}{% endblock %}
 </head>
 <body>
@@ -15,10 +16,10 @@
             <a href="{{ url_for('main.index') }}" class="site-name">Bryan and Bryan</a>
             {% if current_user.is_authenticated %}
             <div class="nav-links">
-                <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
-                <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}">New Assessment</a>
-                <a href="{{ url_for('documents.index') }}">Documents</a>
-                <a href="{{ url_for('main.guide') }}">Guide</a>
+                <a href="{{ url_for('dashboard.index') }}"{% if request.endpoint == 'dashboard.index' %} aria-current="page"{% endif %}>Dashboard</a>
+                <a href="{{ url_for('assessment.wizard_step', step='dispute_type') }}"{% if request.endpoint and request.endpoint.startswith('assessment.') %} aria-current="page"{% endif %}>New Assessment</a>
+                <a href="{{ url_for('documents.index') }}"{% if request.endpoint and request.endpoint.startswith('documents.') %} aria-current="page"{% endif %}>Documents</a>
+                <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
                 <a href="{{ url_for('auth.logout') }}">Log out</a>
             </div>
             {% endif %}
