@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 
 ## Current Position
 
-Phase: 5 of 6 (UI Gap Closure and Polish) — PLANNED
-Plan: 0 of 1 in current phase — Not yet planned
-Status: Gap closure phases added from milestone audit
-Last activity: 2026-04-06 — Added gap closure phases 5-6 from v1.0 audit
+Phase: 5 of 6 (UI Gap Closure and Polish) — COMPLETE
+Plan: 1 of 1 in current phase — Phase complete
+Status: Phase 5 complete — ready for Phase 6
+Last activity: 2026-04-06 — Completed 05-01-PLAN.md (2 tasks, 4 files, 3 min)
 
-Progress: [████████░░] 80% (4/6 phases complete)
+Progress: [█████████░] 90% (5/6 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: 6 minutes
-- Total execution time: 56 minutes
+- Total execution time: 59 minutes
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: [████████░░] 80% (4/6 phases complete)
 | 02-case-assessment | 3/3 completed | 20 min | 7 min |
 | 03-documents-and-guide | 2/2 completed | 18 min | 9 min |
 | 04-dashboard-and-deployment | 2/2 completed | 12 min | 6 min |
+| 05-ui-gap-closure-and-polish | 1/1 completed | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (6 min), 03-02 (12 min), 04-01 (4 min), 04-02 (8 min)
-- Trend: stable
+- Last 5 plans: 03-02 (12 min), 04-01 (4 min), 04-02 (8 min), 05-01 (3 min)
+- Trend: stable, fast
 
 *Updated after each plan completion*
 
@@ -80,6 +81,9 @@ Recent decisions affecting current work:
 - 04-02: Dashboard route at /dashboard (not /) — avoids redirect loop with main.index
 - 04-02: Claim labels use type + opposing party + amount instead of DB IDs
 - 04-02: HTMX script loaded globally from base.html
+- 05-01: HTMX 2.0.4 with SRI integrity hash loaded globally — child templates must not load HTMX directly
+- 05-01: Public nav lives in {% else %} branch of current_user.is_authenticated — no separate public base template needed
+- 05-01: Alpine.js loaded per-template in head_extra (only wizard_shell.html needs it)
 
 ### Pending Todos
 
@@ -97,5 +101,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-04-06
-Stopped at: Gap closure phases 5-6 created from milestone audit — ready to plan Phase 5
+Stopped at: Completed 05-01-PLAN.md — Phase 5 UI gap closure complete
 Resume file: None
