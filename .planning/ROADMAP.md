@@ -78,11 +78,11 @@ Plans:
   2. The deadline tracker calculates and displays key dates (limitation period expiry, 20-day defence deadline after service, settlement conference window, trial request deadline) from user-entered key dates
   3. Timeline visualization renders calculated deadlines in chronological order
   4. User with a complex case (claim > $25K, corporate defendant, or flagged complexity) sees a clear escalation pathway to the partner lawyer
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: User dashboard, deadline tracker, timeline visualization (DASH-01, DASH-02, DASH-03)
-- [ ] 04-02: Lawyer escalation pathway and production hardening (DASH-04, final Cloud Run config, load test, WCAG audit, regulatory sign-off checklist)
+- [ ] 04-01-PLAN.md — Dashboard blueprint, deadline tracker service, claims/documents lists, CSS timeline visualization, navigation update
+- [ ] 04-02-PLAN.md — Lawyer escalation pathway, GitHub Actions deployment hardening, WCAG audit, regulatory sign-off checklist
 
 ## Progress
 
