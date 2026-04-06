@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}Review Document — Bryan and Bryan{% endblock %}
+
+{% block head_extra %}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <nav style="font-size: 0.875rem; margin-bottom: 1rem; color: #666;">
+    <a href="{{ url_for('documents.index') }}">My Documents</a> &rsaquo; Review
+  </nav>
+
+  <h1>Review Document Details</h1>
+  <p>Review and complete all fields below. Fields pre-filled from your assessment can be edited.</p>
+
+  <form method="POST" action="{{ url_for('documents.review', doc_id=document.id) }}"
+        x-data="{ has_representative: {{ 'true' if input_data.get('representative_type', 'self') not in ('', 'self') else 'false' }} }">
+
+    {# ---- Claim Details (pre-filled from assessment) ---- #}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Claim Details</h2>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="claim_type">Type of Claim</label>
+        {% if document.claim_id %}
+        <input type="text" id="claim_type" value="{{ input_data.get('claim_type', '') | replace('_', ' ') | title }}"
+               class="form-control" readonly style="background: #f8f8f8; color: #555;">
+        <input type="hidden" name="claim_type" value="{{ input_data.get('claim_type', '') }}">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">From your assessment — cannot be changed here.</p>
+        {% else %}
+        <input type="text" id="claim_type" name="claim_type" class="form-control"
+               value="{{ input_data.get('claim_type', '') }}"
+               placeholder="e.g. Unpaid debt, Property damage, Breach of contract">
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="incident_date">Date of Incident</label>
+        <input type="date" id="incident_date" name="incident_date" class="form-control"
+               value="{{ input_data.get('incident_date', '') }}">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="facts_description">Description of Facts</label>
+        <textarea id="facts_description" name="facts_description" class="form-control"
+                  rows="5" placeholder="Describe what happened and why you are owed money.">{{ input_data.get('facts_description', '') }}</textarea>
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">
+          This narrative will appear in the body of your document.
+        </p>
+      </div>
+    </section>
+
+    {# ---- Demand Details (Demand Letter specific) ---- #}
+    {% if document.doc_type.value == 'demand_letter' %}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Demand Details</h2>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="demand_amount">Amount Being Demanded ($)</label>
+        <input type="number" id="demand_amount" name="demand_amount" class="form-control"
+               value="{{ input_data.get('demand_amount', input_data.get('amount', '')) }}"
+               min="1" max="50000" step="1" placeholder="0">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">Whole dollar amount (no cents).</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="demand_deadline_days">Payment Deadline (days from letter date)</label>
+        <input type="number" id="demand_deadline_days" name="demand_deadline_days" class="form-control"
+               value="{{ input_data.get('demand_deadline_days', '30') }}"
+               min="7" max="90" step="1">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">Standard is 30 days. Minimum recommended is 7 days.</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="payment_method">How Payment Should Be Made</label>
+        <input type="text" id="payment_method" name="payment_method" class="form-control"
+               value="{{ input_data.get('payment_method', '') }}"
+               placeholder="e.g. E-transfer to email@example.com, certified cheque payable to [Name]">
+      </div>
+    </section>
+    {% endif %}
+
+    {# ---- Your Information (Sender) ---- #}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Your Information</h2>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="sender_name">Your Full Legal Name <span style="color: #c00;">*</span></label>
+        <input type="text" id="sender_name" name="sender_name" class="form-control" required
+               value="{{ input_data.get('sender_name', '') }}"
+               placeholder="As it appears on legal documents">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="sender_address_street">Street Address <span style="color: #c00;">*</span></label>
+        <input type="text" id="sender_address_street" name="sender_address_street" class="form-control" required
+               value="{{ input_data.get('sender_address_street', '') }}"
+               placeholder="123 Main Street, Unit 4">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+        <div class="form-group">
+          <label for="sender_address_city">City <span style="color: #c00;">*</span></label>
+          <input type="text" id="sender_address_city" name="sender_address_city" class="form-control" required
+                 value="{{ input_data.get('sender_address_city', '') }}">
+        </div>
+        <div class="form-group">
+          <label for="sender_address_province">Province</label>
+          <input type="text" id="sender_address_province" name="sender_address_province" class="form-control"
+                 value="{{ input_data.get('sender_address_province', 'ON') }}"
+                 maxlength="2" style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label for="sender_address_postal">Postal Code <span style="color: #c00;">*</span></label>
+          <input type="text" id="sender_address_postal" name="sender_address_postal" class="form-control" required
+                 value="{{ input_data.get('sender_address_postal', '') }}"
+                 placeholder="A1A 1A1" maxlength="7">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+        <div class="form-group">
+          <label for="sender_phone">Phone Number</label>
+          <input type="tel" id="sender_phone" name="sender_phone" class="form-control"
+                 value="{{ input_data.get('sender_phone', '') }}"
+                 placeholder="416-555-0100">
+        </div>
+        <div class="form-group">
+          <label for="sender_email">Email Address</label>
+          <input type="email" id="sender_email" name="sender_email" class="form-control"
+                 value="{{ input_data.get('sender_email', '') }}"
+                 placeholder="you@example.com">
+        </div>
+      </div>
+    </section>
+
+    {# ---- Representative (optional, Alpine.js toggle) ---- #}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Representative (Optional)</h2>
+      <p>Complete this section only if you are represented by a lawyer, paralegal, or agent.</p>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label>
+          <input type="checkbox" x-model="has_representative" value="1"
+                 {% if input_data.get('representative_type', 'self') not in ('', 'self') %}checked{% endif %}>
+          I am represented by a lawyer, paralegal, or agent
+        </label>
+      </div>
+
+      <div x-show="has_representative" x-cloak style="padding-left: 1rem; border-left: 3px solid #ccc;">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="representative_name">Representative Name <span style="color: #c00;">*</span></label>
+          <input type="text" id="representative_name" name="representative_name" class="form-control"
+                 :required="has_representative"
+                 value="{{ input_data.get('representative_name', '') }}">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="representative_type">Type</label>
+          <select id="representative_type" name="representative_type" class="form-control">
+            {% for rt in representative_types %}
+            <option value="{{ rt.value }}"
+              {% if input_data.get('representative_type', '') == rt.value %}selected{% endif %}>
+              {{ rt.label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="representative_address">Representative Address</label>
+          <input type="text" id="representative_address" name="representative_address" class="form-control"
+                 value="{{ input_data.get('representative_address', '') }}"
+                 placeholder="Full address">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="lsuc_number">Law Society Registration Number (if lawyer or paralegal)</label>
+          <input type="text" id="lsuc_number" name="lsuc_number" class="form-control"
+                 value="{{ input_data.get('lsuc_number', '') }}"
+                 placeholder="e.g. 12345A">
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">Required for lawyers and paralegals. Leave blank for agents.</p>
+        </div>
+      </div>
+    </section>
+
+    {# ---- Opposing Party ---- #}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Opposing Party</h2>
+      <p>The person or organization you are sending this document to.</p>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="opposing_party_name">Full Legal Name <span style="color: #c00;">*</span></label>
+        <input type="text" id="opposing_party_name" name="opposing_party_name" class="form-control" required
+               value="{{ input_data.get('opposing_party_name', '') }}"
+               placeholder="Individual: First and Last Name | Business: Full registered name">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="opposing_party_type">Party Type</label>
+        <select id="opposing_party_type" name="opposing_party_type" class="form-control">
+          <option value="individual" {% if input_data.get('opposing_party_type', '') == 'individual' %}selected{% endif %}>Individual</option>
+          <option value="business" {% if input_data.get('opposing_party_type', '') == 'business' %}selected{% endif %}>Business or corporation</option>
+          <option value="organization" {% if input_data.get('opposing_party_type', '') == 'organization' %}selected{% endif %}>Organization</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="opposing_party_address_street">Street Address (Address for Service) <span style="color: #c00;">*</span></label>
+        <input type="text" id="opposing_party_address_street" name="opposing_party_address_street" class="form-control" required
+               value="{{ input_data.get('opposing_party_address_street', '') }}"
+               placeholder="123 Respondent Street">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+        <div class="form-group">
+          <label for="opposing_party_address_city">City <span style="color: #c00;">*</span></label>
+          <input type="text" id="opposing_party_address_city" name="opposing_party_address_city" class="form-control" required
+                 value="{{ input_data.get('opposing_party_address_city', '') }}">
+        </div>
+        <div class="form-group">
+          <label for="opposing_party_address_province">Province</label>
+          <input type="text" id="opposing_party_address_province" name="opposing_party_address_province" class="form-control"
+                 value="{{ input_data.get('opposing_party_address_province', 'ON') }}"
+                 maxlength="2" style="text-transform: uppercase;">
+        </div>
+        <div class="form-group">
+          <label for="opposing_party_address_postal">Postal Code <span style="color: #c00;">*</span></label>
+          <input type="text" id="opposing_party_address_postal" name="opposing_party_address_postal" class="form-control" required
+                 value="{{ input_data.get('opposing_party_address_postal', '') }}"
+                 placeholder="A1A 1A1" maxlength="7">
+        </div>
+      </div>
+    </section>
+
+    {# ---- Court Location ---- #}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Court Location</h2>
+      <p>Select the Ontario Small Claims Court location where you intend to file.</p>
+
+      <div class="form-group">
+        <label for="court_location">Court Location <span style="color: #c00;">*</span></label>
+        <select id="court_location" name="court_location" class="form-control" required>
+          <option value="">— Select a location —</option>
+          {% for loc in court_locations %}
+          <option value="{{ loc }}" {% if input_data.get('court_location', '') == loc %}selected{% endif %}>
+            {{ loc }} Small Claims Court
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </section>
+
+    {# ---- Submit ---- #}
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+      <button type="submit" class="btn btn-primary">Save and Preview Document</button>
+      <a href="{{ url_for('documents.index') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+<style>
+[x-cloak] { display: none !important; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 1.25rem; }
+.form-control { display: block; width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #ccc; border-radius: 3px; font-size: 1rem; box-sizing: border-box; }
+.form-group label { display: block; font-weight: 600; margin-bottom: 0.375rem; font-size: 0.9rem; }
+.btn { display: inline-block; padding: 0.5rem 1.25rem; border-radius: 4px; text-decoration: none; font-size: 0.95rem; cursor: pointer; border: none; }
+.btn-primary { background: #1e3a5f; color: #fff; }
+.btn-secondary { background: #eee; color: #333; }
+</style>
+{% endblock %}

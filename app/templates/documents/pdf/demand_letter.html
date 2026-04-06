@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Demand Letter — Bryan and Bryan</title>
+  <style>
+    /* -----------------------------------------------------------------------
+       Page setup — Letter size, margins with room for running footer disclaimer
+    ----------------------------------------------------------------------- */
+    @page {
+      size: Letter;
+      margin: 2.5cm 2.5cm 3.5cm 2.5cm;
+
+      @bottom-center {
+        content: element(page-disclaimer);
+        font-size: 8pt;
+        color: #555;
+      }
+    }
+
+    /* Running element — WeasyPrint lifts this out of normal flow and prints it
+       in the @bottom-center area of every page. */
+    #page-disclaimer {
+      position: running(page-disclaimer);
+      text-align: center;
+      font-size: 8pt;
+      font-style: italic;
+      color: #555;
+      border-top: 0.5pt solid #ccc;
+      padding-top: 4pt;
+    }
+
+    /* -----------------------------------------------------------------------
+       Typography — system fonts only (no external requests in PDF)
+    ----------------------------------------------------------------------- */
+    body {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #111;
+      margin: 0;
+      padding: 0;
+    }
+
+    p {
+      margin: 0 0 8pt 0;
+    }
+
+    /* -----------------------------------------------------------------------
+       Demand letter structure
+    ----------------------------------------------------------------------- */
+
+    .demand-header {
+      text-align: center;
+      margin-bottom: 20pt;
+      border-bottom: 1.5pt solid #1e3a5f;
+      padding-bottom: 12pt;
+    }
+
+    .demand-header__title {
+      font-size: 18pt;
+      font-weight: bold;
+      color: #1e3a5f;
+      letter-spacing: 2pt;
+      text-transform: uppercase;
+      margin: 0 0 4pt 0;
+    }
+
+    .demand-header__without-prejudice {
+      font-size: 10pt;
+      font-style: italic;
+      color: #555;
+      margin: 0;
+    }
+
+    .demand-date {
+      text-align: right;
+      font-size: 10pt;
+      margin-bottom: 20pt;
+      color: #333;
+    }
+
+    .addressee-block {
+      margin-bottom: 20pt;
+    }
+
+    .addressee-block__name {
+      font-weight: bold;
+    }
+
+    .salutation {
+      margin-bottom: 12pt;
+    }
+
+    .demand-body {
+      margin-bottom: 16pt;
+    }
+
+    .demand-body h2 {
+      font-size: 11pt;
+      font-weight: bold;
+      text-decoration: underline;
+      margin: 14pt 0 6pt 0;
+      color: #1e3a5f;
+    }
+
+    .sender-block {
+      margin-top: 30pt;
+    }
+
+    .sender-block__closing {
+      margin-bottom: 40pt;
+    }
+
+    .sender-block__name {
+      font-weight: bold;
+      border-top: 0.5pt solid #333;
+      padding-top: 4pt;
+      min-width: 250pt;
+      display: inline-block;
+    }
+
+    .footer-note {
+      margin-top: 24pt;
+      padding-top: 8pt;
+      border-top: 0.5pt solid #ccc;
+      font-size: 9pt;
+      color: #666;
+      font-style: italic;
+    }
+
+    /* Use table for layout to avoid WeasyPrint flexbox limitations */
+    .layout-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .layout-table td {
+      vertical-align: top;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  {# -------------------------------------------------------------------------
+     Running disclaimer — WeasyPrint lifts this and prints it on every page
+  -------------------------------------------------------------------------- #}
+  <div id="page-disclaimer">
+    Legal Information, Not Legal Advice. This document was prepared using Bryan and Bryan's document
+    generation tool and does not constitute legal advice. Consult a licensed legal professional before
+    proceeding. Bryan and Bryan &mdash; {{ letter_date }}.
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Document header
+  -------------------------------------------------------------------------- #}
+  <div class="demand-header">
+    <div class="demand-header__title">Demand Letter</div>
+    <div class="demand-header__without-prejudice">Without Prejudice</div>
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Date line
+  -------------------------------------------------------------------------- #}
+  <div class="demand-date">
+    {{ letter_date }}
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Addressee block
+  -------------------------------------------------------------------------- #}
+  <div class="addressee-block">
+    <table class="layout-table">
+      <tr>
+        <td>
+          <div class="addressee-block__name">{{ opposing_party_name or "[Opposing Party Name]" }}</div>
+          {% if opposing_party_address_street %}
+          <div>{{ opposing_party_address_street }}</div>
+          {% endif %}
+          {% if opposing_party_address_city or opposing_party_address_province or opposing_party_address_postal %}
+          <div>
+            {{ opposing_party_address_city }}{% if opposing_party_address_city and opposing_party_address_province %}, {% endif %}{{ opposing_party_address_province }}{% if opposing_party_address_postal %}&nbsp;&nbsp;{{ opposing_party_address_postal }}{% endif %}
+          </div>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Salutation
+  -------------------------------------------------------------------------- #}
+  <p class="salutation">
+    Dear {{ opposing_party_name or "Sir/Madam" }},
+  </p>
+
+  {# -------------------------------------------------------------------------
+     Body
+  -------------------------------------------------------------------------- #}
+  <div class="demand-body">
+
+    {# Opening #}
+    <p>
+      I am writing to demand payment of
+      <strong>${{ "{:,.2f}".format(demand_amount | float) if demand_amount else "[Amount]" }}</strong>
+      {% if claim_type %}
+      in relation to
+      {{ claim_type | replace('_', ' ') | lower }}
+      {% endif %}
+      {% if incident_date %}
+      arising on or about {{ incident_date }}
+      {% endif %}.
+    </p>
+
+    {# Facts section #}
+    {% if facts_description %}
+    <h2>Background</h2>
+    <p>{{ facts_description | e | replace('\n', '<br>') | safe }}</p>
+    {% endif %}
+
+    {# Demand paragraph #}
+    <h2>Demand</h2>
+    <p>
+      I hereby demand that you pay the sum of
+      <strong>${{ "{:,.2f}".format(demand_amount | float) if demand_amount else "[Amount]" }}</strong>
+      within <strong>{{ deadline_days or "30" }} days</strong> of the date of this letter.
+      {% if payment_method %}
+      Payment should be made by {{ payment_method }}.
+      {% endif %}
+    </p>
+
+    {# Consequences paragraph #}
+    <h2>Consequences of Non-Payment</h2>
+    <p>
+      If I do not receive payment in full within the specified timeframe, I intend to
+      commence an action in the Ontario Small Claims Court to recover this amount,
+      together with pre-judgment interest at the applicable rate and court costs.
+      Please note that the current filing fee for a claim in Small Claims Court is
+      {{ filing_fee }} (infrequent claimant).
+    </p>
+
+    <p>
+      I trust that you will give this matter your immediate attention and that legal
+      proceedings will not be necessary.
+    </p>
+
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Closing / Sender block
+  -------------------------------------------------------------------------- #}
+  <div class="sender-block">
+    <p class="sender-block__closing">Yours truly,</p>
+
+    <table class="layout-table">
+      <tr>
+        <td style="min-width: 250pt;">
+          <div class="sender-block__name">{{ sender_name or "[Your Name]" }}</div>
+          {% if sender_address_street %}
+          <div style="margin-top: 4pt;">{{ sender_address_street }}</div>
+          {% endif %}
+          {% if sender_address_city or sender_address_province or sender_address_postal %}
+          <div>
+            {{ sender_address_city }}{% if sender_address_city and sender_address_province %}, {% endif %}{{ sender_address_province }}{% if sender_address_postal %}&nbsp;&nbsp;{{ sender_address_postal }}{% endif %}
+          </div>
+          {% endif %}
+          {% if sender_phone %}
+          <div>Tel: {{ sender_phone }}</div>
+          {% endif %}
+          {% if sender_email %}
+          <div>Email: {{ sender_email }}</div>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  {# -------------------------------------------------------------------------
+     Footer note
+  -------------------------------------------------------------------------- #}
+  <div class="footer-note">
+    This letter is sent without prejudice to any rights or remedies available at law or in equity.
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Preview Document — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<div class="container">
+  <nav style="font-size: 0.875rem; margin-bottom: 1rem; color: #666;">
+    <a href="{{ url_for('documents.index') }}">My Documents</a> &rsaquo;
+    <a href="{{ url_for('documents.review', doc_id=document.id) }}">Review</a> &rsaquo;
+    Preview
+  </nav>
+
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+    <div>
+      <h1 style="margin: 0;">Document Preview</h1>
+      <p style="color: #666; margin: 0.25rem 0 0;">
+        {{ doc_type_labels.get(document.doc_type.value, document.doc_type.value) }} &mdash; {{ document.title }}
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+      <a href="{{ url_for('documents.review', doc_id=document.id) }}" class="btn btn-secondary">
+        &larr; Back to Review
+      </a>
+      {# Standard anchor — NOT HTMX. HTMX cannot trigger binary file downloads. #}
+      <a href="{{ url_for('documents.download', doc_id=document.id) }}" class="btn btn-primary">
+        Download PDF
+      </a>
+    </div>
+  </div>
+
+  <div style="background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.875rem; color: #555;">
+    <strong>Note:</strong> Downloading will save the current version of this document and add it to your version history.
+    Preview may differ slightly from the final PDF layout.
+  </div>
+
+  {# ---- Rendered HTML document inline (sanitized via Jinja2 |safe) ---- #}
+  <div style="background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 2rem; max-width: 800px; margin: 0 auto;">
+    {{ html_content | safe }}
+  </div>
+
+  {# ---- Download CTA (repeated at bottom for convenience) ---- #}
+  <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #f5f8fb; border-radius: 4px;">
+    <p style="margin: 0 0 0.75rem; font-weight: 600;">Ready to download your document?</p>
+    <a href="{{ url_for('documents.download', doc_id=document.id) }}" class="btn btn-primary">
+      Download PDF
+    </a>
+    {% if document.versions %}
+    <a href="{{ url_for('documents.versions', doc_id=document.id) }}" style="display: block; margin-top: 0.75rem; font-size: 0.875rem; color: #666;">
+      View version history ({{ document.versions | length }} version{{ 's' if document.versions | length != 1 }})
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+.btn { display: inline-block; padding: 0.5rem 1.25rem; border-radius: 4px; text-decoration: none; font-size: 0.95rem; }
+.btn-primary { background: #1e3a5f; color: #fff; }
+.btn-secondary { background: #eee; color: #333; }
+</style>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Small Claims Court Filing Fees — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Ontario Small Claims Court — Filing Fees</h1>
+
+  <p>
+    The following fees apply to proceedings in Ontario Small Claims Court.
+    All amounts are set by Ontario Regulation 432/93 under the
+    <em>Administration of Justice Act</em>.
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0;">
+    <thead>
+      <tr style="background: #1e3a5f; color: #fff; text-align: left;">
+        <th style="padding: 0.75rem 1rem;">Fee</th>
+        <th style="padding: 0.75rem 1rem; text-align: right;">Amount</th>
+        <th style="padding: 0.75rem 1rem;">Regulatory Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in fee_table %}
+      <tr style="border-bottom: 1px solid #ddd; {% if loop.index is odd %}background: #f9f9f9;{% endif %}">
+        <td style="padding: 0.625rem 1rem;">{{ row.label }}</td>
+        <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums;">{{ row.amount }}</td>
+        <td style="padding: 0.625rem 1rem; color: #666; font-size: 0.875rem;">{{ row.source }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="background: #fff8e1; border-left: 4px solid #e65100; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+    <p style="margin: 0; font-size: 0.9rem;">
+      <strong>Important:</strong> Fees are set by Ontario Regulation 432/93 and may change without notice.
+      Last verified: <strong>{{ fees_last_verified }}</strong>.
+      Always confirm current fees before filing.
+    </p>
+    <p style="margin: 0.5rem 0 0; font-size: 0.9rem;">
+      For the most current fee schedule, visit:
+      <a href="https://www.ontario.ca/page/small-claims-court-fees" target="_blank" rel="noopener noreferrer">
+        ontario.ca/page/small-claims-court-fees
+      </a>
+    </p>
+  </div>
+
+  <section>
+    <h2>Notes on Fee Categories</h2>
+    <dl style="margin: 0;">
+      <dt style="font-weight: 600; margin-top: 0.75rem;">Infrequent Claimant</dt>
+      <dd style="margin: 0.25rem 0 0; color: #444;">
+        A person or company that files fewer than 10 claims per calendar year. This is the standard category
+        for most individuals and small businesses.
+      </dd>
+      <dt style="font-weight: 600; margin-top: 0.75rem;">Frequent Claimant</dt>
+      <dd style="margin: 0.25rem 0 0; color: #444;">
+        A person or company that files 10 or more claims per calendar year (e.g. landlords, utilities).
+        Higher fees apply as a volume disincentive.
+      </dd>
+      <dt style="font-weight: 600; margin-top: 0.75rem;">Certificate of Judgment</dt>
+      <dd style="margin: 0.25rem 0 0; color: #444;">
+        Issued after you obtain a judgment. Used to enforce the judgment (e.g. garnishment, seizure).
+      </dd>
+      <dt style="font-weight: 600; margin-top: 0.75rem;">Writ of Delivery / Seizure and Sale</dt>
+      <dd style="margin: 0.25rem 0 0; color: #444;">
+        Court-ordered enforcement documents. A Writ of Seizure and Sale directs the sheriff to seize and
+        sell the debtor's property to satisfy the judgment.
+      </dd>
+    </dl>
+  </section>
+
+  <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.875rem; color: #666;">
+    <p>
+      Source: Ontario Regulation 432/93 (Small Claims Court — Fees), as amended.
+      <a href="https://www.ontario.ca/laws/regulation/930432" target="_blank" rel="noopener noreferrer">
+        View regulation on ontario.ca
+      </a>
+    </p>
+  </div>
+</div>
+{% endblock %}

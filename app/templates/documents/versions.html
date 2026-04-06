@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Version History — Bryan and Bryan{% endblock %}
+
+{% block content %}
+<div class="container">
+  <nav style="font-size: 0.875rem; margin-bottom: 1rem; color: #666;">
+    <a href="{{ url_for('documents.index') }}">My Documents</a> &rsaquo;
+    <a href="{{ url_for('documents.preview', doc_id=document.id) }}">{{ document.title }}</a> &rsaquo;
+    Version History
+  </nav>
+
+  <h1>Version History</h1>
+  <p>
+    <strong>{{ document.title }}</strong> &mdash;
+    {{ doc_type_labels.get(document.doc_type.value, document.doc_type.value) }}
+  </p>
+
+  {% if versions %}
+  <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+    Each time you download a document, a new version is created and saved here.
+    You can re-download any previous version.
+  </p>
+
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 2px solid #1e3a5f; text-align: left;">
+        <th style="padding: 0.5rem 0.75rem;">Version</th>
+        <th style="padding: 0.5rem 0.75rem;">Generated</th>
+        <th style="padding: 0.5rem 0.75rem;">Download</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for version in versions %}
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 0.5rem 0.75rem;">
+          <strong>Version {{ version.version_number }}</strong>
+          {% if loop.first %}
+          <span style="background: #1e3a5f; color: #fff; font-size: 0.75rem; padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.5rem;">Latest</span>
+          {% endif %}
+        </td>
+        <td style="padding: 0.5rem 0.75rem; color: #666; font-size: 0.875rem;">
+          {{ version.generated_at.strftime('%Y-%m-%d at %H:%M') }} UTC
+        </td>
+        <td style="padding: 0.5rem 0.75rem;">
+          <a href="{{ url_for('documents.download_version', doc_id=document.id, version_id=version.id) }}"
+             style="font-size: 0.875rem;">
+            Download v{{ version.version_number }} PDF
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% else %}
+  <div style="background: #f5f8fb; border-left: 4px solid #1e3a5f; padding: 1rem; border-radius: 4px;">
+    <p>No versions yet. Download the document to create your first version.</p>
+  </div>
+  {% endif %}
+
+  <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <a href="{{ url_for('documents.preview', doc_id=document.id) }}" class="btn btn-secondary">
+      &larr; Back to Preview
+    </a>
+    <a href="{{ url_for('documents.download', doc_id=document.id) }}" class="btn btn-primary">
+      Download New Version
+    </a>
+  </div>
+</div>
+
+<style>
+.btn { display: inline-block; padding: 0.5rem 1.25rem; border-radius: 4px; text-decoration: none; font-size: 0.95rem; }
+.btn-primary { background: #1e3a5f; color: #fff; }
+.btn-secondary { background: #eee; color: #333; }
+</style>
+{% endblock %}
