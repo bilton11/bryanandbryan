@@ -1,5 +1,5 @@
-from flask import jsonify, render_template
-from flask_login import login_required
+from flask import jsonify, redirect, render_template, url_for
+from flask_login import current_user, login_required
 
 from app.main import main_bp
 
@@ -7,7 +7,7 @@ from app.main import main_bp
 @main_bp.route("/")
 @login_required
 def index():
-    return render_template("main/index.html")
+    return redirect(url_for("dashboard.index"))
 
 
 @main_bp.route("/health")

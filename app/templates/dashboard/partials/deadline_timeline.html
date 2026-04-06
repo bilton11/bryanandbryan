@@ -1,0 +1,30 @@
+{# deadline_timeline.html — HTMX partial and inline include.
+   Variables: deadlines (ClaimDeadlines), claim (Claim), today (date). #}
+{% set items = [] %}
+{% if deadlines.limitation_deadline %}
+  {% set _ = items.append(("Limitation Period Expiry", deadlines.limitation_deadline, "critical")) %}
+{% endif %}
+{% if deadlines.defence_deadline %}
+  {% set _ = items.append(("Defence Filing Deadline", deadlines.defence_deadline, "warning")) %}
+{% endif %}
+{% if deadlines.settlement_conf_date %}
+  {% set _ = items.append(("Settlement Conference", deadlines.settlement_conf_date, "info")) %}
+{% endif %}
+{% if deadlines.trial_request_deadline %}
+  {% set _ = items.append(("Trial Request Deadline", deadlines.trial_request_deadline, "warning")) %}
+{% endif %}
+{% set sorted_items = items | sort(attribute=1) %}
+
+{% if sorted_items %}
+<ol class="deadline-timeline" role="list" aria-label="Deadline timeline">
+  {% for label, dl_date, severity in sorted_items %}
+  {% set is_overdue = dl_date < today %}
+  <li class="deadline-item deadline-item--{{ severity }}{% if is_overdue %} deadline-item--overdue{% endif %}">
+    <span class="deadline-date">{{ dl_date.strftime("%B %d, %Y") }}</span>
+    <span class="deadline-label">{{ label }}{% if is_overdue %} <span class="deadline-overdue-tag" aria-label="overdue">(Overdue)</span>{% endif %}</span>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p class="deadline-empty">Enter your key dates above to see your deadline timeline.</p>
+{% endif %}

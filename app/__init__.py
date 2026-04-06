@@ -39,11 +39,13 @@ def create_app(config_name=None):
     from app.main import main_bp
     from app.assessment import assessment_bp
     from app.documents import documents_bp
+    from app.dashboard import dashboard_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(main_bp)
     app.register_blueprint(assessment_bp)
     app.register_blueprint(documents_bp)
+    app.register_blueprint(dashboard_bp)
 
     # Create tables on startup if they don't exist (production)
     if config_name == "production":

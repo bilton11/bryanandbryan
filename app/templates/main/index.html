@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard — Bryan and Bryan{% endblock %}
+{% block title %}Redirecting — Bryan and Bryan{% endblock %}
 
 {% block content %}
-<h1>Dashboard</h1>
-<p>Welcome. Your dashboard is coming soon.</p>
-<a href="{{ url_for('auth.logout') }}">Sign out</a>
+<p>Redirecting to your dashboard&hellip;</p>
+<p><a href="{{ url_for('dashboard.index') }}">Click here if not redirected automatically.</a></p>
 {% endblock %}
