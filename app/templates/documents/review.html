@@ -16,7 +16,11 @@
   <p>Review and complete all fields below. Fields pre-filled from your assessment can be edited.</p>
 
   <form method="POST" action="{{ url_for('documents.review', doc_id=document.id) }}"
-        x-data="{ has_representative: {{ 'true' if input_data.get('representative_type', 'self') not in ('', 'self') else 'false' }} }">
+        x-data="{
+          has_representative: {{ 'true' if input_data.get('representative_type', 'self') not in ('', 'self') else 'false' }},
+          narrativeMode: '{{ input_data.get('narrative_mode', 'guided') }}',
+          defenceResponse: '{{ input_data.get('defence_response', 'dispute') }}'
+        }">
 
     {# ---- Claim Details (pre-filled from assessment) ---- #}
     <section class="card" style="margin-bottom: 1.5rem;">
@@ -42,6 +46,7 @@
                value="{{ input_data.get('incident_date', '') }}">
       </div>
 
+      {% if document.doc_type.value not in ('form_7a', 'form_9a') %}
       <div class="form-group" style="margin-bottom: 1rem;">
         <label for="facts_description">Description of Facts</label>
         <textarea id="facts_description" name="facts_description" class="form-control"
@@ -50,7 +55,99 @@
           This narrative will appear in the body of your document.
         </p>
       </div>
+      {% endif %}
     </section>
+
+    {# ---- Guided Narrative Prompts (Form 7A and Form 9A only) ---- #}
+    {% if document.doc_type.value in ('form_7a', 'form_9a') %}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Your Statement</h2>
+      <p>Use the guided prompts below to explain your situation clearly and completely. Your answers will be combined into the court form narrative.</p>
+
+      {# Narrative mode toggle #}
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; padding: 0.75rem; background: #f8f8f8; border-radius: 4px; border: 1px solid #ddd;">
+        <span style="font-weight: 600; font-size: 0.9rem;">Mode:</span>
+        <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-weight: 400;">
+          <input type="radio" name="narrative_mode" value="guided"
+                 x-model="narrativeMode"
+                 {% if input_data.get('narrative_mode', 'guided') == 'guided' %}checked{% endif %}>
+          Guided prompts (recommended)
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-weight: 400;">
+          <input type="radio" name="narrative_mode" value="freeform"
+                 x-model="narrativeMode"
+                 {% if input_data.get('narrative_mode') == 'freeform' %}checked{% endif %}>
+          Write your own
+        </label>
+      </div>
+
+      {# Guided prompts — Form 7A (Plaintiff's Claim) #}
+      {% if document.doc_type.value == 'form_7a' %}
+      <div x-show="narrativeMode === 'guided'">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_what_happened">What happened? <span style="color: #c00;">*</span></label>
+          <textarea id="narrative_what_happened" name="narrative_what_happened" class="form-control"
+                    rows="4" placeholder="Describe what the defendant did or failed to do. Be specific about the events that led to your claim.">{{ input_data.get('narrative_what_happened', input_data.get('facts_description', '')) }}</textarea>
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">Example: "The defendant agreed to repair my roof for $4,500 and accepted a deposit of $2,000. The work was never completed and the defendant stopped responding to my calls."</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_when_where">When and where did this happen?</label>
+          <textarea id="narrative_when_where" name="narrative_when_where" class="form-control"
+                    rows="2" placeholder="e.g. On March 15, 2025, at 123 Main Street, Toronto, Ontario.">{{ input_data.get('narrative_when_where', '') }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_damages">What damages or losses did you suffer?</label>
+          <textarea id="narrative_damages" name="narrative_damages" class="form-control"
+                    rows="3" placeholder="List all losses you suffered as a result, including monetary amounts.">{{ input_data.get('narrative_damages', '') }}</textarea>
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">Include: money paid, property damaged, costs to fix the problem, income lost, etc.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_resolution">What resolution are you seeking?</label>
+          <textarea id="narrative_resolution" name="narrative_resolution" class="form-control"
+                    rows="2" placeholder="e.g. I am seeking the return of my $2,000 deposit plus $500 for repairs I had to arrange elsewhere.">{{ input_data.get('narrative_resolution', '') }}</textarea>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Guided prompts — Form 9A (Defence) #}
+      {% if document.doc_type.value == 'form_9a' %}
+      <div x-show="narrativeMode === 'guided'">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_response">What is your response to the plaintiff's claim? <span style="color: #c00;">*</span></label>
+          <textarea id="narrative_response" name="narrative_response" class="form-control"
+                    rows="4" placeholder="Explain why you dispute the claim or provide context for the situation.">{{ input_data.get('narrative_response', '') }}</textarea>
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">Directly address what the plaintiff claims happened and explain your version of events.</p>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_supporting_facts">What facts support your position?</label>
+          <textarea id="narrative_supporting_facts" name="narrative_supporting_facts" class="form-control"
+                    rows="3" placeholder="List specific facts, dates, documents, or witnesses that support your defence.">{{ input_data.get('narrative_supporting_facts', '') }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_counterclaim">Do you have a counterclaim? If so, describe it.</label>
+          <textarea id="narrative_counterclaim" name="narrative_counterclaim" class="form-control"
+                    rows="2" placeholder="Leave blank if you do not have a counterclaim. If you do, you must also file Form 10A.">{{ input_data.get('narrative_counterclaim', '') }}</textarea>
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">A counterclaim is a claim you are making against the plaintiff in return. It requires a separate Form 10A.</p>
+        </div>
+      </div>
+      {% endif %}
+
+      {# Freeform mode — single large textarea #}
+      <div x-show="narrativeMode === 'freeform'" x-cloak>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="narrative_freeform">Your full statement</label>
+          <textarea id="narrative_freeform" name="narrative_freeform" class="form-control"
+                    rows="12" placeholder="Write your complete statement here. Explain what happened, when, and what you are seeking.">{{ input_data.get('narrative_freeform', '') }}</textarea>
+          <p class="help-text" style="font-size: 0.8rem; color: #777;">This text will appear in the court form narrative section exactly as written.</p>
+        </div>
+      </div>
+    </section>
+    {% endif %}
 
     {# ---- Demand Details (Demand Letter specific) ---- #}
     {% if document.doc_type.value == 'demand_letter' %}
@@ -78,6 +175,106 @@
         <input type="text" id="payment_method" name="payment_method" class="form-control"
                value="{{ input_data.get('payment_method', '') }}"
                placeholder="e.g. E-transfer to email@example.com, certified cheque payable to [Name]">
+      </div>
+    </section>
+    {% endif %}
+
+    {# ---- Claim Amount (Form 7A only) ---- #}
+    {% if document.doc_type.value == 'form_7a' %}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Claim Amount</h2>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="claim_amount">Total Amount Claimed ($) <span style="color: #c00;">*</span></label>
+        <input type="number" id="claim_amount" name="claim_amount" class="form-control"
+               value="{{ input_data.get('claim_amount', input_data.get('demand_amount', input_data.get('amount', ''))) }}"
+               min="1" max="50000" step="0.01" placeholder="0.00">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">Maximum $50,000. Pre-judgment interest is calculated separately.</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="interest_rate">Pre-Judgment Interest Rate (% per annum)</label>
+        <input type="text" id="interest_rate" name="interest_rate" class="form-control"
+               value="{{ input_data.get('interest_rate', '') }}"
+               placeholder="e.g. 2.0">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">Leave blank if not claiming pre-judgment interest. Check your contract or the Courts of Justice Act rate.</p>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="claim_number">Court Claim Number (if assigned)</label>
+        <input type="text" id="claim_number" name="claim_number" class="form-control"
+               value="{{ input_data.get('claim_number', '') }}"
+               placeholder="Leave blank — assigned by court upon filing">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">Leave blank when first preparing your claim. Add this after filing if you need to reprint.</p>
+      </div>
+    </section>
+    {% endif %}
+
+    {# ---- Defence Response (Form 9A only) ---- #}
+    {% if document.doc_type.value == 'form_9a' %}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Your Response to the Claim</h2>
+      <p>Select how you are responding to the plaintiff's claim.</p>
+
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; font-weight: 400;">
+          <input type="radio" name="defence_response" value="dispute"
+                 x-model="defenceResponse"
+                 {% if input_data.get('defence_response', 'dispute') == 'dispute' %}checked{% endif %}
+                 style="margin-top: 3px;">
+          <span><strong>I dispute the claim</strong> — I disagree with what the plaintiff is claiming and will defend myself.</span>
+        </label>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; font-weight: 400;">
+          <input type="radio" name="defence_response" value="admit"
+                 x-model="defenceResponse"
+                 {% if input_data.get('defence_response') == 'admit' %}checked{% endif %}
+                 style="margin-top: 3px;">
+          <span><strong>I admit the claim</strong> — I agree I owe the amount but want to propose a payment plan.</span>
+        </label>
+        <div x-show="defenceResponse === 'admit'" x-cloak style="margin-top: 0.75rem; padding-left: 1.5rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label for="admit_amount">Amount I will pay ($)</label>
+              <input type="number" id="admit_amount" name="admit_amount" class="form-control"
+                     value="{{ input_data.get('admit_amount', '') }}"
+                     min="1" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label for="admit_payment_start">Payment starting on</label>
+              <input type="date" id="admit_payment_start" name="admit_payment_start" class="form-control"
+                     value="{{ input_data.get('admit_payment_start', '') }}">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0.75rem;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; font-weight: 400;">
+          <input type="radio" name="defence_response" value="admit_part"
+                 x-model="defenceResponse"
+                 {% if input_data.get('defence_response') == 'admit_part' %}checked{% endif %}
+                 style="margin-top: 3px;">
+          <span><strong>I admit part of the claim</strong> — I agree I owe some of the amount but dispute the rest.</span>
+        </label>
+        <div x-show="defenceResponse === 'admit_part'" x-cloak style="margin-top: 0.75rem; padding-left: 1.5rem;">
+          <div class="form-group">
+            <label for="partial_amount">Amount I admit to ($)</label>
+            <input type="number" id="partial_amount" name="partial_amount" class="form-control"
+                   value="{{ input_data.get('partial_amount', '') }}"
+                   min="1" step="0.01" placeholder="0.00" style="max-width: 200px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="claim_number">Court Claim Number <span style="color: #c00;">*</span></label>
+        <input type="text" id="claim_number" name="claim_number" class="form-control"
+               value="{{ input_data.get('claim_number', '') }}"
+               placeholder="From the Plaintiff's Claim served on you">
+        <p class="help-text" style="font-size: 0.8rem; color: #777;">This appears on the Plaintiff's Claim that was served on you.</p>
       </div>
     </section>
     {% endif %}
@@ -186,7 +383,8 @@
       </div>
     </section>
 
-    {# ---- Opposing Party ---- #}
+    {# ---- Opposing Party (Demand Letter and Form 7A) ---- #}
+    {% if document.doc_type.value in ('demand_letter', 'form_7a') %}
     <section class="card" style="margin-bottom: 1.5rem;">
       <h2>Opposing Party</h2>
       <p>The person or organization you are sending this document to.</p>
@@ -234,6 +432,29 @@
         </div>
       </div>
     </section>
+    {% endif %}
+
+    {# ---- Plaintiff Info (Form 9A only — the person who sued you) ---- #}
+    {% if document.doc_type.value == 'form_9a' %}
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Plaintiff's Information</h2>
+      <p>The person or organization who filed the claim against you.</p>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="plaintiff_name">Plaintiff's Full Legal Name <span style="color: #c00;">*</span></label>
+        <input type="text" id="plaintiff_name" name="plaintiff_name" class="form-control" required
+               value="{{ input_data.get('plaintiff_name', input_data.get('opposing_party_name', '')) }}"
+               placeholder="Name as shown on the Plaintiff's Claim served on you">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="plaintiff_address">Plaintiff's Address for Service</label>
+        <input type="text" id="plaintiff_address" name="plaintiff_address" class="form-control"
+               value="{{ input_data.get('plaintiff_address', '') }}"
+               placeholder="Full address from the Plaintiff's Claim">
+      </div>
+    </section>
+    {% endif %}
 
     {# ---- Court Location ---- #}
     <section class="card" style="margin-bottom: 1.5rem;">
