@@ -33,7 +33,7 @@ jobs:
           pip install --quiet pytest
 
       - name: Run tests
-        run: python -m pytest tests/ -v --tb=short || true
+        run: python -m pytest tests/ -v --tb=short
 
   deploy:
     runs-on: ubuntu-latest
