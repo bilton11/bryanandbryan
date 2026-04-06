@@ -16,6 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Case Assessment** - Multi-step wizard, limitation calculator, jurisdiction check, AI strength indicator
 - [x] **Phase 3: Documents and Guide** - PDF document generators (Demand Letter, Form 7A, Form 9A) and plain-language process guide
 - [x] **Phase 4: Dashboard and Deployment** - User dashboard, deadline tracker, timeline visualization, lawyer escalation, and production deploy
+- [x] **Phase 5: UI Gap Closure and Polish** - Form 7A/9A document buttons, HTMX consolidation, x-cloak CSS, public page navigation
 
 ## Phase Details
 
@@ -95,7 +96,10 @@ Plans:
   3. A single HTMX version loads across the entire app — no dual-version script tags
   4. The `[x-cloak]` CSS rule is present so Alpine.js-controlled elements do not flash before initialization
   5. Unauthenticated users on public pages (/guide, /fees) see navigation links to other public pages and login
-**Plans**: 0 plans
+**Plans**: 1 plan
+
+Plans:
+- [x] 05-01-PLAN.md — x-cloak CSS, HTMX 2.0.4 consolidation, Form 7A/9A document buttons, public page navigation
 
 ### Phase 6: Codebase Consistency Cleanup
 **Goal**: Resolve documentation staleness, model export inconsistency, and CI safety gap identified in milestone audit tech debt.
@@ -120,5 +124,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Case Assessment | 3/3 | Complete | 2026-04-05 |
 | 3. Documents and Guide | 2/2 | Complete | 2026-04-06 |
 | 4. Dashboard and Deployment | 2/2 | Complete | 2026-04-06 |
-| 5. UI Gap Closure and Polish | 0/1 | Planned | — |
+| 5. UI Gap Closure and Polish | 1/1 | Complete | 2026-04-06 |
 | 6. Codebase Consistency Cleanup | 0/1 | Planned | — |
