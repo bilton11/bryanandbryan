@@ -111,7 +111,10 @@ Plans:
   2. REQUIREMENTS.md traceability table shows correct status for all Phase 2, 3, and 4 requirements (Complete, not Pending)
   3. ROADMAP Phase 1 success criterion 1 matches actual implementation (magic-link auth, not email/password)
   4. `pytest` step in deploy.yml fails the pipeline on test failure — no `|| true` bypass
-**Plans**: 0 plans
+**Plans**: 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Model exports, CI test gate, REQUIREMENTS.md traceability, ROADMAP wording verification
 
 ## Progress
 
