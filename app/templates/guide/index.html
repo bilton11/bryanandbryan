@@ -1,0 +1,1025 @@
+{% extends "base.html" %}
+
+{% block title %}Small Claims Court Process Guide — Bryan and Bryan{% endblock %}
+
+{% block head_extra %}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="guide-page"
+     x-data="guideApp()"
+     x-init="init()">
+
+  {# =========================================================================
+     PAGE HEADER
+  ========================================================================= #}
+  <div class="guide-page-header">
+    <h1>Small Claims Court Process Guide</h1>
+    <p class="guide-subtitle">A plain-language guide to the Ontario Small Claims Court process, from before you file through enforcement.</p>
+    <div class="guide-notice" role="note">
+      <strong>Important:</strong> This guide provides general legal information about the Ontario Small Claims Court process.
+      It is not legal advice. For advice about your specific situation, consult a licensed lawyer or paralegal.
+    </div>
+  </div>
+
+  {# =========================================================================
+     "WHERE AM I?" NAVIGATOR
+  ========================================================================= #}
+  <div class="guide-nav-wrapper">
+    <h2 class="guide-nav-label">Where am I in the process?</h2>
+    <p class="guide-nav-hint">Click a stage to jump to that section and see what's next.</p>
+    <div class="guide-nav" role="navigation" aria-label="Process stage navigator">
+      {% for stage in guide_stages %}
+      <button class="guide-nav-pill"
+              :class="{ 'active': activeStage === '{{ stage.id }}' }"
+              @click="goToStage('{{ stage.id }}')"
+              type="button"
+              aria-label="Go to stage {{ stage.icon }}: {{ stage.title }}">
+        <span class="pill-icon">{{ stage.icon }}</span>
+        <span class="pill-label">{{ stage.title }}</span>
+      </button>
+      {% endfor %}
+    </div>
+    <div class="guide-nav-next" x-show="nextStageTitle" x-cloak>
+      <strong>What's next:</strong> <span x-text="nextStageTitle"></span>
+    </div>
+  </div>
+
+  {# =========================================================================
+     SEARCH BAR
+  ========================================================================= #}
+  <div class="guide-search-wrapper">
+    <label for="guide-search" class="guide-search-label">Search the guide</label>
+    <input id="guide-search"
+           type="text"
+           x-model="query"
+           @input="filterSections()"
+           placeholder="Search topics (e.g. 'service', 'fees', 'evidence', 'settlement')..."
+           class="guide-search"
+           autocomplete="off"
+           aria-label="Search guide topics">
+    <p class="guide-search-hint" x-show="query && visibleCount === 0">
+      No sections match "<span x-text="query"></span>" — try a different keyword.
+    </p>
+  </div>
+
+  {# =========================================================================
+     ACCORDION SECTIONS — 8 Stages
+  ========================================================================= #}
+
+  {# --- STAGE 1: Before You File --- #}
+  <div class="guide-section"
+       id="before-filing"
+       data-keywords="before filing, small claims court, monetary limit, $50,000, limitation period, 2 years, evidence, costs, demand letter, mediation, checklist, eligibility"
+       x-show="sectionVisible('before-filing')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('before-filing')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">1</span>
+      <span class="stage-title">Before You File</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>Is Small Claims Court right for you?</h3>
+      <p>Ontario Small Claims Court handles civil (non-criminal) disputes worth up to <strong>{{ monetary_limit_formatted }}</strong>.
+         As of October 2024, this limit was raised from $35,000 to $50,000.
+         The court handles money claims and claims for the return of personal property valued under the limit.</p>
+      <p>The following types of claims cannot be brought in Small Claims Court:</p>
+      <ul>
+        <li>Claims about title to land or real property</li>
+        <li>Bankruptcy matters</li>
+        <li>False imprisonment or malicious prosecution</li>
+        <li>Claims exceeding $50,000 (you can reduce your claim to the limit)</li>
+      </ul>
+
+      <h3>Do you have a case?</h3>
+      <p>Before filing, ask yourself three questions:</p>
+      <ol>
+        <li><strong>What happened?</strong> — Can you clearly explain the events that gave rise to your claim?</li>
+        <li><strong>Who is responsible?</strong> — Can you identify the specific person or company who owes you money?</li>
+        <li><strong>What are your damages?</strong> — Can you quantify your losses in dollars?</li>
+      </ol>
+      <p>You also need to be able to <em>prove</em> your case on a balance of probabilities — meaning it is more likely than not that what you say happened actually happened.</p>
+
+      <h3>Is your claim within the limitation period?</h3>
+      <p>In Ontario, you generally have <strong>2 years</strong> from the date you discovered your claim to file it. This is called the basic limitation period under the <em>Limitations Act, 2002</em>.</p>
+      <p>The "discovery" date is when you first knew (or should have known) that you had a claim. In most cases, this is the date of the incident or the date a debt became due and was not paid.</p>
+      <p><strong>Important exceptions:</strong></p>
+      <ul>
+        <li>Claims involving minors: the 2-year period does not start running until the minor turns 18</li>
+        <li>Claims involving persons who were legally incapable: limitation period may be extended</li>
+        <li>An ultimate limitation period of 15 years applies regardless of discovery</li>
+      </ul>
+      <p>If your claim might be close to the limitation period, consult a lawyer or paralegal immediately.</p>
+
+      <h3>What evidence do you need?</h3>
+      <p>Evidence is what you will use to prove your claim at trial. Common evidence includes:</p>
+      <ul>
+        <li>Contracts, agreements, invoices, receipts</li>
+        <li>Text messages, emails, and letters</li>
+        <li>Photographs of damaged property or incomplete work</li>
+        <li>Bank statements showing payments made</li>
+        <li>Estimates or repair quotes from professionals</li>
+        <li>Witnesses who saw or heard relevant events</li>
+      </ul>
+      <p>Gather and organize your evidence before filing. You do not submit it at the time of filing, but you will need it at the settlement conference and trial.</p>
+
+      <h3>What will it cost?</h3>
+      <p>Filing fees depend on whether you are a frequent or infrequent claimant:</p>
+      <ul>
+        <li><strong>Infrequent claimant</strong> (fewer than 10 claims per year): {{ filing_fee_infrequent }} filing fee</li>
+        <li><strong>Frequent claimant</strong> (10 or more claims per year): {{ filing_fee_frequent }} filing fee</li>
+      </ul>
+      <p>Additional costs may include: serving the defendant, travel to court, expert witnesses, and representation. If you lose, the court can order you to pay some of the other party's costs.</p>
+      <p><a href="{{ url_for('documents.fees') }}">View the complete fee schedule &rarr;</a></p>
+
+      <h3>Consider alternatives first</h3>
+      <p>Before filing, consider whether a less formal approach might resolve your dispute faster and at lower cost:</p>
+      <ul>
+        <li><strong>Send a demand letter</strong> — formally request payment in writing and give a deadline. Many disputes settle at this stage.
+            <a href="{{ url_for('documents.index') }}">Generate a demand letter &rarr;</a></li>
+        <li><strong>Mediation</strong> — a neutral mediator helps both parties reach a voluntary settlement</li>
+        <li><strong>Direct negotiation</strong> — sometimes a calm phone call or meeting resolves things</li>
+      </ul>
+
+      <div class="checklist-box">
+        <h4>Pre-Filing Checklist</h4>
+        <ul class="checklist">
+          <li>My claim is for $50,000 or less</li>
+          <li>My claim is within the 2-year limitation period</li>
+          <li>I can identify the defendant's full legal name and address</li>
+          <li>I have evidence that supports my claim</li>
+          <li>I have tried to resolve this informally (demand letter, negotiation)</li>
+          <li>I understand the filing fee and potential costs if I lose</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  {# --- STAGE 2: Filing the Claim --- #}
+  <div class="guide-section"
+       id="filing"
+       data-keywords="filing, claim, form 7a, plaintiff's claim, court location, where to file, filing fee, $108, $249, frequent, infrequent, online, in person, mail"
+       x-show="sectionVisible('filing')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('filing')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">2</span>
+      <span class="stage-title">Filing the Claim</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>Choosing the right court location</h3>
+      <p>You must file in the correct Small Claims Court location. You can file where:</p>
+      <ul>
+        <li>The cause of action (the event that gave rise to your claim) arose, OR</li>
+        <li>The defendant lives or carries on business</li>
+      </ul>
+      <p>Filing in the wrong location may result in your claim being transferred, which causes delays.</p>
+
+      <h3>Completing the Plaintiff's Claim (Form 7A)</h3>
+      <p>The Plaintiff's Claim (Form 7A) is the official court document that starts your case. It includes:</p>
+      <ul>
+        <li>Your full name and address (as plaintiff)</li>
+        <li>The defendant's full name and address</li>
+        <li>A clear description of what happened (the "reasons for claim")</li>
+        <li>The amount you are claiming and how you calculated it</li>
+      </ul>
+      <p>Be specific and factual. Use dates, dollar amounts, and specific details. Avoid emotional language — stick to what happened.</p>
+      <p><a href="{{ url_for('documents.index') }}">Generate your Form 7A using our tool &rarr;</a></p>
+
+      <h3>Filing options</h3>
+      <ul>
+        <li><strong>In person:</strong> Bring 3 copies of the signed claim to the court office (1 for you, 1 for the court, 1 for each defendant)</li>
+        <li><strong>By mail:</strong> Mail to the court office with a cheque or money order for the filing fee</li>
+        <li><strong>Online:</strong> Some Ontario Small Claims Courts accept online filing — check ontario.ca/courts</li>
+      </ul>
+
+      <h3>Filing fees</h3>
+      <ul>
+        <li><strong>{{ filing_fee_infrequent }}</strong> — infrequent claimant (fewer than 10 claims per year)</li>
+        <li><strong>{{ filing_fee_frequent }}</strong> — frequent claimant (10 or more claims per year)</li>
+      </ul>
+
+      <h3>What happens after you file</h3>
+      <p>The court assigns a claim number to your case. Keep this number — you will use it on all future documents. The court stamps your copies and returns them for service on the defendant.</p>
+
+    </div>
+  </div>
+
+  {# --- STAGE 3: Serving the Defendant --- #}
+  <div class="guide-section"
+       id="serving"
+       data-keywords="serving, service, serve defendant, personal service, alternatives, mail, courier, affidavit of service, form 8a, 6 months"
+       x-show="sectionVisible('serving')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('serving')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">3</span>
+      <span class="stage-title">Serving the Defendant</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>What is service?</h3>
+      <p>"Service" is the formal legal process of delivering court documents to the defendant. The defendant must be properly served before the court process can move forward. Improper service can get your case dismissed.</p>
+
+      <h3>Methods of service</h3>
+      <p><strong>Personal service (preferred):</strong> Someone hands the documents directly to the defendant. This is the most reliable method.</p>
+      <p><strong>Alternatives to personal service:</strong></p>
+      <ul>
+        <li>For individuals: leave documents at the defendant's home with someone who appears to be an adult, then mail another copy</li>
+        <li>For corporations: leave documents at the corporation's registered office with someone who appears to be managing it</li>
+        <li>Mail to the last known address (certified mail with return receipt)</li>
+        <li>Courier delivery to the last known address</li>
+      </ul>
+
+      <h3>Who can serve?</h3>
+      <p>Any person who is:</p>
+      <ul>
+        <li>Not a party to the proceeding (not you, if you are the plaintiff)</li>
+        <li>At least 18 years of age</li>
+      </ul>
+      <p>You can ask a friend, family member (not involved in the case), or professional process server.</p>
+
+      <h3>Timing</h3>
+      <p>You must serve the defendant within <strong>6 months</strong> of the date the claim was issued by the court. If you cannot locate the defendant within this time, you can request an extension from the court.</p>
+
+      <h3>Proof of service — Affidavit of Service (Form 8A)</h3>
+      <p>The person who served the documents must complete an Affidavit of Service (Form 8A) swearing that service was completed. This sworn document must be filed with the court. You keep a copy for your records.</p>
+      <p>The affidavit must include: who was served, what was served, when and how service occurred, and the server's signature before a commissioner of oaths or notary public.</p>
+
+    </div>
+  </div>
+
+  {# --- STAGE 4: Defendant's Response --- #}
+  <div class="guide-section"
+       id="defence"
+       data-keywords="defence, defendant response, form 9a, 20 days, deadline, default judgment, noting in default, dispute, admit, payment"
+       x-show="sectionVisible('defence')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('defence')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">4</span>
+      <span class="stage-title">Defendant's Response</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>The {{ defence_deadline_days }}-day deadline</h3>
+      <p>After being served with the Plaintiff's Claim, the defendant has <strong>{{ defence_deadline_days }} days</strong> to respond. This deadline runs from the date of service (not the date of filing).</p>
+
+      <h3>The defendant's options</h3>
+      <p><strong>1. File a Defence (Form 9A)</strong></p>
+      <p>The defendant disputes the claim, either in whole or in part. The defence must:</p>
+      <ul>
+        <li>Admit or deny each factual allegation</li>
+        <li>Give reasons for disputing the claim</li>
+        <li>Be filed at the court office with the {{ defence_filing_fee }} filing fee</li>
+      </ul>
+      <p>If you are the defendant, <a href="{{ url_for('documents.index') }}">generate your Form 9A using our tool &rarr;</a></p>
+
+      <p><strong>2. File a Defence and Defendant's Claim (Form 10A)</strong></p>
+      <p>The defendant disputes the claim AND is making a counterclaim against the plaintiff. This is done in the same proceeding.</p>
+
+      <p><strong>3. Admit the claim and propose terms of payment</strong></p>
+      <p>The defendant agrees they owe the money but asks to pay in installments. The plaintiff can accept or reject the proposed terms.</p>
+
+      <p><strong>4. Do nothing</strong></p>
+      <p>If the defendant does not file a defence within {{ defence_deadline_days }} days, the plaintiff can ask the court to "note the defendant in default." Once noted in default, the defendant cannot participate further without the court's permission. The plaintiff can then bring a motion for default judgment.</p>
+
+      <h3>If no defence is filed (plaintiff perspective)</h3>
+      <p>File a "Request to Clerk" form asking the clerk to note the defendant in default. Then file a motion for default judgment. The court will review your claim and may award judgment without a hearing.</p>
+
+    </div>
+  </div>
+
+  {# --- STAGE 5: Settlement Conference --- #}
+  <div class="guide-section"
+       id="settlement"
+       data-keywords="settlement conference, mandatory, mediation, judge, what to bring, preparation, settlement, negotiate, offer, costs, dos and don'ts"
+       x-show="sectionVisible('settlement')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('settlement')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">5</span>
+      <span class="stage-title">Settlement Conference</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>What is a settlement conference?</h3>
+      <p>A settlement conference is a mandatory meeting with a judge or deputy judge before trial. It is designed to:</p>
+      <ul>
+        <li>Help the parties explore whether they can settle without going to trial</li>
+        <li>Narrow and clarify the issues in dispute</li>
+        <li>Identify agreed facts</li>
+        <li>Discuss evidence and witnesses</li>
+      </ul>
+      <p><strong>You cannot go to trial in Small Claims Court without first attending a settlement conference.</strong></p>
+
+      <h3>When does it happen?</h3>
+      <p>The court schedules the settlement conference after both sides have filed their documents. Timing varies by location and court availability — it may be weeks to several months after filing the defence.</p>
+
+      <h3>Who attends?</h3>
+      <p>All parties (or their representatives) must attend. If you have a lawyer or paralegal, they typically attend with you. You must attend in person (or via video if the court permits) — you cannot send someone else without permission.</p>
+
+      <h3>What happens at the conference?</h3>
+      <p>A judge presides. The conference is informal — there are no witnesses or formal evidence, just a discussion. The judge may:</p>
+      <ul>
+        <li>Ask each side to explain their position briefly</li>
+        <li>Point out strengths and weaknesses in each side's case</li>
+        <li>Suggest a settlement range</li>
+        <li>Help draft a settlement agreement if the parties agree</li>
+      </ul>
+
+      <h3>Possible outcomes</h3>
+      <ul>
+        <li><strong>Settlement:</strong> Both parties agree on terms — the case is over. Terms are recorded as a court order.</li>
+        <li><strong>Partial settlement:</strong> Some issues resolved, remaining issues go to trial</li>
+        <li><strong>No settlement:</strong> Case is scheduled for trial. The judge gives directions about evidence, witnesses, and timing.</li>
+        <li><strong>Dismissal:</strong> If a party fails to appear or cooperate, the judge may dismiss the claim or defence</li>
+      </ul>
+
+      {# SETTLEMENT CONFERENCE PREPARATION SUB-GUIDE #}
+      <div class="subguide-box">
+        <h3 class="subguide-title">Settlement Conference Preparation Guide</h3>
+
+        <h4>What to expect</h4>
+        <p>The settlement conference is not a trial. You will not call witnesses or present evidence formally. However, the judge will want to understand your case, so be prepared to explain it clearly and concisely — in 5 to 10 minutes.</p>
+        <p>The judge may give you their frank assessment of your case's strengths and weaknesses. This is valuable feedback, even if it is not what you want to hear.</p>
+
+        <h4>What to bring</h4>
+        <div class="checklist-box">
+          <ul class="checklist">
+            <li>All documents you intend to rely on (organized in a folder or binder)</li>
+            <li>A written summary of your position (1-2 pages)</li>
+            <li>A list of all witnesses you plan to call at trial</li>
+            <li>A list of the specific amounts you are claiming, with calculations</li>
+            <li>Any offers to settle you have already made or received</li>
+            <li>A copy of the Plaintiff's Claim and any Defence filed</li>
+            <li>Your calendar — you may need to agree on trial dates</li>
+          </ul>
+        </div>
+
+        <h4>How to present your case</h4>
+        <ol>
+          <li><strong>Be organized.</strong> Know the key facts and have them written down. Do not rely on memory alone.</li>
+          <li><strong>Be concise.</strong> Tell the judge the most important facts first. You will be asked to summarize, not give a full account.</li>
+          <li><strong>Focus on evidence.</strong> What can you prove? What documents or witnesses support your position?</li>
+          <li><strong>Know your best offer.</strong> Before the conference, decide how much you would accept to settle (or pay, if you are the defendant). You do not have to reveal this immediately, but knowing it helps you negotiate.</li>
+          <li><strong>Be respectful.</strong> Address the judge as "Your Honour." Speak calmly, even if the other side does not.</li>
+        </ol>
+
+        <h4>Dos and Don'ts</h4>
+        <table class="guide-table">
+          <thead>
+            <tr><th>Do</th><th>Don't</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Arrive early — court delays are stressful</td>
+              <td>Interrupt the other party or the judge</td>
+            </tr>
+            <tr>
+              <td>Listen carefully to what the judge says about your case</td>
+              <td>Bring irrelevant evidence or air personal grievances</td>
+            </tr>
+            <tr>
+              <td>Come prepared with a realistic settlement offer</td>
+              <td>Make ultimatums — keep negotiations open</td>
+            </tr>
+            <tr>
+              <td>Ask the judge to clarify anything you do not understand</td>
+              <td>Refuse to engage in settlement discussions at all</td>
+            </tr>
+            <tr>
+              <td>Keep notes of what is discussed and decided</td>
+              <td>Make statements that could be used against you at trial</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="guide-table-note">Note: Statements made during a settlement conference are generally inadmissible at trial — the conference is confidential. However, any agreed terms recorded in a court order are binding.</p>
+
+        <h4>After the conference</h4>
+        <p>If you settled: keep your copy of the settlement order. If the other party does not comply, you can enforce it as a judgment.</p>
+        <p>If you did not settle: review the judge's directions carefully. Make note of any deadlines for disclosing evidence, serving witness lists, or filing additional documents.</p>
+        <p>You have <strong>30 days</strong> after an unsuccessful settlement conference to request a trial date (Rule 13.05(2)).</p>
+      </div>
+
+    </div>
+  </div>
+
+  {# --- STAGE 6: Trial Management Conference --- #}
+  <div class="guide-section"
+       id="tmc"
+       data-keywords="trial management conference, TMC, rule 16.1, June 2025, witness list, trial readiness, issues, estimate"
+       x-show="sectionVisible('tmc')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('tmc')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">6</span>
+      <span class="stage-title">Trial Management Conference</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <div class="notice-banner">
+        <strong>New as of June 2025:</strong> Rule 16.1.01 of the Rules of the Small Claims Court introduced the Trial Management Conference (TMC) as a new mandatory step before trial. This was added to improve trial efficiency and reduce unnecessary delays.
+      </div>
+
+      <h3>What is a Trial Management Conference?</h3>
+      <p>A Trial Management Conference (TMC) is a brief meeting with a judge that occurs after the settlement conference if the case is going to trial. It is designed to ensure both parties are ready and that the trial will run efficiently.</p>
+
+      <h3>When does it happen?</h3>
+      <p>The court schedules the TMC after the settlement conference has concluded without a full settlement and the case is proceeding to trial. The TMC typically occurs a few weeks before the scheduled trial date.</p>
+
+      <h3>Purpose</h3>
+      <p>At the TMC, the judge will:</p>
+      <ul>
+        <li>Confirm the issues that remain in dispute</li>
+        <li>Review the witness lists from both sides</li>
+        <li>Estimate how long the trial will take</li>
+        <li>Confirm trial readiness — are documents disclosed? Are witnesses available?</li>
+        <li>Give any final directions to ensure the trial runs smoothly</li>
+        <li>Consider any last-minute settlement possibilities</li>
+      </ul>
+
+      <h3>What to bring to the TMC</h3>
+      <ul>
+        <li>Your complete witness list (name and what each witness will say)</li>
+        <li>Your complete document list (all exhibits you plan to use at trial)</li>
+        <li>Confirmation that all documents have been disclosed to the other side</li>
+        <li>A realistic estimate of how long your case will take to present</li>
+      </ul>
+
+      <p>Failing to attend the TMC or being unprepared may result in the judge giving directions that disadvantage your case, or in extreme cases, dismissing the claim or striking the defence.</p>
+
+    </div>
+  </div>
+
+  {# --- STAGE 7: Trial --- #}
+  <div class="guide-section"
+       id="trial"
+       data-keywords="trial, evidence, witnesses, examination, cross-examination, judgment, costs, appeal, divisional court, 30 days"
+       x-show="sectionVisible('trial')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('trial')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">7</span>
+      <span class="stage-title">Trial</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>How a Small Claims Court trial works</h3>
+      <p>Small Claims Court trials are less formal than Superior Court trials, but they follow a structured process:</p>
+      <ol>
+        <li><strong>Opening statements (optional):</strong> Each side may briefly explain what they will prove</li>
+        <li><strong>Plaintiff's case:</strong> The plaintiff presents their evidence and calls their witnesses</li>
+        <li><strong>Cross-examination:</strong> The defendant questions the plaintiff's witnesses</li>
+        <li><strong>Defendant's case:</strong> The defendant presents their evidence and calls their witnesses</li>
+        <li><strong>Cross-examination:</strong> The plaintiff questions the defendant's witnesses</li>
+        <li><strong>Closing arguments:</strong> Each side summarizes why they should win</li>
+        <li><strong>Judgment:</strong> The judge may give judgment immediately or "reserve" judgment (decide later)</li>
+      </ol>
+
+      <h3>Evidence rules</h3>
+      <p>Small Claims Court has more relaxed evidence rules than Superior Court. Hearsay evidence (second-hand accounts) may be admitted, though the judge will weigh it accordingly. The court values practical fairness over strict procedural technicality.</p>
+      <p>Documents must generally be disclosed to the other side before trial — you cannot surprise the other party with new evidence at trial.</p>
+
+      <h3>Witnesses</h3>
+      <p>Witnesses testify under oath or affirmation. Both parties can question (examine) their own witnesses and cross-examine the other side's witnesses.</p>
+      <p>If a witness will not come voluntarily, you can issue a summons (a court order requiring attendance). There is a fee for issuing a summons, and the witness is entitled to attendance money and travel expenses.</p>
+
+      <h3>Judgment</h3>
+      <p>The judge considers the evidence and applies the law to decide who wins and how much (if anything) is awarded. The standard of proof is "balance of probabilities" — meaning it is more likely than not that the plaintiff's version is correct.</p>
+
+      <h3>Costs</h3>
+      <p>The winning party may be awarded representation costs (limited in Small Claims Court — usually capped at 15% of the amount claimed). The court can also award higher costs if a party behaved unreasonably.</p>
+
+      <h3>Appealing a judgment</h3>
+      <p>Either party can appeal a Small Claims Court judgment to the Divisional Court within <strong>30 days</strong> of the judgment being made. Appeals are expensive and complex — you should consult a lawyer before appealing.</p>
+
+    </div>
+  </div>
+
+  {# --- STAGE 8: After Judgment / Enforcement --- #}
+  <div class="guide-section"
+       id="enforcement"
+       data-keywords="enforcement, garnishment, seizure, writ, after judgment, payment, debtor, examination, judgment debtor, 6 years"
+       x-show="sectionVisible('enforcement')"
+       x-data="{ open: false }">
+    <button class="guide-section-header" @click="open = !open; setActiveStage('enforcement')" type="button"
+            :aria-expanded="open">
+      <span class="stage-badge">8</span>
+      <span class="stage-title">After Judgment / Enforcement</span>
+      <span class="chevron" :class="{ 'chevron-open': open }">&#9660;</span>
+    </button>
+    <div class="guide-section-body" x-show="open" x-cloak>
+
+      <h3>If the other party pays voluntarily</h3>
+      <p>Many parties pay after judgment without further action. Payment is typically expected within a reasonable time (often 30 days, or as specified in the judgment). If you receive full payment, file a satisfaction of judgment with the court.</p>
+
+      <h3>If the other party does not pay</h3>
+      <p>Winning a judgment does not automatically put money in your pocket — you may need to enforce it. Enforcement options include:</p>
+
+      <p><strong>Garnishment:</strong> A court order directing a third party (typically an employer or bank) to pay money owed to the judgment debtor directly to you instead.</p>
+      <ul>
+        <li>Wage garnishment: up to 20% of net wages (or as ordered)</li>
+        <li>Bank account garnishment: money in accounts up to the judgment amount</li>
+      </ul>
+
+      <p><strong>Writ of Seizure and Sale:</strong> A court order allowing the sheriff to seize and sell the debtor's personal property (not land in Small Claims Court). Fee: {{ '$55.00' }}.</p>
+
+      <p><strong>Writ of Delivery:</strong> If your claim was for the return of specific property, this order allows the sheriff to seize and return the property. Fee: {{ '$55.00' }}.</p>
+
+      <p><strong>Examination of Judgment Debtor:</strong> You can summon the debtor to court to answer questions under oath about their finances — their income, assets, bank accounts, and employer. This is an important step if you do not know where to direct enforcement.</p>
+
+      <h3>Costs of enforcement</h3>
+      <p>Enforcement costs (sheriff fees, filing fees for writs) can generally be added to the judgment amount and recovered from the debtor.</p>
+
+      <h3>How long does a judgment last?</h3>
+      <p>A Small Claims Court judgment is enforceable for <strong>6 years</strong> from the date of the judgment. After 6 years, the judgment expires unless you take steps to renew it (by bringing a new action on the judgment). Post-judgment interest continues to accrue during this period at the rate set out in the judgment.</p>
+
+      <h3>If you cannot collect</h3>
+      <p>If the debtor has no assets or income ("judgment proof"), you may not be able to collect. This is a risk of litigation. Consider the debtor's ability to pay before filing a claim.</p>
+
+    </div>
+  </div>
+
+  {# No results message #}
+  <div x-show="query && visibleCount === 0" x-cloak class="guide-no-results">
+    <p>No guide sections match "<strong x-text="query"></strong>". Try a different keyword or <button @click="query = ''; filterSections()" class="link-btn" type="button">clear the search</button>.</p>
+  </div>
+
+</div>
+
+{# =========================================================================
+   Alpine.js Components
+========================================================================= #}
+<script>
+function guideApp() {
+  const STAGES = [
+    { id: 'before-filing', title: 'Before You File' },
+    { id: 'filing', title: 'Filing the Claim' },
+    { id: 'serving', title: 'Serving the Defendant' },
+    { id: 'defence', title: "Defendant's Response" },
+    { id: 'settlement', title: 'Settlement Conference' },
+    { id: 'tmc', title: 'Trial Management Conference' },
+    { id: 'trial', title: 'Trial' },
+    { id: 'enforcement', title: 'After Judgment / Enforcement' },
+  ];
+
+  return {
+    activeStage: null,
+    nextStageTitle: '',
+    query: '',
+    visibleCount: STAGES.length,
+    hiddenSections: new Set(),
+
+    init() {
+      this.visibleCount = STAGES.length;
+    },
+
+    setActiveStage(id) {
+      this.activeStage = id;
+      const idx = STAGES.findIndex(s => s.id === id);
+      this.nextStageTitle = idx >= 0 && idx < STAGES.length - 1
+        ? STAGES[idx + 1].title
+        : '';
+    },
+
+    goToStage(id) {
+      this.setActiveStage(id);
+      // Open the accordion by dispatching a click-like event through DOM
+      this.$nextTick(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Find the button inside this section and click it to open if closed
+          const btn = el.querySelector('.guide-section-header');
+          if (btn && btn.getAttribute('aria-expanded') === 'false') {
+            btn.click();
+          }
+        }
+      });
+    },
+
+    filterSections() {
+      const q = this.query.trim().toLowerCase();
+      if (!q) {
+        this.hiddenSections = new Set();
+        this.visibleCount = STAGES.length;
+        return;
+      }
+      let visible = 0;
+      this.hiddenSections = new Set();
+      STAGES.forEach(stage => {
+        const el = document.getElementById(stage.id);
+        if (!el) return;
+        const keywords = (el.getAttribute('data-keywords') || '').toLowerCase();
+        const title = stage.title.toLowerCase();
+        const matches = keywords.includes(q) || title.includes(q);
+        if (!matches) {
+          this.hiddenSections.add(stage.id);
+        } else {
+          visible++;
+        }
+      });
+      this.visibleCount = visible;
+    },
+
+    sectionVisible(id) {
+      return !this.hiddenSections.has(id);
+    },
+  };
+}
+</script>
+
+<style>
+/* =========================================================================
+   Guide Page Styles
+========================================================================= */
+
+.guide-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.guide-page-header {
+  margin-bottom: 2rem;
+}
+
+.guide-page-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  color: #1e3a5f;
+}
+
+.guide-subtitle {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 1rem;
+}
+
+.guide-notice {
+  background: #fff8e6;
+  border: 1px solid #e6c84a;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: #5a4500;
+}
+
+/* ---- Navigator ---- */
+.guide-nav-wrapper {
+  background: #f4f7fb;
+  border: 1px solid #d0dcea;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.guide-nav-label {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: #1e3a5f;
+}
+
+.guide-nav-hint {
+  font-size: 0.82rem;
+  color: #666;
+  margin: 0 0 0.75rem 0;
+}
+
+.guide-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.guide-nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.375rem 0.75rem;
+  border: 1.5px solid #c0cedf;
+  border-radius: 20px;
+  background: #fff;
+  color: #1e3a5f;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1.2;
+}
+
+.guide-nav-pill:hover {
+  background: #e8f0f8;
+  border-color: #1e3a5f;
+}
+
+.guide-nav-pill.active {
+  background: #1e3a5f;
+  color: #fff;
+  border-color: #1e3a5f;
+}
+
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.12);
+  font-size: 0.7rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.guide-nav-pill.active .pill-icon {
+  background: rgba(255,255,255,0.25);
+}
+
+.guide-nav-next {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #1e3a5f;
+  padding: 0.4rem 0.75rem;
+  background: #e8f0f8;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ---- Search ---- */
+.guide-search-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.guide-search-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: #222;
+}
+
+.guide-search {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  border: 1.5px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  color: #111;
+}
+
+.guide-search:focus {
+  outline: none;
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 2px rgba(30,58,95,0.15);
+}
+
+.guide-search-hint {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.4rem;
+}
+
+/* ---- Accordion Sections ---- */
+.guide-section {
+  border: 1px solid #dce3ec;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.guide-section-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  transition: background 0.15s;
+}
+
+.guide-section-header:hover {
+  background: #f4f7fb;
+}
+
+.stage-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1e3a5f;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.stage-title {
+  flex: 1;
+}
+
+.chevron {
+  font-size: 0.7rem;
+  color: #666;
+  transition: transform 0.2s;
+}
+
+.chevron-open {
+  transform: rotate(180deg);
+}
+
+.guide-section-body {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #e8edf3;
+  background: #fff;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: #222;
+}
+
+.guide-section-body h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 1.25rem 0 0.5rem 0;
+}
+
+.guide-section-body h3:first-child {
+  margin-top: 0;
+}
+
+.guide-section-body h4 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 1rem 0 0.35rem 0;
+}
+
+.guide-section-body p {
+  margin: 0 0 0.7rem 0;
+}
+
+.guide-section-body ul, .guide-section-body ol {
+  margin: 0 0 0.7rem 0;
+  padding-left: 1.5rem;
+}
+
+.guide-section-body li {
+  margin-bottom: 0.3rem;
+}
+
+/* ---- Checklist ---- */
+.checklist-box {
+  background: #f6faf0;
+  border: 1px solid #b8d9a0;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+
+.checklist-box h4 {
+  margin-top: 0;
+  font-size: 0.9rem;
+  color: #2d6a0f;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checklist li {
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.checklist li::before {
+  content: '☐';
+  position: absolute;
+  left: 0;
+  color: #2d6a0f;
+}
+
+/* ---- Sub-guide box ---- */
+.subguide-box {
+  background: #f4f7fb;
+  border: 1.5px solid #c0cedf;
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.subguide-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-top: 0 !important;
+  margin-bottom: 0.75rem !important;
+  border-bottom: 1px solid #c0cedf;
+  padding-bottom: 0.5rem;
+}
+
+/* ---- Notice banner ---- */
+.notice-banner {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 0.65rem 1rem;
+  font-size: 0.88rem;
+  color: #664d03;
+  margin-bottom: 1rem;
+}
+
+/* ---- Guide table ---- */
+.guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 0.75rem 0;
+}
+
+.guide-table th {
+  background: #e8edf3;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  border: 1px solid #c0cedf;
+}
+
+.guide-table td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #dce3ec;
+  vertical-align: top;
+}
+
+.guide-table tr:nth-child(even) td {
+  background: #f9fafc;
+}
+
+.guide-table-note {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* ---- No results ---- */
+.guide-no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #1e3a5f;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .guide-nav {
+    flex-direction: column;
+  }
+  .guide-nav-pill {
+    width: 100%;
+    border-radius: 6px;
+  }
+  .guide-section-body {
+    padding: 1rem;
+  }
+}
+
+[x-cloak] { display: none !important; }
+</style>
+{% endblock %}

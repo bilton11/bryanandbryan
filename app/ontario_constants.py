@@ -104,6 +104,19 @@ FORM_9A_VERSION = "August 1, 2022"  # Defence
 FEES_LAST_VERIFIED = "2026-04-04"
 
 
+# --- Process Guide Stage Names ---
+GUIDE_STAGES = [
+    {"id": "before-filing", "title": "Before You File", "icon": "1"},
+    {"id": "filing", "title": "Filing the Claim", "icon": "2"},
+    {"id": "serving", "title": "Serving the Defendant", "icon": "3"},
+    {"id": "defence", "title": "Defendant's Response", "icon": "4"},
+    {"id": "settlement", "title": "Settlement Conference", "icon": "5"},
+    {"id": "tmc", "title": "Trial Management Conference", "icon": "6"},
+    {"id": "trial", "title": "Trial", "icon": "7"},
+    {"id": "enforcement", "title": "After Judgment / Enforcement", "icon": "8"},
+]
+
+
 # --- Display Helpers ---
 def format_fee(cents: int) -> str:
     """Format a fee in cents to a display string like '$108.00'."""
