@@ -8,4 +8,12 @@ __pycache__
 *.md
 .venv
 venv
-migrations/versions/__pycache__
+instance/
+tests/
+artifacts/
+*.png
+*.bat
+ERROR
+.dockerignore
+.gitignore
+.playwright-mcp

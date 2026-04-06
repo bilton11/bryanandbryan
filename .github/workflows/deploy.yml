@@ -68,11 +68,16 @@ jobs:
           region: ${{ env.REGION }}
           image: ${{ env.IMAGE }}
           secrets: |
-            DATABASE_URL=claimpilot-db-url:latest
-            ANTHROPIC_API_KEY=anthropic-api-key:latest
-            SECRET_KEY=flask-secret-key:latest
+            SECRET_KEY=bb-secret-key:latest
+            ANTHROPIC_API_KEY=bb-anthropic-api-key:latest
+            DB_PASSWORD=bb-db-password:latest
+            MAIL_USERNAME=bb-mail-username:latest
+            MAIL_PASSWORD=bb-mail-password:latest
           env_vars: |
             FLASK_CONFIG=production
+            CLOUD_SQL_INSTANCE=${{ env.PROJECT_ID }}:northamerica-northeast1:bb-postgres
+            DB_NAME=bryanandbryan
+            DB_USER=bb-app
           flags: >-
             --min-instances=0
             --max-instances=3
