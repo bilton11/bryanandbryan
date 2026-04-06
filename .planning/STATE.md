@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-04-04)
 
 ## Current Position
 
-Phase: 5 of 6 (UI Gap Closure and Polish) — COMPLETE
+Phase: 6 of 6 (Codebase Consistency Cleanup) — COMPLETE
 Plan: 1 of 1 in current phase — Phase complete
-Status: Phase 5 complete — ready for Phase 6
-Last activity: 2026-04-06 — Completed 05-01-PLAN.md (2 tasks, 4 files, 3 min)
+Status: ALL PHASES COMPLETE — v1.0 milestone achieved
+Last activity: 2026-04-06 — Completed 06-01-PLAN.md (2 tasks, 6 files, 2 min)
 
-Progress: [█████████░] 90% (5/6 phases complete)
+Progress: [██████████] 100% (6/6 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 6 minutes
-- Total execution time: 59 minutes
+- Total plans completed: 11
+- Average duration: 5 minutes
+- Total execution time: 61 minutes
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [█████████░] 90% (5/6 phases complete)
 | 03-documents-and-guide | 2/2 completed | 18 min | 9 min |
 | 04-dashboard-and-deployment | 2/2 completed | 12 min | 6 min |
 | 05-ui-gap-closure-and-polish | 1/1 completed | 3 min | 3 min |
+| 06-codebase-consistency-cleanup | 1/1 completed | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (12 min), 04-01 (4 min), 04-02 (8 min), 05-01 (3 min)
+- Last 5 plans: 04-01 (4 min), 04-02 (8 min), 05-01 (3 min), 06-01 (2 min)
 - Trend: stable, fast
 
 *Updated after each plan completion*
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - 05-01: HTMX 2.0.4 with SRI integrity hash loaded globally — child templates must not load HTMX directly
 - 05-01: Public nav lives in {% else %} branch of current_user.is_authenticated — no separate public base template needed
 - 05-01: Alpine.js loaded per-template in head_extra (only wizard_shell.html needs it)
+- 06-01: tests/ directory created with smoke tests — without it, pytest exits 4 (no tests found) which blocks CI same as failure
+- 06-01: conftest.py uses in-memory SQLite with TESTING=True override — no DATABASE_URL env var required in CI
+- 06-01: ROADMAP.md Phase 1 criterion 1 was already correct ("magic link") — confirmed no-op
 
 ### Pending Todos
 
@@ -94,12 +98,12 @@ None.
 - Phase 1: AI prompt guardrail architecture requires supervising lawyer sign-off before any user-facing AI feature ships (Nippon Life v. OpenAI March 2026 precedent)
 - Phase 1: Data retention policy (specific retention periods and deletion workflows) must be decided by partners before schema design
 - Phase 2: Limitation period branching logic must be reviewed by supervising lawyer before launch — discovery doctrine branches are legally sensitive
-- Phase 4: pytest step in deploy.yml uses `|| true` — remove before external launch so test failures block deployment
 - All phases: Python 3.14 is in use — verify any new SQLAlchemy model files have `from __future__ import annotations`
 - CI/CD: GitHub repository secrets (GCP_PROJECT_ID, WIF_PROVIDER, WIF_SERVICE_ACCOUNT) must be configured before first deploy to main
+- RESOLVED 06-01: pytest || true bypass removed — CI test gate now enforced
 
 ## Session Continuity
 
 Last session: 2026-04-06
-Stopped at: Completed 05-01-PLAN.md — Phase 5 UI gap closure complete
+Stopped at: Completed 06-01-PLAN.md — Phase 6 codebase consistency cleanup complete — ALL PHASES DONE
 Resume file: None
