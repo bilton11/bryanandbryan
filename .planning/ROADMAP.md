@@ -84,10 +84,35 @@ Plans:
 - [x] 04-01-PLAN.md — Dashboard blueprint, deadline tracker service, claims/documents lists, CSS timeline visualization, navigation update
 - [x] 04-02-PLAN.md — Lawyer escalation pathway, GitHub Actions deployment hardening, WCAG audit, regulatory sign-off checklist
 
+### Phase 5: UI Gap Closure and Polish
+**Goal**: Close the Form 7A/9A UI entry point gap identified in milestone audit, consolidate HTMX versions, and fix cosmetic/UX issues on public pages.
+**Depends on**: Phase 4
+**Requirements**: (gap closure — no new requirements)
+**Gap Closure**: Closes integration gap (Form 7A/9A buttons) and broken E2E flow (Guide → Form 7A generation) from v1.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. User can create Form 7A and Form 9A documents from the documents index page — both standalone and from-claim paths, matching existing Demand Letter button pattern
+  2. The Guide → Generate Form 7A flow completes end-to-end without hitting a dead end
+  3. A single HTMX version loads across the entire app — no dual-version script tags
+  4. The `[x-cloak]` CSS rule is present so Alpine.js-controlled elements do not flash before initialization
+  5. Unauthenticated users on public pages (/guide, /fees) see navigation links to other public pages and login
+**Plans**: 0 plans
+
+### Phase 6: Codebase Consistency Cleanup
+**Goal**: Resolve documentation staleness, model export inconsistency, and CI safety gap identified in milestone audit tech debt.
+**Depends on**: Phase 5
+**Requirements**: (gap closure — no new requirements)
+**Gap Closure**: Closes tech debt items from v1.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. Document and DocumentVersion models are exported from `app/models/__init__.py` consistent with all other models
+  2. REQUIREMENTS.md traceability table shows correct status for all Phase 2, 3, and 4 requirements (Complete, not Pending)
+  3. ROADMAP Phase 1 success criterion 1 matches actual implementation (magic-link auth, not email/password)
+  4. `pytest` step in deploy.yml fails the pipeline on test failure — no `|| true` bypass
+**Plans**: 0 plans
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -95,3 +120,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 2. Case Assessment | 3/3 | Complete | 2026-04-05 |
 | 3. Documents and Guide | 2/2 | Complete | 2026-04-06 |
 | 4. Dashboard and Deployment | 2/2 | Complete | 2026-04-06 |
+| 5. UI Gap Closure and Polish | 0/1 | Planned | — |
+| 6. Codebase Consistency Cleanup | 0/1 | Planned | — |
