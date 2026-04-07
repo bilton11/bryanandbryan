@@ -17,25 +17,46 @@
 <body>
     <a href="#main-content" class="skip-nav">Skip to main content</a>
 
-    <header role="banner">
-        <nav role="navigation" aria-label="Main navigation">
-            <a href="{{ url_for('main.index') }}" class="site-name">Bryan and Bryan</a>
+    <header class="topnav" role="banner">
+        <div class="topnav__inner">
+            <a href="{{ url_for('main.index') }}" class="topnav__brand">Bryan and Bryan</a>
+
             {% if current_user.is_authenticated %}
-            <div class="nav-links">
-                <a href="{{ url_for('dashboard.index') }}"{% if request.endpoint == 'dashboard.index' %} aria-current="page"{% endif %}>Dashboard</a>
-                <a href="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}"{% if request.endpoint and request.endpoint.startswith('assessment.') %} aria-current="page"{% endif %}>New Assessment</a>
-                <a href="{{ url_for('documents.index') }}"{% if request.endpoint and request.endpoint.startswith('documents.') %} aria-current="page"{% endif %}>Documents</a>
-                <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
-                <a href="{{ url_for('auth.logout') }}">Log out</a>
+            <nav class="topnav__links" role="navigation" aria-label="Main navigation">
+                <a href="{{ url_for('dashboard.index') }}"
+                   class="topnav__link{% if request.endpoint == 'dashboard.index' %} topnav__link--active{% endif %}"
+                   {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}>Dashboard</a>
+                <a href="{{ url_for('assessment.wizard_entry') }}"
+                   class="topnav__link{% if request.endpoint and request.endpoint.startswith('assessment.') %} topnav__link--active{% endif %}"
+                   {% if request.endpoint and request.endpoint.startswith('assessment.') %}aria-current="page"{% endif %}>New Assessment</a>
+                <a href="{{ url_for('documents.index') }}"
+                   class="topnav__link{% if request.endpoint and request.endpoint.startswith('documents.') %} topnav__link--active{% endif %}"
+                   {% if request.endpoint and request.endpoint.startswith('documents.') %}aria-current="page"{% endif %}>Documents</a>
+                <a href="{{ url_for('main.guide') }}"
+                   class="topnav__link{% if request.endpoint == 'main.guide' %} topnav__link--active{% endif %}"
+                   {% if request.endpoint == 'main.guide' %}aria-current="page"{% endif %}>Resources</a>
+            </nav>
+            <div class="topnav__actions">
+                <button type="button" class="topnav__icon-btn" aria-label="Notifications" title="Notifications">
+                    <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+                </button>
+                <a href="{{ url_for('auth.logout') }}"
+                   class="topnav__avatar"
+                   aria-label="Log out (signed in as {{ current_user.email }})"
+                   title="Log out">{{ (current_user.email or '?')[0] | upper }}</a>
             </div>
             {% else %}
-            <div class="nav-links">
-                <a href="{{ url_for('main.guide') }}"{% if request.endpoint == 'main.guide' %} aria-current="page"{% endif %}>Guide</a>
-                <a href="{{ url_for('documents.fees') }}"{% if request.endpoint == 'documents.fees' %} aria-current="page"{% endif %}>Fees</a>
-                <a href="{{ url_for('auth.login') }}">Log in</a>
+            <nav class="topnav__links" role="navigation" aria-label="Main navigation">
+                <a href="{{ url_for('main.guide') }}"
+                   class="topnav__link{% if request.endpoint == 'main.guide' %} topnav__link--active{% endif %}">Resources</a>
+                <a href="{{ url_for('documents.fees') }}"
+                   class="topnav__link{% if request.endpoint == 'documents.fees' %} topnav__link--active{% endif %}">Fees</a>
+            </nav>
+            <div class="topnav__actions">
+                <a href="{{ url_for('auth.login') }}" class="topnav__login-btn">Log in</a>
             </div>
             {% endif %}
-        </nav>
+        </div>
     </header>
 
     <main id="main-content" role="main">
@@ -53,20 +74,37 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer role="contentinfo">
-        {# DISCLAIMER — NOT in a block. Cannot be overridden by child templates. #}
-        <div class="disclaimer" aria-label="Legal disclaimer">
-            <p>
-                <strong>Legal Information, Not Legal Advice:</strong>
-                The information provided by this tool is for general informational purposes only
-                and does not constitute legal advice. It is not a substitute for advice from a
-                qualified lawyer or paralegal. For advice about your specific situation,
-                please consult a licensed legal professional.
-            </p>
-            <p>
-                AI-generated assessments describe statistical patterns in similar cases and
-                do not predict outcomes in your case.
-            </p>
+    <footer class="site-footer" role="contentinfo">
+        <div class="site-footer__inner">
+            <div class="site-footer__brand">Bryan and Bryan</div>
+            <nav class="site-footer__links" aria-label="Footer links">
+                <a href="#legal-disclaimer">Legal Disclaimer</a>
+                <a href="{{ url_for('main.guide') }}">Process Guide</a>
+                <a href="mailto:info@bryanandbryan.ca">info@bryanandbryan.ca</a>
+            </nav>
+            <div class="site-footer__copyright">
+                &copy; 2026 Bryan and Bryan &middot; Licensed Paralegal Services in Ontario
+            </div>
+
+            {# DISCLAIMER — NOT in a block. Cannot be overridden by child templates.
+               Wrapped in <details open> so it stays visible by default for
+               legal-compliance but can be collapsed by users who have read it. #}
+            <details class="site-footer__disclaimer" id="legal-disclaimer" open>
+                <summary>Legal Disclaimer</summary>
+                <div class="disclaimer" aria-label="Legal disclaimer">
+                    <p>
+                        <strong>Legal Information, Not Legal Advice:</strong>
+                        The information provided by this tool is for general informational purposes only
+                        and does not constitute legal advice. It is not a substitute for advice from a
+                        qualified lawyer or paralegal. For advice about your specific situation,
+                        please consult a licensed legal professional.
+                    </p>
+                    <p>
+                        AI-generated assessments describe statistical patterns in similar cases and
+                        do not predict outcomes in your case.
+                    </p>
+                </div>
+            </details>
         </div>
     </footer>
 </body>
