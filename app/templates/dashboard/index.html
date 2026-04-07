@@ -10,37 +10,72 @@
 </div>
 {% endif %}
 
-<h1 style="color: var(--color-primary); margin-bottom: 1.5rem;">Welcome, {{ current_user.email }}</h1>
+<header class="workspace__header">
+  <h1 class="workspace__title headline">Legal Workspace</h1>
+  <p class="workspace__intro">
+    Welcome back. Your Ontario Small Claims filings are organised below.
+    Follow the active timeline to ensure all court deadlines are met.
+  </p>
+</header>
 
 {% if not claims %}
 <div class="dashboard-cta">
   <p>You have no active cases. Ready to get started?</p>
-  <a href="{{ url_for('assessment.wizard_step', step_name='dispute_type') }}" class="btn btn-primary">Start your first case assessment</a>
+  <a href="{{ url_for('assessment.wizard_entry') }}" class="btn btn-primary">Start your first case assessment</a>
 </div>
 {% endif %}
 
-<div class="dashboard-grid">
+<div class="bento">
 
-  {# ---- My Claims ---- #}
-  <section class="dashboard-section" aria-labelledby="section-claims">
-    <h2 id="section-claims">My Claims</h2>
+  {# ---- My Claims (col-span-8 on 900px+) ---- #}
+  <section class="bento__card bento__card--claims" aria-labelledby="section-claims">
+    <div class="bento__card-head">
+      <h2 id="section-claims" class="bento__card-title headline">My Claims</h2>
+      {% if claims %}
+      <a class="bento__card-link" href="{{ url_for('assessment.wizard_entry') }}">
+        NEW CLAIM <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+      </a>
+      {% endif %}
+    </div>
     {% include "dashboard/partials/claims_list.html" %}
   </section>
 
-  {# ---- My Documents ---- #}
-  <section class="dashboard-section" aria-labelledby="section-docs">
-    <h2 id="section-docs">My Documents</h2>
+  {# ---- Critical Deadlines (col-span-4, dark) ---- #}
+  <section class="bento__card bento__card--deadlines bento__card--dark" aria-labelledby="section-deadlines-summary">
+    <h2 id="section-deadlines-summary" class="bento__card-title">Critical Deadlines</h2>
+    {% include "dashboard/partials/deadlines_summary.html" %}
+  </section>
+
+  {# ---- Case Documentation (col-span-12) ---- #}
+  <section class="bento__card bento__card--docs" aria-labelledby="section-docs">
+    <div class="bento__card-head">
+      <h2 id="section-docs" class="bento__card-title headline">Case Documentation</h2>
+      <a class="bento__upload-btn" href="{{ url_for('documents.index') }}">
+        <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
+        UPLOAD NEW
+      </a>
+    </div>
     {% include "dashboard/partials/documents_list.html" %}
   </section>
 
-</div>{# /.dashboard-grid #}
+  {# ---- Escalation Guidance (col-span-12, conditional — the partial renders
+         nothing when no claim requires escalation) ---- #}
+  {% include "dashboard/partials/escalation_panel.html" %}
 
-{# ---- Deadlines and Timeline (full-width below grid) ---- #}
+</div>{# /.bento #}
+
+{# ---- Manage Claim Dates (per-claim HTMX date entry + timeline) ----
+   Kept below the bento because the date-entry forms are functional (HTMX
+   wired to dashboard.save_dates) and must not be removed. The bento's
+   "Critical Deadlines" card is a read-only aggregate view; this section is
+   where users actually enter and edit claim dates. #}
 {% if claims %}
-<section class="dashboard-section dashboard-section--timeline" aria-labelledby="section-deadlines" style="margin-top: 1.5rem;">
-  <h2 id="section-deadlines">Deadlines and Timeline</h2>
-  <p class="field-hint" style="margin-bottom:0.75rem;">Enter key dates for each claim to track your court deadlines automatically.</p>
-  <p class="field-hint" style="margin-bottom:1.5rem;"><a href="{{ url_for('main.guide') }}">Learn about the process</a> — understand what each deadline means and what to expect at each stage.</p>
+<section class="manage-dates" aria-labelledby="section-manage-dates">
+  <h2 id="section-manage-dates" class="manage-dates__title headline">Manage Claim Dates</h2>
+  <p class="manage-dates__intro">
+    Enter the key dates for each claim to drive the deadline timeline above.
+    <a href="{{ url_for('main.guide') }}">Learn what each deadline means</a>.
+  </p>
 
   {% for claim in claims %}
   {% set deadlines = claim_deadlines[claim.id] %}
@@ -90,9 +125,6 @@
     <div id="timeline-{{ claim.id }}">
       {% include "dashboard/partials/deadline_timeline.html" with context %}
     </div>
-
-    {% set escalation = claim_escalations[claim.id] %}
-    {% include "dashboard/partials/escalation_panel.html" with context %}
 
   </div>{# /.claim-deadline-block #}
 

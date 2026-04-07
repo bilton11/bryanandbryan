@@ -1,30 +1,55 @@
-{# escalation_panel.html — lawyer escalation CTA.
-   Variables: escalation (dict with "required" bool and "reasons" list), claim (Claim). #}
-{% if escalation.required %}
-<aside class="escalation-panel" aria-labelledby="escalation-heading-{{ claim.id }}">
-  <h3 id="escalation-heading-{{ claim.id }}">This Case May Need a Lawyer</h3>
+{# escalation_panel.html — aggregate lawyer-escalation card for the dashboard bento.
+   Reads `claims` and `claim_escalations` from context.
+   Renders nothing unless at least one claim requires escalation. #}
 
-  <p>Based on your case details, we recommend consulting with a licensed lawyer before
-  proceeding.</p>
-
-  {% if escalation.reasons %}
-  <ul class="escalation-reasons" aria-label="Reasons for recommendation">
-    {% for reason in escalation.reasons %}
-    <li>{{ reason }}</li>
+{% set escalating_claims = [] %}
+{% set all_reasons = [] %}
+{% for claim in claims %}
+  {% set esc = claim_escalations.get(claim.id, {}) %}
+  {% if esc.get("required") %}
+    {% set _ = escalating_claims.append(claim) %}
+    {% for reason in esc.get("reasons", []) %}
+      {% if reason not in all_reasons %}
+        {% set _ = all_reasons.append(reason) %}
+      {% endif %}
     {% endfor %}
-  </ul>
   {% endif %}
+{% endfor %}
 
-  <a class="escalation-cta"
-     href="mailto:info@bryanandbryan.ca?subject=Consultation%20Request%20%E2%80%94%20{{ (claim.step_data or {}).get('dispute_type', {}).get('claim_type', 'Case') | replace('_', ' ') | title }}"
-     aria-label="Request a consultation">
-    Request a Consultation
-  </a>
-
-  <p style="margin-top:0.75rem;">Our partner lawyer can review your case and provide legal
-  advice tailored to your situation.</p>
-
-  <p class="escalation-disclaimer">This recommendation is based on general case
-  characteristics and does not constitute legal advice.</p>
+{% if escalating_claims %}
+<aside class="bento__card bento__card--escalation escalation-card" aria-labelledby="escalation-heading">
+  <div class="escalation-card__body">
+    <div class="escalation-card__icon" aria-hidden="true">
+      <span class="material-symbols-outlined">shield</span>
+    </div>
+    <h3 id="escalation-heading" class="escalation-card__title">Escalation Guidance</h3>
+    <p class="escalation-card__lead">
+      {% if escalating_claims | length == 1 %}
+      One of your claims may require a lawyer. Based on the case details we recommend consulting a licensed legal professional before proceeding.
+      {% else %}
+      {{ escalating_claims | length }} of your claims may require a lawyer. Based on the case details we recommend consulting a licensed legal professional before proceeding.
+      {% endif %}
+    </p>
+    {% if all_reasons %}
+    <ul class="escalation-card__reasons" aria-label="Reasons for recommendation">
+      {% for reason in all_reasons %}
+      <li>{{ reason }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <p class="escalation-card__disclaimer">
+      This recommendation is based on general case characteristics and does not constitute legal advice.
+    </p>
+  </div>
+  <div class="escalation-card__actions">
+    <a class="escalation-card__btn escalation-card__btn--primary"
+       href="mailto:info@bryanandbryan.ca?subject=Find%20Legal%20Counsel%20%E2%80%94%20Bryan%20and%20Bryan%20Referral">
+      Find Legal Counsel
+    </a>
+    <a class="escalation-card__btn escalation-card__btn--ghost"
+       href="mailto:info@bryanandbryan.ca?subject=Professional%20Review%20Request%20%E2%80%94%20Bryan%20and%20Bryan">
+      Professional Review
+    </a>
+  </div>
 </aside>
 {% endif %}

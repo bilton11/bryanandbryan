@@ -1,6 +1,7 @@
-{# documents_list.html — partial for the My Documents section.
+{# documents_list.html — tile grid for the Case Documentation bento card.
    Variables: documents (list[Document]).
-   Included by dashboard/index.html. #}
+   Each tile is an anchor that triggers a PDF download (plain HTTP, not HTMX —
+   HTMX cannot trigger binary file downloads, decision 03-01). #}
 
 {% set doc_type_labels = {
   "demand_letter": "Demand Letter",
@@ -9,19 +10,26 @@
 } %}
 
 {% if documents %}
-<ul class="documents-list" role="list">
+<div class="docs-grid" role="list">
   {% for doc in documents %}
-  <li>
-    <div class="doc-info">
-      <span class="doc-title">{{ doc.title }}</span>
-      <span class="doc-type-badge doc-type-badge--{{ doc.doc_type.value }}">{{ doc_type_labels.get(doc.doc_type.value, doc.doc_type.value) }}</span>
-      <span class="field-hint" style="font-size:0.8125rem;">{{ doc.updated_at.strftime("%b %d, %Y") }}</span>
-    </div>
-    {# Plain anchor tag — NOT HTMX. HTMX cannot trigger binary file downloads (decision 03-01). #}
-    <a href="{{ url_for('documents.download', doc_id=doc.id) }}" class="btn btn-secondary" style="font-size:0.875rem; padding:0.375rem 0.75rem; min-height:unset; white-space:nowrap;">Download PDF</a>
-  </li>
+  <a class="doc-tile" role="listitem" href="{{ url_for('documents.download', doc_id=doc.id) }}">
+    <span class="doc-tile__icon" aria-hidden="true">
+      <span class="material-symbols-outlined">picture_as_pdf</span>
+    </span>
+    <span class="doc-tile__body">
+      <span class="doc-tile__title">{{ doc.title }}</span>
+      <span class="doc-tile__meta">
+        {{ doc_type_labels.get(doc.doc_type.value, doc.doc_type.value) }}
+        &middot;
+        {{ doc.updated_at.strftime("%b %d, %Y") }}
+      </span>
+    </span>
+  </a>
   {% endfor %}
-</ul>
+</div>
 {% else %}
-<p class="field-hint">No documents generated yet. <a href="{{ url_for('documents.index') }}">Go to Documents</a> to create your first document.</p>
+<p class="docs-grid__empty">
+  No documents generated yet.
+  <a href="{{ url_for('documents.index') }}">Create your first document</a>.
+</p>
 {% endif %}

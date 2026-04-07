@@ -1,0 +1,51 @@
+{# deadlines_summary.html — aggregate Critical Deadlines for the dark bento card.
+   Variables (from context): claims, claim_deadlines, today.
+   Flattens all upcoming deadlines across the user's claims into a single sorted
+   list and shows the top 4 as a vertical timeline. #}
+
+{% set all_upcoming = [] %}
+{% for claim in claims %}
+  {% set dl = claim_deadlines.get(claim.id) %}
+  {% if dl %}
+    {% if dl.limitation_deadline and dl.limitation_deadline >= today %}
+      {% set _ = all_upcoming.append((dl.limitation_deadline, "Limitation Period Expiry", claim)) %}
+    {% endif %}
+    {% if dl.defence_deadline and dl.defence_deadline >= today %}
+      {% set _ = all_upcoming.append((dl.defence_deadline, "Defence Filing Deadline", claim)) %}
+    {% endif %}
+    {% if dl.settlement_conf_date and dl.settlement_conf_date >= today %}
+      {% set _ = all_upcoming.append((dl.settlement_conf_date, "Settlement Conference", claim)) %}
+    {% endif %}
+    {% if dl.trial_request_deadline and dl.trial_request_deadline >= today %}
+      {% set _ = all_upcoming.append((dl.trial_request_deadline, "Trial Request Deadline", claim)) %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% set sorted_upcoming = (all_upcoming | sort(attribute=0))[:4] %}
+
+{% if sorted_upcoming %}
+<ol class="deadlines-summary__timeline" role="list">
+  {% for dl_date, label, claim in sorted_upcoming %}
+  {% set step_data = claim.step_data or {} %}
+  {% set opposing = step_data.get("opposing_party", {}).get("party_name", "") %}
+  {% set claim_label = opposing or ("Claim #" ~ claim.id) %}
+  <li class="deadlines-summary__item">
+    <span class="deadlines-summary__dot{% if loop.first %} deadlines-summary__dot--active{% endif %}" aria-hidden="true"></span>
+    <time class="deadlines-summary__date" datetime="{{ dl_date.isoformat() }}">
+      {{ dl_date.strftime("%b %d, %Y") }}
+    </time>
+    <span class="deadlines-summary__title">{{ label }}</span>
+    <span class="deadlines-summary__meta">{{ claim_label }}</span>
+  </li>
+  {% endfor %}
+</ol>
+
+<button type="button" class="deadlines-summary__cta" title="Calendar sync — coming soon" disabled>
+  Synchronize Calendar
+</button>
+{% else %}
+<p class="deadlines-summary__empty">
+  No upcoming deadlines. Enter your key dates below to populate this timeline.
+</p>
+{% endif %}
