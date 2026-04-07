@@ -1,26 +1,66 @@
 /* =============================================================================
    Bryan and Bryan — Base Stylesheet
    Mobile-first, WCAG 2.1 AA fundamentals
-   Navy/gold palette: #1B2A4A (primary), #C9A84C (accent)
+   "Digital Jurist" palette — DESIGN.md
+     Primary (deep navy):  #041534
+     Secondary (gold):     #755b00
+     Surface (warm cream): #f9f9f6
    ============================================================================= */
 
 /* --- Design Tokens --------------------------------------------------------- */
 :root {
-  --color-primary:       #1B2A4A;
-  --color-primary-light: #2d4a7a;
-  --color-accent:        #C9A84C;
-  --color-accent-hover:  #b8963f;
-  --color-bg:            #ffffff;
-  --color-bg-secondary:  #f8f9fa;
-  --color-text:          #1a1a1a;
-  --color-text-secondary:#4a5568;
-  --color-border:        #e2e8f0;
-  --color-error:         #c53030;
-  --color-success:       #2f855a;
+  /* Brand — Digital Jurist core palette */
+  --color-primary:           #041534;  /* deep navy */
+  --color-primary-container: #1b2a4a;  /* prior primary, now elevated container */
+  --color-primary-light:     #2d4a7a;
+  --color-on-primary:        #ffffff;
+  --color-secondary:         #755b00;  /* antique gold */
+  --color-secondary-hover:   #5c4700;
+  --color-secondary-fixed:   #ffe08f;  /* warm gold tint for badges/highlights */
+  --color-secondary-fixed-dim: #e6c364;
+  --color-on-secondary-fixed-variant: #584400;
 
-  --font-stack:    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --radius:        6px;
-  --shadow:        0 1px 3px rgba(0, 0, 0, 0.1);
+  /* Surface tiers — tonal layering ("no-line rule" from DESIGN.md §2) */
+  --color-surface:                  #f9f9f6;  /* warm cream base */
+  --color-surface-container-low:    #f4f4f1;  /* sectioning */
+  --color-surface-container-lowest: #ffffff;  /* cards — lifted */
+  --color-surface-container-high:   #e8e8e5;  /* elevated details */
+  --color-outline:                  #75777f;
+  --color-outline-variant:          #c5c6cf;  /* ghost borders only */
+
+  /* Text — warm off-black, never pure #000 per DESIGN.md §6 */
+  --color-on-surface:         #1a1c1b;
+  --color-on-surface-variant: #45464e;
+
+  /* Semantic */
+  --color-error:   #ba1a1a;
+  --color-success: #2f855a;
+
+  /* Legacy aliases — keep existing stylesheet working while tokens migrate.
+     These MUST remain so the ~1,160 lines below don't break. */
+  --color-bg:             var(--color-surface);
+  --color-bg-secondary:   var(--color-surface-container-low);
+  --color-text:           var(--color-on-surface);
+  --color-text-secondary: var(--color-on-surface-variant);
+  --color-border:         var(--color-outline-variant);
+  --color-accent:         var(--color-secondary);
+  --color-accent-hover:   var(--color-secondary-hover);
+
+  /* Typography */
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-stack: var(--font-sans); /* alias: existing rules referencing --font-stack pick up Inter */
+
+  /* Geometry — DESIGN.md §5 prefers structured "md" roundedness */
+  --radius:       6px;        /* legacy — buttons, inputs */
+  --radius-lg:    0.25rem;    /* 4px  — cards */
+  --radius-xl:    0.5rem;     /* 8px  — bento cards */
+  --radius-full:  0.75rem;    /* 12px — pills */
+
+  /* Elevation — ambient not digital (DESIGN.md §4) */
+  --shadow:          0 1px 3px rgba(26, 28, 27, 0.08);
+  --shadow-ambient:  0 10px 40px rgba(26, 28, 27, 0.06);
+
   --max-width:     1200px;
   --touch-target:  44px; /* WCAG 2.5.5 minimum touch target size */
 }
