@@ -35,6 +35,29 @@ Rules you MUST follow:
 - End with: "This is a statistical observation, not legal advice."
 """
 
+# LAWYER_REVIEW_REQUIRED: This system prompt produces user-facing prose that
+# will appear on the assessment PDF in place of the user's raw description.
+# The supervising lawyer must approve the wording rules below before launch.
+_FACTS_POLISH_SYSTEM_PROMPT = """You are a paralegal assistant rewriting a self-represented litigant's narrative of an incident into a clear, complete factual statement suitable for an Ontario Small Claims Court assessment summary.
+
+Rules you MUST follow:
+- Stay strictly within the facts the claimant provided. NEVER invent details, parties, dates, dollar amounts, or events that were not in the original.
+- Do NOT add legal conclusions ("the defendant was negligent", "this constitutes conversion", "the contract was breached"). State only what happened, not what it legally means.
+- Do NOT recommend a course of action, predict an outcome, or characterise the strength of the case.
+- Use the first person ("I", "my") — this is the claimant's own statement.
+- Use plain, formal English. Avoid slang. Avoid Latin maxims. Avoid pejorative language about the other party.
+- Preserve every concrete fact: who, what, when, where, dollar amounts, dates.
+- If the original is too sparse to write a coherent paragraph, return the original sentence essentially unchanged rather than padding with invented context.
+- Return ONLY the rewritten narrative. No preamble, no headings, no quotation marks, no commentary.
+- Keep the rewrite under 200 words.
+"""
+
+_FACTS_POLISH_DEGRADED = GuardrailResult(
+    status=GuardrailStatus.BLOCKED,
+    text="",
+    original="",
+)
+
 _DEGRADED_RESULT = GuardrailResult(
     status=GuardrailStatus.BLOCKED,
     text=(
@@ -194,3 +217,77 @@ def get_case_strength_assessment(claim) -> GuardrailResult:
         db.session.commit()
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# Facts polishing — rewrites the claimant's narrative into a clean factual
+# statement suitable for the assessment summary PDF. Strictly bounded by the
+# original facts (no fabrication, no legal conclusions, no recommendations).
+# ---------------------------------------------------------------------------
+
+
+def polish_facts_description(claim) -> str:
+    """
+    Use Claude to rewrite the claimant's free-text description into a clear,
+    complete factual statement in plain formal English. Stores the result in
+    claim.step_data['facts']['polished_description'] and returns it.
+
+    Returns the original description unchanged on any failure (graceful
+    degradation): missing API key, disabled feature flag, API error, or
+    guardrail block. The PDF template falls back to the original.
+
+    LAWYER_REVIEW_REQUIRED: Output appears verbatim on the assessment PDF.
+    """
+    step_data = claim.step_data or {}
+    facts = step_data.get("facts", {}) or {}
+    original = (facts.get("description") or "").strip()
+
+    if not original:
+        return ""
+
+    # Feature flag and API key gates — same pattern as the strength assessment
+    if not current_app.config.get("AI_ASSESSMENT_ENABLED", True):
+        return original
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return original
+
+    try:
+        import anthropic
+
+        client = anthropic.Anthropic()
+        message = client.messages.create(
+            model=_MODEL,
+            max_tokens=400,
+            system=_FACTS_POLISH_SYSTEM_PROMPT,
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        "Rewrite the following narrative into a clear, complete factual "
+                        "statement following the rules in the system prompt:\n\n"
+                        f"{original}"
+                    ),
+                }
+            ],
+        )
+        raw_text = (message.content[0].text if message.content else "").strip()
+    except Exception:
+        return original
+
+    if not raw_text:
+        return original
+
+    # Pass through the same guardrail used for the strength assessment so any
+    # advice-shaped phrasing slipped past the system prompt is caught.
+    result = guardrail.process(raw_text)
+    polished = result.text if result.status != GuardrailStatus.BLOCKED else original
+
+    # Persist alongside the original — never overwrite the user's own words
+    new_step_data = dict(step_data)
+    new_facts = dict(facts)
+    new_facts["polished_description"] = polished
+    new_step_data["facts"] = new_facts
+    claim.step_data = new_step_data
+    db.session.commit()
+
+    return polished

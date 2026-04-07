@@ -61,12 +61,33 @@
     }
 
     /* -----------------------------------------------------------------------
-       Header / branding
+       Header / branding — letterhead with shield logo + wordmark
     ----------------------------------------------------------------------- */
     .report-header {
       margin-bottom: 20pt;
       border-bottom: 2pt solid #1e3a5f;
-      padding-bottom: 10pt;
+      padding-bottom: 12pt;
+    }
+
+    .report-header__layout {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .report-header__layout td {
+      vertical-align: middle;
+      padding: 0;
+    }
+
+    .report-header__logo-cell {
+      width: 64pt;
+      padding-right: 12pt !important;
+    }
+
+    .report-header__logo {
+      width: 56pt;
+      height: auto;
+      display: block;
     }
 
     .report-header__brand {
@@ -251,12 +272,23 @@
   </div>
 
   {# -------------------------------------------------------------------------
-     a) Report header
+     a) Report header — letterhead with shield logo + wordmark
   -------------------------------------------------------------------------- #}
   <div class="report-header">
-    <div class="report-header__brand">Bryan and Bryan &mdash; Ontario Small Claims Court</div>
-    <h1>Case Assessment Summary</h1>
-    <div class="report-header__date">Generated: {{ report_date }}</div>
+    <table class="report-header__layout">
+      <tr>
+        {% if brand_logo_data_uri %}
+        <td class="report-header__logo-cell">
+          <img class="report-header__logo" src="{{ brand_logo_data_uri }}" alt="Bryan and Bryan crest">
+        </td>
+        {% endif %}
+        <td>
+          <div class="report-header__brand">Bryan and Bryan &mdash; Ontario Small Claims Court</div>
+          <h1>Case Assessment Summary</h1>
+          <div class="report-header__date">Generated: {{ report_date }}</div>
+        </td>
+      </tr>
+    </table>
   </div>
 
   {# -------------------------------------------------------------------------

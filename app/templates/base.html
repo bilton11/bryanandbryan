@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bryan and Bryan{% endblock %}</title>
+    {# Favicon — B&B shield. Same file as the topnav + PDF letterhead. #}
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
     {# Google Fonts — Newsreader (serif display) + Inter (body) + Material Symbols.
        Consistent with existing CDN pattern (HTMX also loaded from CDN). #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +22,13 @@
 
     <header class="topnav" role="banner">
         <div class="topnav__inner">
-            <a href="{{ url_for('main.index') }}" class="topnav__brand">Bryan and Bryan</a>
+            <a href="{{ url_for('main.index') }}" class="topnav__brand">
+                <img class="topnav__brand-logo"
+                     src="{{ url_for('static', filename='img/logo.png') }}"
+                     alt=""
+                     aria-hidden="true">
+                <span class="topnav__brand-text">Bryan and Bryan</span>
+            </a>
 
             {% if current_user.is_authenticated %}
             <nav class="topnav__links" role="navigation" aria-label="Main navigation">

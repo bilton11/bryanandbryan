@@ -47,6 +47,40 @@
     }
 
     /* -----------------------------------------------------------------------
+       Letterhead — B&B crest + wordmark above the demand letter title
+    ----------------------------------------------------------------------- */
+    .letterhead {
+      text-align: center;
+      margin-bottom: 14pt;
+      padding-bottom: 10pt;
+      border-bottom: 0.75pt solid #b89548;
+    }
+
+    .letterhead__logo {
+      width: 64pt;
+      height: auto;
+      display: block;
+      margin: 0 auto 6pt auto;
+    }
+
+    .letterhead__wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-size: 16pt;
+      font-weight: bold;
+      letter-spacing: 1pt;
+      color: #1e3a5f;
+      margin: 0;
+    }
+
+    .letterhead__tagline {
+      font-size: 8.5pt;
+      color: #6a5320;
+      letter-spacing: 1.5pt;
+      text-transform: uppercase;
+      margin-top: 2pt;
+    }
+
+    /* -----------------------------------------------------------------------
        Demand letter structure
     ----------------------------------------------------------------------- */
 
@@ -151,6 +185,17 @@
     generation tool and does not constitute legal advice. Consult a licensed legal professional before
     proceeding. Bryan and Bryan &mdash; {{ letter_date }}.
   </div>
+
+  {# -------------------------------------------------------------------------
+     Letterhead — B&B crest + wordmark
+  -------------------------------------------------------------------------- #}
+  {% if brand_logo_data_uri %}
+  <div class="letterhead">
+    <img class="letterhead__logo" src="{{ brand_logo_data_uri }}" alt="Bryan and Bryan crest">
+    <div class="letterhead__wordmark">Bryan and Bryan</div>
+    <div class="letterhead__tagline">Licensed Paralegal Services &middot; Ontario</div>
+  </div>
+  {% endif %}
 
   {# -------------------------------------------------------------------------
      Document header

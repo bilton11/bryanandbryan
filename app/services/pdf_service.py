@@ -7,10 +7,49 @@ No site navigation, login/logout links, or other chrome is included in the PDF.
 """
 from __future__ import annotations
 
+import base64
 from datetime import date
+from pathlib import Path
 
-from flask import render_template
+from flask import current_app, render_template
 from flask_weasyprint import HTML as WeasyHTML
+
+
+# ---------------------------------------------------------------------------
+# Brand letterhead — embed the B&B logo as a base64 data URI so PDFs stay
+# self-contained. WeasyPrint receives HTML strings without a base_url, so
+# relative <img src> paths cannot be resolved at render time. Encoding the
+# logo inline keeps the "no external requests in PDF" guarantee.
+# ---------------------------------------------------------------------------
+
+_LOGO_RELATIVE_PATH = "img/logo.png"
+_LOGO_DATA_URI_CACHE: str | None = None
+
+
+def get_brand_logo_data_uri() -> str:
+    """
+    Return the B&B shield logo as a `data:image/png;base64,...` URI suitable
+    for embedding in a PDF or HTML template. Returns an empty string when the
+    file is missing so templates can render without a letterhead during
+    development.
+    """
+    global _LOGO_DATA_URI_CACHE
+    if _LOGO_DATA_URI_CACHE is not None:
+        return _LOGO_DATA_URI_CACHE
+
+    try:
+        static_root = Path(current_app.static_folder)
+    except RuntimeError:
+        # Outside of an app context — treat as missing rather than crash
+        return ""
+
+    logo_path = static_root / _LOGO_RELATIVE_PATH
+    if not logo_path.is_file():
+        return ""
+
+    encoded = base64.b64encode(logo_path.read_bytes()).decode("ascii")
+    _LOGO_DATA_URI_CACHE = f"data:image/png;base64,{encoded}"
+    return _LOGO_DATA_URI_CACHE
 
 
 def render_assessment_pdf(claim) -> bytes:
@@ -38,8 +77,10 @@ def render_assessment_pdf(claim) -> bytes:
             break
 
     # --- Facts ---
+    # Prefer the AI-polished narrative when present (set during finalize by
+    # polish_facts_description). Falls back to the user's original wording.
     facts = step_data.get("facts", {})
-    facts_description = facts.get("description", "")
+    facts_description = facts.get("polished_description") or facts.get("description", "")
     facts_incident_date = facts.get("incident_date", "")
     facts_discovery_date = facts.get("discovery_date", "")
 
@@ -101,6 +142,7 @@ def render_assessment_pdf(claim) -> bytes:
         evidence_score_label=evidence_score_label,
         ai_assessment_text=ai_assessment_text,
         report_date=report_date,
+        brand_logo_data_uri=get_brand_logo_data_uri(),
     )
 
     html_string = render_template("assessment/pdf/assessment_report.html", **context)

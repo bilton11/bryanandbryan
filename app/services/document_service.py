@@ -19,9 +19,11 @@ from app.models.document import DocumentType
 def _build_demand_letter_context(input_data: dict) -> dict:
     """Build template context dict for the Demand Letter template."""
     from app.ontario_constants import FILING_FEE_INFREQUENT_CLAIMANT, format_fee
+    from app.services.pdf_service import get_brand_logo_data_uri
 
     return {
         "letter_date": date.today().strftime("%B %d, %Y"),
+        "brand_logo_data_uri": get_brand_logo_data_uri(),
         "opposing_party_name": input_data.get("opposing_party_name", ""),
         "opposing_party_address_street": input_data.get("opposing_party_address_street", ""),
         "opposing_party_address_city": input_data.get("opposing_party_address_city", ""),

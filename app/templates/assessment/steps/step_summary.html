@@ -161,20 +161,59 @@
     >&larr; Back</button>
 
     {#
-      Submitting the summary step POSTs to wizard_step/summary which saves the step
-      and then issues an HX-Redirect to /assess/finalize. The finalize route triggers
-      the AI assessment and redirects to the results page.
-      The htmx-indicator shows "Analyzing..." while the server is processing.
+      Plain form submit (NOT HTMX). The finalize route does slow AI work
+      between the POST and the redirect to /results, so the browser is busy
+      navigating for ~10-30s. We disable the button and show a full-screen
+      working overlay; the overlay persists until the new page loads and
+      replaces the entire DOM.
     #}
     <form
-      hx-post="{{ url_for('assessment.wizard_step', step_name='summary') }}"
-      hx-target="#wizard-step-container"
-      hx-swap="innerHTML"
+      id="assessment-finalize-form"
+      method="POST"
+      action="{{ url_for('assessment.wizard_step', step_name='summary') }}"
     >
-      <button type="submit" class="btn btn-primary" hx-indicator="#assessment-loading">
-        <span class="htmx-trigger-text">Complete Assessment &rarr;</span>
-        <span id="assessment-loading" class="htmx-indicator">Analyzing your case&hellip;</span>
+      <button type="submit" class="btn btn-primary" id="assessment-finalize-btn">
+        Complete Assessment &rarr;
       </button>
     </form>
   </div>
 </div>
+
+{# ----------------------------------------------------------------------------
+   Working overlay — full-screen modal shown while the AI runs the
+   strength assessment + facts polish during /assess/finalize. The overlay
+   is hidden by default; the form's submit handler reveals it and disables
+   the button so the user can't double-submit.
+---------------------------------------------------------------------------- #}
+<div class="working-overlay" id="working-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="working-overlay-title" aria-describedby="working-overlay-body">
+  <div class="working-overlay__card">
+    <div class="working-overlay__spinner" aria-hidden="true"></div>
+    <h2 class="working-overlay__title" id="working-overlay-title">Analysing your case</h2>
+    <p class="working-overlay__body" id="working-overlay-body">
+      Our AI is reviewing the facts you provided and generating your case
+      assessment. This usually takes 10&ndash;30 seconds &mdash; please don't
+      close this window.
+    </p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById('assessment-finalize-form');
+    var btn = document.getElementById('assessment-finalize-btn');
+    var overlay = document.getElementById('working-overlay');
+    if (!form || !btn || !overlay) return;
+
+    form.addEventListener('submit', function () {
+      // Lock the button so a second click can't double-fire the AI call
+      btn.disabled = true;
+      btn.setAttribute('aria-busy', 'true');
+      btn.textContent = 'Analysing\u2026';
+      // Reveal the overlay; the browser then handles the POST + finalize +
+      // redirect chain. No JS hides the overlay — when the browser navigates
+      // to /results, the new DOM replaces this one entirely.
+      overlay.classList.add('working-overlay--visible');
+      overlay.setAttribute('aria-hidden', 'false');
+    });
+  })();
+</script>

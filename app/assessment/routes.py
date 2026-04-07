@@ -516,8 +516,14 @@ def finalize():
     claim.current_step = "complete"
     db.session.commit()
 
-    # Generate AI assessment (stores result in claim.ai_assessment)
-    # Gracefully degrades if API key absent or AI_ASSESSMENT_ENABLED=false
+    # 1. Polish the claimant's narrative into a clean factual statement.
+    #    Stores result in claim.step_data["facts"]["polished_description"];
+    #    falls back to the original on any failure.
+    from app.services.assessment_service import polish_facts_description
+    polish_facts_description(claim)
+
+    # 2. Generate AI strength assessment (stores result in claim.ai_assessment).
+    #    Gracefully degrades if API key absent or AI_ASSESSMENT_ENABLED=false.
     get_case_strength_assessment(claim)
 
     return redirect(url_for("assessment.results", claim_id=claim.id))
