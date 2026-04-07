@@ -1222,14 +1222,10 @@ fieldset {
 }
 
 .topnav__brand-logo {
-  width: 2rem;
-  height: 2rem;
+  width: 10rem;
+  height: 10rem;
   object-fit: contain;
   flex-shrink: 0;
-}
-
-.topnav__brand-text {
-  display: inline-block;
 }
 
 .topnav__links {

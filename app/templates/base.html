@@ -22,12 +22,10 @@
 
     <header class="topnav" role="banner">
         <div class="topnav__inner">
-            <a href="{{ url_for('main.index') }}" class="topnav__brand">
+            <a href="{{ url_for('main.index') }}" class="topnav__brand" aria-label="Bryan and Bryan — Home">
                 <img class="topnav__brand-logo"
                      src="{{ url_for('static', filename='img/logo.png') }}"
-                     alt=""
-                     aria-hidden="true">
-                <span class="topnav__brand-text">Bryan and Bryan</span>
+                     alt="Bryan and Bryan">
             </a>
 
             {% if current_user.is_authenticated %}
