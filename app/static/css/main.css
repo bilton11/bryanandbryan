@@ -2050,3 +2050,52 @@ button:disabled {
   cursor: wait;
   opacity: 0.7;
 }
+
+
+/* ============================================================================
+   AI assessment card — scoped overrides for markdown-rendered output.
+   The card lives on the results page; the markdown_safe filter emits <h1>-<h4>,
+   <p>, <strong>, <em>, <ul>, <ol>. Without these scoped rules, an AI-emitted
+   <h2> would inherit body defaults (~24px) and overpower the small card.
+   ============================================================================ */
+.ai-assessment-card__text h1,
+.ai-assessment-card__text h2,
+.ai-assessment-card__text h3,
+.ai-assessment-card__text h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0.75rem 0 0.25rem;
+  font-family: var(--font-serif);
+}
+
+.ai-assessment-card__text h1:first-child,
+.ai-assessment-card__text h2:first-child,
+.ai-assessment-card__text h3:first-child,
+.ai-assessment-card__text h4:first-child {
+  margin-top: 0;
+}
+
+.ai-assessment-card__text p {
+  margin: 0 0 0.625rem;
+  line-height: 1.6;
+}
+
+.ai-assessment-card__text p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-assessment-card__text strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.ai-assessment-card__text ul,
+.ai-assessment-card__text ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.ai-assessment-card__text li {
+  margin-bottom: 0.25rem;
+}

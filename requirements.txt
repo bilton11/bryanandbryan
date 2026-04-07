@@ -14,3 +14,4 @@ python-dateutil>=2.9,<3
 weasyprint>=68.0,<69
 flask-weasyprint>=1.2.0,<2
 anthropic>=0.89.0,<1
+markdown>=3.5,<4

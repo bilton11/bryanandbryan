@@ -27,6 +27,11 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     limiter.init_app(app)
 
+    # Jinja filters — `markdown_safe` renders AI-generated markdown text into
+    # safe HTML for both the website and the WeasyPrint PDF templates.
+    from app.services.markdown_renderer import render_markdown_safe
+    app.jinja_env.filters["markdown_safe"] = render_markdown_safe
+
     # Register user_loader
     from app.models.user import User
 

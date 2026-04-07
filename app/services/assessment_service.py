@@ -31,6 +31,7 @@ Rules you MUST follow:
 - NEVER say "you should", "you must", "I recommend", "you will win", "you will lose".
 - Frame ALL observations as: "Cases with similar characteristics in Ontario..."
 - Do not predict the outcome of this specific case.
+- Write in plain prose. Do NOT use markdown headings (no `#` or `##`). Avoid bullet lists. You may use `**bold**` sparingly for emphasis on key numbers or terms.
 - Keep response under 150 words.
 - End with: "This is a statistical observation, not legal advice."
 """

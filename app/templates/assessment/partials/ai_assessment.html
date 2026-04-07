@@ -11,7 +11,9 @@
     <h3 class="ai-assessment-card__heading">Case Strength Indicator</h3>
   </div>
   <div class="ai-assessment-card__body">
-    <p class="ai-assessment-card__text">{{ ai_text | e }}</p>
+    {# Wrapper is a <div>, not <p>, because markdown_safe emits its own <p>
+       tags and nesting <p> inside <p> is invalid HTML. #}
+    <div class="ai-assessment-card__text">{{ ai_text | markdown_safe }}</div>
   </div>
   <div class="ai-assessment-card__footer">
     <p class="ai-assessment-card__disclaimer">

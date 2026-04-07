@@ -241,6 +241,44 @@
       line-height: 1.6;
     }
 
+    /* Scoped overrides for markdown-rendered headings inside the AI block.
+       Without these, an AI-emitted <h2> would inherit the global section
+       heading style (border-bottom navy bar, 12pt, italic). */
+    .ai-assessment__text h1,
+    .ai-assessment__text h2,
+    .ai-assessment__text h3,
+    .ai-assessment__text h4 {
+      font-size: 10pt;
+      font-weight: bold;
+      color: #1e3a5f;
+      border-bottom: none;
+      padding-bottom: 0;
+      margin: 8pt 0 3pt 0;
+    }
+
+    .ai-assessment__text p {
+      margin: 0 0 5pt 0;
+    }
+
+    .ai-assessment__text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .ai-assessment__text strong {
+      font-weight: bold;
+      color: #1e3a5f;
+    }
+
+    .ai-assessment__text ul,
+    .ai-assessment__text ol {
+      margin: 4pt 0;
+      padding-left: 18pt;
+    }
+
+    .ai-assessment__text li {
+      margin-bottom: 2pt;
+    }
+
     .ai-assessment--unavailable {
       border-color: #ccc;
       background: #f8f8f8;
@@ -454,7 +492,7 @@
   {% if ai_assessment_text %}
     <div class="ai-assessment">
       <div class="ai-assessment__label">Statistical Case Analysis</div>
-      <div class="ai-assessment__text">{{ ai_assessment_text | e }}</div>
+      <div class="ai-assessment__text">{{ ai_assessment_text | markdown_safe }}</div>
     </div>
   {% else %}
     <div class="ai-assessment ai-assessment--unavailable">
