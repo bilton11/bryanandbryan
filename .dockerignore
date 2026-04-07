@@ -12,6 +12,7 @@ instance/
 tests/
 artifacts/
 *.png
+!app/static/**/*.png
 *.bat
 ERROR
 .dockerignore
