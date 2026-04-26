@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Bryan and Bryan{% endblock %}</title>
-    {# Favicon — B&B shield. Same file as the topnav + PDF letterhead. #}
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+    <title>{% block title %}Small Claims Assistant{% endblock %}</title>
     {# Google Fonts — Newsreader (serif display) + Inter (body) + Material Symbols.
        Consistent with existing CDN pattern (HTMX also loaded from CDN). #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,10 +19,8 @@
 
     <header class="topnav" role="banner">
         <div class="topnav__inner">
-            <a href="{{ url_for('main.index') }}" class="topnav__brand" aria-label="Bryan and Bryan — Home">
-                <img class="topnav__brand-logo"
-                     src="{{ url_for('static', filename='img/logo.png') }}"
-                     alt="Bryan and Bryan">
+            <a href="{{ url_for('main.index') }}" class="topnav__brand" aria-label="Small Claims Assistant — Home">
+                <span class="topnav__brand-text">Small Claims Assistant</span>
             </a>
 
             {% if current_user.is_authenticated %}
@@ -83,14 +78,13 @@
 
     <footer class="site-footer" role="contentinfo">
         <div class="site-footer__inner">
-            <div class="site-footer__brand">Bryan and Bryan</div>
+            <div class="site-footer__brand">Small Claims Assistant</div>
             <nav class="site-footer__links" aria-label="Footer links">
                 <a href="#legal-disclaimer">Legal Disclaimer</a>
                 <a href="{{ url_for('main.guide') }}">Process Guide</a>
-                <a href="mailto:info@bryanandbryan.ca">info@bryanandbryan.ca</a>
             </nav>
             <div class="site-footer__copyright">
-                &copy; 2026 Bryan and Bryan &middot; Licensed Paralegal Services in Ontario
+                &copy; 2026 Small Claims Assistant
             </div>
 
             {# DISCLAIMER — NOT in a block. Cannot be overridden by child templates.

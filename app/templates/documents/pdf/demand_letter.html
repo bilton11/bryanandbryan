@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Demand Letter — Bryan and Bryan</title>
+  <title>Demand Letter — Small Claims Assistant</title>
   <style>
     /* -----------------------------------------------------------------------
        Page setup — Letter size, margins with room for running footer disclaimer
@@ -181,21 +181,14 @@
      Running disclaimer — WeasyPrint lifts this and prints it on every page
   -------------------------------------------------------------------------- #}
   <div id="page-disclaimer">
-    Legal Information, Not Legal Advice. This document was prepared using Bryan and Bryan's document
+    Legal Information, Not Legal Advice. This document was prepared using Small Claims Assistant's document
     generation tool and does not constitute legal advice. Consult a licensed legal professional before
-    proceeding. Bryan and Bryan &mdash; {{ letter_date }}.
+    proceeding. {{ letter_date }}.
   </div>
 
-  {# -------------------------------------------------------------------------
-     Letterhead — B&B crest + wordmark
-  -------------------------------------------------------------------------- #}
-  {% if brand_logo_data_uri %}
   <div class="letterhead">
-    <img class="letterhead__logo" src="{{ brand_logo_data_uri }}" alt="Bryan and Bryan crest">
-    <div class="letterhead__wordmark">Bryan and Bryan</div>
-    <div class="letterhead__tagline">Licensed Paralegal Services &middot; Ontario</div>
+    <div class="letterhead__wordmark">Small Claims Assistant</div>
   </div>
-  {% endif %}
 
   {# -------------------------------------------------------------------------
      Document header

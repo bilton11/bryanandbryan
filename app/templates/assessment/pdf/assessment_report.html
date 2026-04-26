@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Case Assessment Summary — Bryan and Bryan</title>
+  <title>Case Assessment Summary — Small Claims Assistant</title>
   <style>
     /* -----------------------------------------------------------------------
        Page setup — Letter, margins with room for running footer disclaimer
@@ -306,7 +306,7 @@
   <div id="page-disclaimer">
     Legal Information, Not Legal Advice. This assessment describes statistical patterns
     in similar cases and does not constitute legal advice or predict your case outcome.
-    Bryan and Bryan &mdash; {{ report_date }}.
+    Small Claims Assistant &mdash; {{ report_date }}.
   </div>
 
   {# -------------------------------------------------------------------------
@@ -315,13 +315,8 @@
   <div class="report-header">
     <table class="report-header__layout">
       <tr>
-        {% if brand_logo_data_uri %}
-        <td class="report-header__logo-cell">
-          <img class="report-header__logo" src="{{ brand_logo_data_uri }}" alt="Bryan and Bryan crest">
-        </td>
-        {% endif %}
         <td>
-          <div class="report-header__brand">Bryan and Bryan &mdash; Ontario Small Claims Court</div>
+          <div class="report-header__brand">Small Claims Assistant &mdash; Ontario Small Claims Court</div>
           <h1>Case Assessment Summary</h1>
           <div class="report-header__date">Generated: {{ report_date }}</div>
         </td>
@@ -507,7 +502,7 @@
   <div class="report-footer">
     <p>This report was generated on {{ report_date }}. For legal advice about your
     specific situation, consult a licensed legal professional.</p>
-    <p>Bryan and Bryan provides legal information, not legal advice.
+    <p>Small Claims Assistant provides legal information, not legal advice.
     AI-generated assessments describe statistical patterns in similar Ontario cases
     and do not predict the outcome of your case.</p>
   </div>

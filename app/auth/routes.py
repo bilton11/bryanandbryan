@@ -71,19 +71,19 @@ def _send_magic_link_email(
     from email.mime.text import MIMEText
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = "Your Bryan and Bryan sign-in link"
+    msg["Subject"] = "Your Small Claims Assistant sign-in link"
     msg["From"] = mail_user
     msg["To"] = to_email
 
     text = (
-        "Sign in to Bryan and Bryan by visiting this link "
+        "Sign in to Small Claims Assistant by visiting this link "
         f"(expires in 15 minutes):\n\n{verify_url}\n\n"
         "If you did not request this link, you can safely ignore this email."
     )
     html = (
-        "<p>Click the link below to sign in to Bryan and Bryan. "
+        "<p>Click the link below to sign in to Small Claims Assistant. "
         "The link expires in 15 minutes.</p>"
-        f'<p><a href="{verify_url}">Sign in to Bryan and Bryan</a></p>'
+        f'<p><a href="{verify_url}">Sign in to Small Claims Assistant</a></p>'
         "<p>If you did not request this link, you can safely ignore this email.</p>"
     )
     msg.attach(MIMEText(text, "plain"))
